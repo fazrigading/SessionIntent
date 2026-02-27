@@ -132,7 +132,7 @@ Using an AUR helper:
 
 ```bash
 yay -S sessionintent
-#或者
+# or
 paru -S sessionintent
 ```
 

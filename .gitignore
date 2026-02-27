@@ -52,3 +52,6 @@ Thumbs.db
 # User config files (local state)
 .config/sessionintent/
 .local/state/sessionintent/
+
+# Author personal config
+my_personal_config.yaml

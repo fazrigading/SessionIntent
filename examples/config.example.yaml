@@ -49,7 +49,8 @@ modes:
       profile: work
       urls:
         - https://github.com
-        - https://stackoverflow.com
+        - https://slack.com
+    
     # VSCode workspace
     vscode:
       workspace: "~/Work/CurrentProject.code-workspace"
@@ -156,9 +157,9 @@ modes:
       1:
         - firefox
 
-  # --- Debug / Incident Mode ---
+  # --- Debug Mode ---
   debug:
-    label: "Debug / Incident"
+    label: "Debug"
     description: "Troubleshooting and monitoring"
     
     workspaces:
