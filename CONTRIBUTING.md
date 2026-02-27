@@ -8,7 +8,11 @@ Please be respectful and constructive in all interactions. We welcome contributi
 
 ## How Can I Contribute?
 
-### 1. Reporting Bugs
+### 1. Following Project Roadmap
+
+Check [ROADMAP.md](docs/ROADMAP.md) for planned features and areas where contributions are welcome. Pick an item that interests you and open a discussion issue before starting major work.
+
+### 2. Reporting Bugs
 
 Before reporting a bug:
 - Check if it's already reported in [Issues](https://github.com/fazrigading/SessionIntent/issues)
@@ -21,7 +25,7 @@ To report a bug:
 4. Attach config files (remove sensitive data)
 5. Include output with `--dev` flag
 
-### 2. Suggesting Features
+### 3. Suggesting Features
 
 Feature requests should:
 - Clearly describe the use case
@@ -29,7 +33,7 @@ Feature requests should:
 - Include example config
 - Consider backward compatibility
 
-### 3. Pull Requests
+### 4. Pull Requests
 
 #### Process
 
@@ -113,42 +117,17 @@ sessionintent --dev --mode work --config tests/test_configs/valid.yaml
 - Add comments for complex configs
 - Use consistent formatting
 
-## Project Structure
-
-```
-SessionIntent/
-├── src/                         # Main package
-│   ├── __init__.py              # Package exports
-│   ├── __main__.py              # CLI entry point
-│   ├── constants/               # Configuration constants
-│   ├── config/                  # Configuration management
-│   ├── hardware/                # Hardware detection
-│   ├── app/                     # Application management
-│   ├── workspace/               # Workspace management
-│   ├── extensions/              # GNOME Shell extensions
-│   ├── ui/                      # User interface
-│   ├── session/                 # Session orchestration
-│   └── cli/                     # CLI utilities
-├── tests/                       # Test files
-│   ├── test_config/
-│   ├── test_hardware/
-│   ├── test_app/
-│   └── test_session/
-├── docs/                        # Documentation
-├── scripts/                     # Utility scripts
-├── pyproject.toml               # Package configuration
-├── requirements.txt             # Dependencies
-└── CONTRIBUTING.md
-```
-
 ## Documentation
 
 All documentation is in the `docs/` directory:
 
 - `README.md` - Main project overview
-- `configuration-guide.md` - Config tutorial
-- `modes.md` - Mode examples
+- `ARCHITECTURE.md` - System architecture
+- `CONFIGURATION-GUIDE.md` - Config tutorial
 - `FAQ.md` - Common questions
+- `INSTALLATION.md` - Installation manual
+- `MODES.md` - Mode examples
+- `ROADMAP.md` - Project roadmap
 
 ## Testing
 
@@ -183,6 +162,7 @@ def test_mode_switching():
 ## Questions?
 
 - Open an issue
+- Start a new discussion
 <!-- - Join our Discord
 - Email project maintainers -->
 
