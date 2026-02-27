@@ -4,7 +4,7 @@ SessionIntent - Session Orchestration for GNOME Wayland
 
 Usage:
     sessionintent                     # Select mode via UI
-    sessionintent -m WORKSPACE        # Apply specific mode
+    sessionintent -m <mode>           # Apply specific mode
     sessionintent --panic             # Clear state (no app termination)
     sessionintent --quit              # Gracefully close managed apps
     sessionintent --clear             # Clear state files only
@@ -14,7 +14,7 @@ Usage:
     sessionintent --reload            # Reload configuration
     sessionintent --suspend           # Suspend session
     sessionintent --init              # Initialize configs
-    sessionintent -d -m M             # Dry-run mode
+    sessionintent -d -m <mode>        # (Dev) Dry-run mode
 
 See 'sessionintent --help' for more information.
 """
