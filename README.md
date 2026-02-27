@@ -25,7 +25,7 @@ pip install -r requirements.txt
 sessionintent --init
 ```
 
-For more details on manual installation, please read (docs/INSTALLATION.md)[docs/INSTALLATION.md]
+Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for more details on manual installation.
 
 ### Configuration
 
@@ -34,47 +34,11 @@ For more details on manual installation, please read (docs/INSTALLATION.md)[docs
 sessionintent --init
 ```
 
-2. Edit `~/.config/sessionintent/config.yaml` to define your modes
+2. Edit `~/.config/sessionintent/config.yaml` to define your modes, read [examples/config.example.yaml](examples/config.example.yaml) for reference.
 
 3. Launch the mode selector:
 ```bash
 sessionintent
-```
-
-### Example Config
-
-```yaml
-defaults:
-  ask_before_kill: true
-  reuse_workspaces: true
-
-hardware_profiles:
-  battery:
-    disable_modes: [gaming]
-  plugged:
-    allow_all: true
-
-modes:
-  browsing:
-    label: "Browsing / Chilling"
-    firefox:
-      profile: chill
-    workspaces:
-      1:
-        - firefox
-      2:
-        - discord
-
-  work:
-    label: "Work / Research"
-    firefox:
-      profile: research
-    workspaces:
-      1:
-        - firefox
-        - vscode
-      2:
-        - terminal
 ```
 
 ## Usage
@@ -83,33 +47,26 @@ modes:
 # Select mode via UI (requires wofi/rofi) - default behavior
 sessionintent
 
-# Apply specific mode directly
+# Apply specific mode directly (without wofi/rofi)
 sessionintent --mode browsing
 sessionintent -m browsing
 
 # Session control
-sessionintent --panic             # Clear state (no app termination)
-sessionintent -P
-sessionintent --quit              # Gracefully close managed apps
-sessionintent -q
+sessionintent --panic / -P       # Clear state (no app termination)
+sessionintent --quit / -q        # Gracefully close managed apps
 sessionintent --clear            # Clear state files only
-sessionintent --kill             # Force kill managed apps
-sessionintent -k
-sessionintent --suspend          # Suspend session
+sessionintent --kill / -k        # Force kill managed apps
+sessionintent --suspend -S       # Suspend session
 
 # Status and listing
-sessionintent --status            # Show current status
-sessionintent -s
-sessionintent --list             # List available modes
-sessionintent -l
+sessionintent --status / -s      # Show current status
+sessionintent --list / -l        # List available modes
 
 # Configuration
-sessionintent --init             # Initialize default config
-sessionintent -i
-sessionintent --reload           # Reload configuration
-sessionintent -r
+sessionintent --init / -i        # Initialize default config
+sessionintent --reload  / -r     # Reload configuration
 
-# Dry-run mode (for testing)
+# Dry-run mode (for dev testing)
 sessionintent --dev --mode work
 sessionintent -d -m work
 ```
@@ -132,7 +89,7 @@ sessionintent -d -m work
 
 ## Project Structure
 
-```
+```tree
 SessionIntent/
 ├── src/
 │   ├── __init__.py          # Package exports
