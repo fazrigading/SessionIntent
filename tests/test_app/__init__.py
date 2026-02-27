@@ -1,1 +1,1 @@
-"""Tests for app module."""
+"""Tests for app package."""

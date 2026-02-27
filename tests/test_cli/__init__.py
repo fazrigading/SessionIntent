@@ -1,1 +1,1 @@
-"""Tests for CLI module."""
+"""Tests for CLI package."""
