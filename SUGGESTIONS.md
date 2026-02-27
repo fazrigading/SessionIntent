@@ -2,7 +2,7 @@
 
 ## Current Status
 
-SessionIntent is a well-designed session orchestration system for GNOME Wayland on Fedora 43. It provides:
+SessionIntent is a well-designed session orchestration system for GNOME Wayland on Linux. It provides:
 - Intent-based session control via YAML configuration
 - Hardware-aware mode switching (battery/AC detection)
 - Workspace orchestration with advisory placement
@@ -98,12 +98,12 @@ SessionIntent/
 ├── .gitignore                        # Exclude config files, build artifacts
 ├── .editorconfig                     # Consistent code style
 ├── CONTRIBUTING.md                   # Contribution guidelines
-├── AGENTS.md                        # AI agent guidelines
+├── AGENTS.md                         # AI agent guidelines
 └── docs/                             # Additional documentation
-    ├── architecture.md               # Detailed architecture docs
-    ├── configuration-guide.md        # Config tutorial
-    ├── modes.md                      # Mode examples
-    ├── installation.md               # Installation guide
+    ├── ARCHITECTURE.md               # Detailed architecture docs
+    ├── CONFIGURATION-GUIDE.md        # Config tutorial
+    ├── MODES.md                      # Mode examples
+    ├── INSTALLATION.md               # Installation guide
     └── FAQ.md                        # Common questions
 ```
 

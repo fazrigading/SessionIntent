@@ -39,10 +39,10 @@ SessionIntent/
 ```
 docs/
 ├── README.md                        # Documentation navigation
-├── architecture.md                  # Detailed architecture
-├── configuration-guide.md           # Config tutorial
-├── modes.md                         # Mode examples and patterns
-├── installation.md                  # Installation guide
+├── ARCHITECTURE.md                  # Detailed architecture
+├── CONFIGURATION-GUIDE.md           # Config tutorial
+├── MODES.md                         # Mode examples and patterns
+├── INSTALLATION.md                  # Installation guide
 └── FAQ.md                           # Common questions
 ```
 

@@ -4,9 +4,9 @@ This folder contains comprehensive documentation for SessionIntent.
 
 ## Quick Start
 
-1. **Installation**: See `installation.md`
-2. **Configuration**: See `configuration-guide.md`
-3. **Modes**: See `modes.md`
+1. **Installation**: See `INSTALLATION.md`
+2. **Configuration**: See `CONFIGURATION-GUIDE.md`
+3. **Modes**: See `MODES.md`
 4. **FAQ**: See `FAQ.md`
 
 ## Documentation Structure
@@ -14,23 +14,22 @@ This folder contains comprehensive documentation for SessionIntent.
 | File | Description |
 | ---- | ----------- |
 | `README.md` | Overview and quick start |
-| `architecture.md` | System architecture details |
-| `installation.md` | Installation instructions for all distros |
-| `configuration-guide.md` | Config file tutorial |
-| `modes.md` | Mode examples and patterns |
+| `ARCHITECTURE.md` | System architecture details |
+| `CONFIGURATION-GUIDE.md` | Config file tutorial |
 | `FAQ.md` | Common questions and answers |
+| `INSTALLATION.md` | Installation instructions for all distros |
+| `MODES.md` | Mode examples and patterns |
+| `ROADMAP.md` | Future enhancements and contribution ideas |
 
 ## For Developers
 
 - `ARCHITECTURE.md` - Technical architecture overview
-- `CONTRIBUTING.md` - Contribution guidelines
-- `CHANGELOG.md` - Version history
-- `TESTING.md` - Testing procedures
+- `ROADMAP.md` - Future enhancements and contribution ideas
 
 ## Getting Help
 
 1. Check **FAQ.md** first
-2. Review **configuration-guide.md** for setup issues
+2. Review **CONFIGURATION-GUIDE.md** for setup issues
 3. Check existing **Issues** on GitHub
 4. Open a new **Issue** with your config and steps
 

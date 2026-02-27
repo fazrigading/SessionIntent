@@ -1,4 +1,4 @@
-# SessionIntent - A declarative session orchestration system for GNOME Wayland
+# SessionIntent - Declarative session orchestration system for Linux with GNOME Wayland
 
 SessionIntent allows you to switch between different "intent-based modes" (Work, Gaming, Browsing, etc.) that automatically launch, reuse, and organize your applications across workspaces.
 
@@ -9,7 +9,7 @@ SessionIntent allows you to switch between different "intent-based modes" (Work,
 - 📝 **Declarative configuration** - Single YAML file defines everything
 - 🔒 **Safe operations** - No data loss, no forced kills
 - 🎛️ **Workspace orchestration** - Advisory workspace placement
-- 🧪 **Dev mode** - Test configurations without side effects
+- 🧪 **Dev mode** - Test configurations and system functionality
 - 🔄 **Hot reload** - Edit config and apply without restart
 
 ## Quick Start
@@ -18,12 +18,14 @@ SessionIntent allows you to switch between different "intent-based modes" (Work,
 
 ```bash
 # Method 1: Using installer script
-curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/scripts/install.sh | bash
 
-# Method 2: Manual installation
+# Method 2: Manual installation 
 pip install -r requirements.txt
 sessionintent --init
 ```
+
+For more details on manual installation, please read (docs/INSTALLATION.md)[docs/INSTALLATION.md]
 
 ### Configuration
 
@@ -107,8 +109,8 @@ sessionintent --dev --mode work
 
 - Python 3.10+
 - PyYAML
-- wofi or rofi (for UI)
-- GNOME Wayland (Fedora 43+ recommended)
+- wofi or rofi (OPTIONAL, for UI)
+- GNOME Wayland
 
 ## Project Structure
 
@@ -151,7 +153,7 @@ SessionIntent/
 
 ## Distribution
 
-- **Fedora**: `sudo dnf install sessionintent` (via COPR)
+- **Fedora**: `sudo dnf install sessionintent` (via COPR) **[PLANNED]**
 - **Other distros**: Use `install.sh` script
 
 ## License
@@ -160,9 +162,9 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ROADMAP.md](docs/ROADMAP.md) for details.
 
 ## Acknowledgments
 
-- Built for GNOME Wayland on Fedora 43
+- Built for GNOME Wayland
 - Inspired by window manager session management tools

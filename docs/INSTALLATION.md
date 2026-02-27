@@ -5,7 +5,7 @@
 ### Method 1: One-liner (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/scripts/install.sh | bash
 ```
 
 ### Method 2: Manual Installation
@@ -140,7 +140,7 @@ paru -S sessionintent
 
 ### Fedora
 
-SessionIntent is designed for Fedora 43+ with GNOME Wayland.
+SessionIntent is designed for Linux with GNOME Wayland.
 
 ```bash
 # Install dependencies

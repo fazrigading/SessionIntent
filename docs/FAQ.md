@@ -26,7 +26,7 @@ Yes! We have:
 
 ### Is SessionIntent distro-agnostic?
 
-Primarily designed for Fedora 43+ with GNOME, but should work on other Linux distributions with:
+Designed for Linux with GNOME Wayland. It should work on any Linux distribution running GNOME.
 - Python 3.10+
 - PyYAML
 - GNOME Wayland session
