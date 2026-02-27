@@ -156,7 +156,7 @@ install_autostart() {
 Type=Application
 Name=SessionIntent
 Comment=Session mode selector
-Exec=python3 $INSTALL_DIR/sessionintent --prompt
+Exec=sessionintent
 X-GNOME-AutoRestart=false
 X-GNOME-Autostart-Delay=3
 EOF
@@ -222,7 +222,7 @@ print_success_message() {
     echo "  1. Reload your shell: source \$SHELL_CONFIG"
     echo "  2. Run: sessionintent --help"
     echo "  3. Configure modes in: $CONFIG_DIR/config.yaml"
-    echo "  4. Select session mode: sessionintent --prompt"
+    echo "  4. Select session mode: sessionintent"
     echo ""
 }
 
