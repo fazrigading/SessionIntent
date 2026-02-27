@@ -148,19 +148,178 @@ class SessionManager:
 
     def panic(self) -> None:
         """Clear current session state without killing processes."""
-        import os
-
         if self.dev_mode:
-            print("[DEV] Panic reset: Would clear state.")
+            print("[DEV] Panic: Would clear state.")
             return
 
-        if STATE_FILE.exists():
+        from ..session.state import clear_state
+
+        clear_state(self.dev_mode)
+        print("Panic: State cleared.")
+
+    def quit(self) -> None:
+        """Gracefully close managed applications (SIGTERM)."""
+        if self.dev_mode:
+            print("[DEV] Quit: Would gracefully close managed apps.")
+            return
+
+        from ..session.state import load_state
+
+        current_mode = load_state()
+
+        if not current_mode:
+            print("Quit: No active mode to quit from.")
+            return
+
+        mode_cfg = self.config.get("modes", {}).get(current_mode, {})
+        apps_to_close = self._get_managed_apps(mode_cfg)
+
+        if not apps_to_close:
+            print("Quit: No managed applications to close.")
+            return
+
+        print(f"Quit: Closing {len(apps_to_close)} application(s)...")
+        self._close_apps(apps_to_close, graceful=True)
+
+        from ..session.state import clear_state
+
+        clear_state(self.dev_mode)
+        print("Quit: Done.")
+
+    def clear(self) -> None:
+        """Clear state files only (no app management)."""
+        if self.dev_mode:
+            print("[DEV] Clear: Would clear state files only.")
+            return
+
+        from ..session.state import clear_state
+
+        clear_state(self.dev_mode)
+        print("Clear: State files cleared.")
+
+    def _get_managed_apps(self, mode_cfg: dict[str, Any]) -> list[str]:
+        """Get list of app keys managed by the current mode."""
+        apps = []
+        workspaces = mode_cfg.get("workspaces", {})
+        for ws_apps in workspaces.values():
+            for app_entry in ws_apps:
+                if isinstance(app_entry, str):
+                    apps.append(app_entry)
+                else:
+                    apps.append(list(app_entry.keys())[0])
+        return apps
+
+    def _close_apps(self, app_keys: list[str], graceful: bool = True) -> None:
+        """Close applications by their keys."""
+        import subprocess
+
+        for app_key in app_keys:
+            app_def = self.apps.get(app_key, {})
+            check_pattern = app_def.get("check", app_key)
+
+            if check_pattern is False:
+                continue
+
             try:
-                STATE_FILE.unlink()
-            except (IOError, OSError):
+                if graceful:
+                    subprocess.run(
+                        ["pkill", "-TERM", "-f", check_pattern],
+                        capture_output=True,
+                    )
+                else:
+                    subprocess.run(
+                        ["pkill", "-KILL", "-f", check_pattern],
+                        capture_output=True,
+                    )
+            except subprocess.CalledProcessError:
                 pass
 
-        print("Panic reset: State cleared.")
+    def status(self) -> None:
+        """Show current session status."""
+        from ..session.state import load_state
+
+        current_mode = load_state()
+        power_state = "AC" if is_on_ac() else "Battery"
+
+        print("=== SessionIntent Status ===")
+        print(f"Current Mode: {current_mode or 'None'}")
+        print(f"Power State: {power_state}")
+        print(f"Dev Mode: {self.dev_mode}")
+        print(f"Config Path: {self.config_path}")
+
+    def list_modes(self) -> None:
+        """List all available modes."""
+        modes = self.config.get("modes", {})
+        hardware_profile = "plugged" if is_on_ac() else "battery"
+        profile_config = self.config.get("hardware_profiles", {}).get(
+            hardware_profile, {}
+        )
+        disabled_modes = profile_config.get("disable_modes", [])
+
+        print("=== Available Modes ===")
+        if not modes:
+            print("  No modes defined.")
+            return
+
+        for mode_key, mode_data in modes.items():
+            label = mode_data.get("label", mode_key)
+            if mode_key in disabled_modes:
+                print(f"  {mode_key} ({label}) - [Disabled on {hardware_profile}]")
+            else:
+                print(f"  {mode_key} ({label})")
+
+    def kill(self) -> None:
+        """Force kill managed applications (SIGKILL)."""
+        if self.dev_mode:
+            print("[DEV] Kill: Would force kill managed apps.")
+            return
+
+        from ..session.state import load_state
+
+        current_mode = load_state()
+
+        if not current_mode:
+            print("Kill: No active mode to kill apps from.")
+            return
+
+        mode_cfg = self.config.get("modes", {}).get(current_mode, {})
+        apps_to_kill = self._get_managed_apps(mode_cfg)
+
+        if not apps_to_kill:
+            print("Kill: No managed applications to kill.")
+            return
+
+        print(f"Kill: Force killing {len(apps_to_kill)} application(s)...")
+        self._close_apps(apps_to_kill, graceful=False)
+        print("Kill: Done.")
+
+    def reload(self) -> None:
+        """Reload configuration files."""
+        if self.dev_mode:
+            print("[DEV] Reload: Would reload configuration.")
+            return
+
+        try:
+            self._load_config()
+            print("Reload: Configuration reloaded.")
+        except (ValueError, IOError) as e:
+            print(f"Reload: Failed to reload config: {e}")
+
+    def suspend(self) -> None:
+        """Suspend session (pause mode switching)."""
+        if self.dev_mode:
+            print("[DEV] Suspend: Would suspend session.")
+            return
+
+        from ..session.state import load_state, save_state
+
+        current_mode = load_state()
+        if not current_mode:
+            print("Suspend: No active mode to suspend.")
+            return
+
+        save_state(f"suspend:{current_mode}", self.dev_mode)
+        print(f"Suspend: Session suspended. Use --quit to resume and close apps.")
 
 
 # convenience imports for direct use

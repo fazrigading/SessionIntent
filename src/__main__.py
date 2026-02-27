@@ -3,11 +3,18 @@
 SessionIntent - Session Orchestration for GNOME Wayland
 
 Usage:
-    sessionintent --prompt           # Select mode via UI
-    sessionintent --mode WORKSPACE   # Apply specific mode
-    sessionintent --panic            # Clear state
-    sessionintent --init             # Initialize configs
-    sessionintent --dev --mode M     # Dry-run mode
+    sessionintent                     # Select mode via UI
+    sessionintent -m WORKSPACE        # Apply specific mode
+    sessionintent --panic             # Clear state (no app termination)
+    sessionintent --quit              # Gracefully close managed apps
+    sessionintent --clear             # Clear state files only
+    sessionintent --kill              # Force kill managed apps
+    sessionintent --status            # Show current status
+    sessionintent --list              # List available modes
+    sessionintent --reload            # Reload configuration
+    sessionintent --suspend           # Suspend session
+    sessionintent --init              # Initialize configs
+    sessionintent -d -m M             # Dry-run mode
 
 See 'sessionintent --help' for more information.
 """
@@ -32,16 +39,34 @@ def main() -> int:
 
     if args.init:
         manager.init_config()
+    elif args.reload:
+        manager.reload()
+        if args.status:
+            manager.status()
+        if args.list:
+            manager.list_modes()
     elif args.panic:
         manager.panic()
+    elif args.quit:
+        manager.quit()
+    elif args.clear:
+        manager.clear()
+    elif args.kill:
+        manager.kill()
+    elif args.suspend:
+        manager.suspend()
+    elif args.status:
+        manager.status()
+        if args.list:
+            manager.list_modes()
+    elif args.list:
+        manager.list_modes()
     elif args.mode:
         manager.apply_mode(args.mode)
-    elif args.prompt:
+    else:
         mode = manager.select_mode()
         if mode:
             manager.apply_mode(mode)
-    else:
-        print(get_help_message())
 
     return 0
 
