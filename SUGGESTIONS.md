@@ -336,7 +336,7 @@ A declarative session orchestration system for GNOME Wayland
 ## Quick Start
 1. Install: `./install.sh` or `pip install -e .`
 2. Configure: `~/.config/sessionintent/config.yaml`
-3. Launch: `sessionintent --prompt`
+3. Launch: `sessionintent`
 
 ## Features
 - Intent-based session modes

@@ -1,7 +1,7 @@
 .\" sessionintent.1
 .\" Manual page for sessionintent
 .\"
-.TH SESSIONINTENT 1 "2026-02-24" "sessionintent 0.2.0" "User Commands"
+.TH SESSIONINTENT 1 "2026-02-27" "sessionintent 0.2.0" "User Commands"
 
 .SH NAME
 sessionintent \- A declarative session orchestration system for GNOME Wayland
@@ -16,30 +16,66 @@ you to switch between different "intent-based modes" that automatically launch,
 reuse, and organize your applications across workspaces.
 
 .SH OPTIONS
-.TP
-.BR \-\-prompt
-Prompt for mode selection via UI (requires wofi or rofi).
 
+.SS "Mode Selection"
 .TP
-.BR \-\-mode \fIMODE\fR
+.BR \-m ", " \-\-mode \fIMODE\fR
 Apply a specific mode directly, bypassing the UI selector.
 
 .TP
-.BR \-\-panic
+.BR \-p ", " \-\-prompt
+Prompt for mode selection via UI (requires wofi or rofi).
+This is the default behavior when no arguments are provided.
+
+.SS "Session Control"
+.TP
+.BR \-P ", " \-\-panic
 Clear current session state without killing any processes.
 
 .TP
-.BR \-\-init
+.BR \-q ", " \-\-quit
+Gracefully close managed applications (sends SIGTERM).
+
+.TP
+.BR \-\-clear
+Clear state files only (without touching applications).
+
+.TP
+.BR \-k ", " \-\-kill
+Force kill managed applications (sends SIGKILL).
+
+.TP
+.BR \-S ", " \-\-suspend
+Suspend session (pause mode switching).
+
+.SS "Information"
+.TP
+.BR \-s ", " \-\-status
+Show current session status (mode, power state, dev mode).
+
+.TP
+.BR \-l ", " \-\-list
+List available modes from configuration.
+
+.SS "Configuration"
+.TP
+.BR \-i ", " \-\-init
 Initialize default configuration files.
 
 .TP
-.BR \-\-config \fIPATH\fR
-Use a custom configuration file instead of the default.
+.BR \-r ", " \-\-reload
+Reload configuration files.
 
 .TP
-.BR \-\-dev
+.BR \-c ", " \-\-config \fIPATH\fR
+Use a custom configuration file instead of the default.
+
+.SS "Developer"
+.TP
+.BR \-d ", " \-\-dev
 Enable developer mode: print commands instead of executing them.
 
+.SS "Miscellaneous"
 .TP
 .BR \-\-help
 Display this help message and exit.
@@ -49,21 +85,53 @@ Display this help message and exit.
 Display version information and exit.
 
 .SH EXAMPLES
+.SS "Basic Usage"
 .TP
-.IP "sessionintent --prompt"
-Select a session mode using the UI.
+.I "sessionintent"
+Select a session mode using the UI (default behavior).
 
 .TP
-.IP "sessionintent --mode work"
+.I "sessionintent -m work"
 Apply the 'work' mode directly.
 
 .TP
-.IP "sessionintent --dev --mode work"
+.I "sessionintent -d -m work"
 See what commands would be executed without running them.
 
+.SS "Session Control"
 .TP
-.IP "sessionintent --panic"
+.I "sessionintent -P"
 Clear the current session state.
+
+.TP
+.I "sessionintent -q"
+Gracefully close all managed applications.
+
+.TP
+.I "sessionintent -k"
+Force kill all managed applications.
+
+.TP
+.I "sessionintent -S"
+Suspend the current session.
+
+.SS "Information"
+.TP
+.I "sessionintent -s"
+Show current session status.
+
+.TP
+.I "sessionintent -l"
+List all available modes.
+
+.SS "Configuration"
+.TP
+.I "sessionintent -i"
+Initialize default configuration files.
+
+.TP
+.I "sessionintent -r"
+Reload configuration files.
 
 .SH CONFIGURATION
 See the configuration guide for details on setting up modes and apps.
@@ -76,13 +144,13 @@ Configuration files are located in:
 
 .SH REQUIREMENTS
 .IP
-• Python 3.10+
+\- Python 3.10+
 .IP
-• PyYAML
+\- PyYAML
 .IP
-• wofi or rofi (for UI selection)
+\- wofi or rofi (for UI selection)
 .IP
-• GNOME Wayland session
+\- GNOME Wayland session
 
 .SH AUTHOR
 SessionIntent is maintained by Fazri Gading and the community.

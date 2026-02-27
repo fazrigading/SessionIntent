@@ -100,7 +100,7 @@ cat > ~/.config/autostart/sessionintent.desktop << EOF
 Type=Application
 Name=SessionIntent
 Comment=Session mode selector
-Exec=python3 ~/.local/bin/sessionintent --prompt
+Exec=sessionintent
 X-GNOME-AutoRestart=false
 X-GNOME-Autostart-Delay=3
 EOF

@@ -35,8 +35,41 @@ python3 -m pytest -v --tb=short
 ```bash
 # Via Python module
 sessionintent --help
+
+# Select mode via UI (default)
+sessionintent
+
+# Apply specific mode directly
 sessionintent --mode browsing
+sessionintent -m browsing
+
+# Dev mode (dry-run)
 sessionintent --dev --mode browsing
+sessionintent -d -m browsing
+
+# Status and listing
+sessionintent --status
+sessionintent -s
+sessionintent --list
+sessionintent -l
+
+# Session control
+sessionintent --panic          # Clear state (no app termination)
+sessionintent -P
+sessionintent --quit          # Gracefully close managed apps
+sessionintent -q
+sessionintent --clear         # Clear state files only
+sessionintent --kill          # Force kill managed apps
+sessionintent -k
+sessionintent --suspend       # Suspend session
+
+# Configuration
+sessionintent --init          # Initialize default configs
+sessionintent -i
+sessionintent --reload        # Reload configuration
+sessionintent -r
+sessionintent --config <path> # Custom config file
+sessionintent -c <path>
 ```
 
 ## Code Style Guidelines

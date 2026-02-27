@@ -124,10 +124,10 @@ sessionintent --mode work
 ### How do I check current session?
 
 ```bash
+sessionintent --status
+# or
 cat ~/.local/state/sessionintent/current
 ```
-
-Or use `--panic` to clear (will show current mode then clear).
 
 ### Can I bind to keyboard shortcut?
 
@@ -135,17 +135,23 @@ Yes! In GNOME Settings → Keyboard → Custom Shortcuts:
 
 ```
 Name: Session Intent
-Command: python3 ~/.local/bin/sessionintent --prompt
+Command: sessionintent
+Shortcut: Super+M
+```
+Name: Session Intent
+Command: sessionintent
 Shortcut: Super+M
 ```
 
 ### Does SessionIntent kill apps?
 
 No! SessionIntent:
-- Never kills processes
-- Never deletes data
+- Never kills processes by default
 - Only reuses or launches apps
-- Has panic mode (clears state only)
+- Has separate commands for different behaviors:
+  - `--panic`: Clear state only (no app termination)
+  - `--quit`: Gracefully close managed apps (SIGTERM)
+  - `--kill`: Force kill managed apps (SIGKILL)
 
 ## Advanced
 

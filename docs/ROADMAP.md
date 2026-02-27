@@ -112,7 +112,7 @@ Create .deb package for Debian-based distributions.
 Add terminal-based mode selector for headless environments:
 
 ```bash
-sessionintent --prompt --tui
+sessionintent --tui
 ```
 
 ### Mode Preview

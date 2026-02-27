@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dev mode for dry-run testing
 - Hardware-aware mode switching
 - Panic reset command
+- Separate session control commands:
+  - `--quit` (-q): Gracefully close managed applications (SIGTERM)
+  - `--clear`: Clear state files only (no app management)
+  - `--kill` (-k): Force kill managed applications (SIGKILL)
+  - `--suspend` (-S): Suspend session (pause mode switching)
+- Status and listing commands:
+  - `--status` (-s): Show current session status
+  - `--list` (-l): List available modes
+  - `--reload` (-r): Reload configuration files
+- Short flags for existing options:
+  - `-m` / `--mode`
+  - `-c` / `--config`
+  - `-P` / `--panic`
+  - `-i` / `--init`
+  - `-d` / `--dev`
+- Default behavior: `--prompt` is now the default when no arguments provided
 
 ### Changed
 - Improved template resolution
@@ -20,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - None
 
 ### Removed
-- None
+- `--prompt` flag (now default behavior)
 
 ### Fixed
 - None

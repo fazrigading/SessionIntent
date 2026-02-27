@@ -174,17 +174,31 @@ sessionintent --init
 
 ### Basic Usage
 ```bash
-# Select mode via UI
-sessionintent --prompt
+# Select mode via UI (default)
+sessionintent
 
 # Apply mode directly
+sessionintent -m work
 sessionintent --mode work
 
 # Dry-run for testing
+sessionintent -d -m work
 sessionintent --dev --mode work
 
-# Clear state
-sessionintent --panic
+# Session control
+sessionintent -P             # Clear state (no app termination)
+sessionintent -q             # Gracefully close apps
+sessionintent --clear       # Clear state files only
+sessionintent -k             # Force kill apps
+sessionintent -S             # Suspend session
+
+# Status and listing
+sessionintent -s             # Show status
+sessionintent -l             # List modes
+
+# Configuration
+sessionintent -i             # Initialize defaults
+sessionintent -r             # Reload config
 ```
 
 ## Requirements

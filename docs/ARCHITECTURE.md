@@ -118,17 +118,44 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
 ```tree
 1. User invokes sessionintent
    │
+   ├─> (no args) - Default
+   │   └─> Load modes -> Show UI -> User selects -> Apply mode
+   │
    ├─> --prompt
    │   └─> Load modes -> Show UI -> User selects -> Apply mode
    │
    ├─> --mode <name>
    │   └─> Load modes -> Validate -> Apply mode
    │
-   ├─> --panic
-   │   └─> Clear state file
+   ├─> --panic (-P)
+   │   └─> Clear state file (no app termination)
    │
-   └─> --init
-       └─> Create default configs
+   ├─> --quit (-q)
+   │   └─> Get current mode -> Find apps -> SIGTERM apps -> Clear state
+   │
+   ├─> --clear
+   │   └─> Clear state file only
+   │
+   ├─> --kill (-k)
+   │   └─> Get current mode -> Find apps -> SIGKILL apps
+   │
+   ├─> --suspend (-S)
+   │   └─> Save suspend:<mode> to state
+   │
+   ├─> --status (-s)
+   │   └─> Show current mode, power state, dev mode
+   │
+   ├─> --list (-l)
+   │   └─> List available modes (hardware-aware)
+   │
+   ├─> --reload (-r)
+   │   └─> Reload config from disk
+   │
+   ├─> --init (-i)
+   │   └─> Create default configs
+   │
+   └─> --dev (-d)
+       └─> Print commands instead of executing
 
 2. Mode Application
    │

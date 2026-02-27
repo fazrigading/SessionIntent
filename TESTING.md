@@ -6,17 +6,26 @@ SessionIntent includes a **Developer Mode** for safe testing without side effect
 
 ### New Arguments
 
-- `--dev`: Enables "dry-run" mode. Prints commands instead of executing them.
-- `--mode <name>`: Directly apply a specific mode, bypassing the selection menu.
-- `--config <path>`: Specify a custom configuration file.
-- `--panic`: Clear current state (in dry-run).
+- `--dev` (-d): Enables "dry-run" mode. Prints commands instead of executing them.
+- `--mode <name>` (-m): Directly apply a specific mode, bypassing the selection menu.
+- `--config <path>` (-c): Specify a custom configuration file.
+- `--panic` (-P): Clear current state (no app termination).
+- `--quit` (-q): Gracefully close managed apps.
+- `--clear`: Clear state files only.
+- `--kill` (-k): Force kill managed apps.
+- `--status` (-s): Show current session status.
+- `--list` (-l): List available modes.
+- `--reload` (-r): Reload configuration files.
+- `--suspend` (-S): Suspend session.
 
 ### How to Test
 
 #### 1. Test a specific mode
 
 ```bash
-python3 sessionintent.py --dev --mode browsing
+sessionintent -d -m browsing
+# or
+sessionintent --dev --mode browsing
 ```
 
 This will simulate switching workspaces and launching apps defined in the "browsing" mode.
@@ -24,22 +33,37 @@ This will simulate switching workspaces and launching apps defined in the "brows
 #### 2. Test with a custom config
 
 ```bash
-python3 sessionintent.py --dev --mode work --config tests/test_configs/valid.yaml
+sessionintent -d -m work -c tests/test_configs/valid.yaml
+# or
+sessionintent --dev --mode work --config tests/test_configs/valid.yaml
 ```
 
 #### 3. Test the Panic reset
 
 ```bash
-python3 sessionintent.py --dev --panic
+sessionintent -d -P
+# or
+sessionintent --dev --panic
 ```
 
-#### 4. Test the UI selector
+#### 4. Test the UI selector (default behavior)
 
 ```bash
-python3 sessionintent.py --dev --prompt
+sessionintent
+# or with dev mode
+sessionintent -d
 ```
 
 > Note: UI still shows, but actions are dry-run.
+
+#### 5. Test status and listing
+
+```bash
+sessionintent -s          # Show status
+sessionintent -l          # List modes
+sessionintent -s -l       # Show both
+sessionintent -r -s       # Reload and show status
+```
 
 ---
 
@@ -98,7 +122,7 @@ def test_config_loading():
 
 1. **Initialize Config**
    ```bash
-   python3 sessionintent.py --init
+   sessionintent -i
    ```
 
 2. **Edit config** (add test mode)
@@ -108,16 +132,18 @@ def test_config_loading():
 
 3. **Test dry-run**
    ```bash
-   python3 sessionintent.py --dev --mode test-mode
+   sessionintent -d -m test-mode
    ```
 
 4. **Test selection** (if UI available)
    ```bash
-   python3 sessionintent.py --prompt
+   sessionintent
    ```
 
 5. **Verify state**
    ```bash
+   sessionintent -s
+   # or
    cat ~/.local/state/sessionintent/current
    ```
 

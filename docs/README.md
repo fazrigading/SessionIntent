@@ -40,3 +40,33 @@ This folder contains comprehensive documentation for SessionIntent.
 - `code` = Code/command
 - `[brackets]` = Optional
 - `{braces}` = Required value
+
+## CLI Reference
+
+```bash
+# Default: Select mode via UI
+sessionintent
+
+# Apply mode
+sessionintent -m MODE
+sessionintent --mode MODE
+
+# Session control
+sessionintent -P / --panic    # Clear state (no app termination)
+sessionintent -q / --quit    # Gracefully close apps
+sessionintent --clear        # Clear state files only
+sessionintent -k / --kill    # Force kill apps
+sessionintent -S / --suspend # Suspend session
+
+# Info commands
+sessionintent -s / --status  # Show current status
+sessionintent -l / --list    # List available modes
+
+# Configuration
+sessionintent -i / --init    # Initialize default configs
+sessionintent -r / --reload   # Reload configuration
+sessionintent -c / --config   # Custom config file
+
+# Dev mode
+sessionintent -d / --dev      # Dry-run mode
+```

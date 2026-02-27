@@ -38,7 +38,7 @@ sessionintent --init
 
 3. Launch the mode selector:
 ```bash
-sessionintent --prompt
+sessionintent
 ```
 
 ### Example Config
@@ -80,20 +80,38 @@ modes:
 ## Usage
 
 ```bash
-# Select mode via UI (requires wofi/rofi)
-sessionintent --prompt
+# Select mode via UI (requires wofi/rofi) - default behavior
+sessionintent
 
 # Apply specific mode directly
 sessionintent --mode browsing
+sessionintent -m browsing
 
-# Clear current state
-sessionintent --panic
+# Session control
+sessionintent --panic             # Clear state (no app termination)
+sessionintent -P
+sessionintent --quit              # Gracefully close managed apps
+sessionintent -q
+sessionintent --clear            # Clear state files only
+sessionintent --kill             # Force kill managed apps
+sessionintent -k
+sessionintent --suspend          # Suspend session
 
-# Initialize default config
-sessionintent --init
+# Status and listing
+sessionintent --status            # Show current status
+sessionintent -s
+sessionintent --list             # List available modes
+sessionintent -l
+
+# Configuration
+sessionintent --init             # Initialize default config
+sessionintent -i
+sessionintent --reload           # Reload configuration
+sessionintent -r
 
 # Dry-run mode (for testing)
 sessionintent --dev --mode work
+sessionintent -d -m work
 ```
 
 ## Key Files
