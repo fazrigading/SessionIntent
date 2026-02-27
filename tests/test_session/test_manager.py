@@ -44,18 +44,17 @@ MOCK_APPS = {
 class TestSessionManagerInit:
     """Test SessionManager initialization."""
 
-    def test_init_dev_mode(self):
+    def test_init_dev_mode(self, tmp_path, monkeypatch):
         """Test initialization with dev mode enabled."""
-        with patch("src.constants.paths.STATE_DIR") as mock_state_dir:
-            manager = SessionManager(dev_mode=True)
-            assert manager.dev_mode is True
-            assert manager.config == {}
+        with patch("src.session.manager.load_config", return_value={}):
+            with patch("src.session.manager.load_apps", return_value={}):
+                manager = SessionManager(dev_mode=True)
+                assert manager.dev_mode is True
+                assert manager.config == {}
 
     def test_init_no_dev_mode_creates_state_dir(self, tmp_path, monkeypatch):
         """Test that non-dev mode creates state directory."""
-        from src.constants import paths
-
-        monkeypatch.setattr(paths, "STATE_DIR", tmp_path / "state")
+        monkeypatch.setattr("src.session.manager.STATE_DIR", tmp_path / "state")
 
         manager = SessionManager(dev_mode=False)
 
@@ -104,20 +103,18 @@ class TestApplyMode:
 class TestPanic:
     """Test panic reset functionality."""
 
-    def test_panic_clears_state(self, tmp_path):
+    def test_panic_clears_state(self, tmp_path, monkeypatch):
         """Test panic clears state file."""
-        from src.constants import paths
-
         state_dir = tmp_path / "state"
         state_file = state_dir / "current"
         state_dir.mkdir(parents=True)
         state_file.write_text("work")
 
-        with patch.object(paths, "STATE_FILE", state_file):
-            manager = SessionManager(dev_mode=False)
-            manager.panic()
+        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        manager = SessionManager(dev_mode=False)
+        manager.panic()
 
-            assert not state_file.exists()
+        assert not state_file.exists()
 
 
 class TestGetAvailableModes:
@@ -139,7 +136,7 @@ modes:
 """)
 
         with patch("src.constants.paths.CONFIG_PATH", config_path):
-            with patch("src.hardware.power.is_on_ac", return_value=False):
+            with patch("src.ui.selector.is_on_ac", return_value=False):
                 manager = SessionManager(config_path=str(config_path))
 
                 modes = manager.get_available_modes()
