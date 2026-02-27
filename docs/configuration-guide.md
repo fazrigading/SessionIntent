@@ -47,14 +47,17 @@ modes:
 ### Options
 
 #### version
+
 Optional. Current config version (for future migrations).
 
 #### defaults
+
 Global defaults for all modes:
 - `ask_before_kill`: Prompt before killing processes (default: true)
 - `reuse_workspaces`: Keep workspace state between mode switches (default: true)
 
 #### hardware_profiles
+
 Adjust behavior based on power state:
 
 ```yaml
@@ -66,6 +69,7 @@ hardware_profiles:
 ```
 
 #### modes
+
 Define your session modes:
 
 Each mode can have:
@@ -194,7 +198,7 @@ modes:
             background: true
 ```
 
-## Mode Switching Strategy
+## Mode Switching
 
 ### Use Multiple Workspaces
 
@@ -241,6 +245,7 @@ modes:
 ### Extension Names
 
 You can reference extensions by:
+
 - **Display name**: `Dash to Panel`, `Caffeine`, `Workspace Indicator`
 - **Hyphenated name**: `dash-to-panel`, `caffeine`, `workspace-indicator`
 - **UUID**: `dash-to-panel@jderose9.github.com`, `caffeine@patapon.info`
@@ -251,7 +256,7 @@ The resolver handles all these formats.
 
 SessionIntent includes a registry of common GNOME extensions. You can use any of these names in your config:
 
-- `dash to panel` - Dock to panel
+- `dash to panel` - Dash to panel
 - `caffeine` - Prevent auto-suspend
 - `workspace indicator` - Show workspace number
 - `hide top bar` - Auto-hide top bar
@@ -275,18 +280,18 @@ Error: Extension 'unknown-extension' does not exist
 
 ## Troubleshooting
 
-### App not reusing?
+### App won't reused
 
 Check `internal_reuse: false` or `check` pattern mismatch.
 
-### Wrong workspace?
+### Wrong workspace
 
 Ensure workspace numbers match mode config. Switch happens *before* app launch.
 
-### Mode not showing?
+### Mode not showing
 
 Check `hardware_profiles` - battery mode might be disabled.
 
-### Template not resolving?
+### Template not resolving
 
 Verify format: `{param|default}` with pipe and braces.
