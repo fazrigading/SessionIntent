@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sessionintent"
+version = "0.2.0"
+description = "A declarative session orchestration system for GNOME Wayland"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "PyYAML>=6.0",
+]
+
+[project.scripts]
+sessionintent = "src.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/fazrigading/SessionIntent"
+Documentation = "https://github.com/fazrigading/SessionIntent/docs"
+Source = "https://github.com/fazrigading/SessionIntent"
+Issues = "https://github.com/fazrigading/SessionIntent/issues"
+
+[tool.setuptools]
+packages = ["src", "src.constants", "src.config", "src.hardware", "src.app", "src.workspace", "src.ui", "src.session", "src.cli"]
+py-modules = []
+
+[tool.setuptools.package-data]
+sessionintent = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --cov=src --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

@@ -1,0 +1,88 @@
+# SessionIntent - Example Apps Registry
+# Copy this to ~/.config/sessionintent/apps.yaml
+
+# Firefox - Web browser
+firefox:
+  cmd: ["firefox", "-P", "{profile|default}"]
+  append_param: "urls"
+  internal_reuse: true
+
+# VSCode - Code editor
+vscode:
+  cmd: ["code", "--reuse-window", "{workspace|}"]
+  primary_param: "workspace"
+  internal_reuse: true
+
+# Discord - Communication
+discord:
+  cmd: ["discord"]
+  check: "discord"
+  flags:
+    background: "--start-minimized"
+  internal_reuse: false
+
+# Spotify - Listen online music
+spotify:
+  cmd: ["spotify"]
+  check: "spotify"
+  internal_reuse: false
+
+# ytmdesktop - YouTube Music Desktop
+ytmdesktop:
+  cmd: ["ytmdesktop"]
+  check: "ytmdesktop"
+  internal_reuse: false
+
+# gnome-pomodoro - Focus timer
+gnome-pomodoro:
+  cmd: ["gnome-pomodoro"]
+  check: "gnome-pomodoro"
+  internal_reuse: false
+
+# terminal - Default terminal emulator
+terminal:
+  cmd: ["gnome-terminal"]
+  check: false
+  internal_reuse: true
+
+# Steam - Gaming platform
+steam:
+  cmd: ["steam"]
+  check: "steam"
+  internal_reuse: false
+
+# lutris - Gaming launcher
+lutris:
+  cmd: ["lutris"]
+  check: "lutris"
+  internal_reuse: false
+
+# obsidian - Knowledge base
+obsidian:
+  cmd: ["obsidian"]
+  check: "obsidian"
+  internal_reuse: false
+
+# zotero - Research tool
+zotero:
+  cmd: ["zotero"]
+  check: "zotero"
+  internal_reuse: false
+
+# extension-manager - GNOME extensions
+extension-manager:
+  cmd: ["extension-manager"]
+  check: "extension-manager"
+  internal_reuse: false
+
+# gnome-system-log - Log viewer
+gnome-system-log:
+  cmd: ["gnome-system-log"]
+  check: "gnome-system-log"
+  internal_reuse: false
+
+# wireshark - Network analyzer
+wireshark:
+  cmd: ["wireshark"]
+  check: "wireshark"
+  internal_reuse: false

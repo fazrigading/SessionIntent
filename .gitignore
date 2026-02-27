@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyc
+
+# Virtual environments
+env/
+venv/
+ENV/
+
+# Packaging
+*.egg-info/
+dist/
+build/
+*.spec
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.tox/
+.nox/
+
+# Type checking
+.mypy_cache/
+.ruff_cache/
+
+# Logs
+*.log
+
+# YAML
+*.yaml.bak
+*.yml.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+*.tmp
+
+# User config files (local state)
+.config/sessionintent/
+.local/state/sessionintent/

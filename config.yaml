@@ -1,0 +1,172 @@
+# SessionIntent - Example Configuration
+# Copy this to ~/.config/sessionintent/config.yaml
+
+# Current config version (for future migrations)
+version: 1
+
+# Global defaults for all modes
+defaults:
+  ask_before_kill: true
+  reuse_workspaces: true
+
+# Hardware-aware mode switching
+# Modes in disable_modes will not appear on battery
+hardware_profiles:
+  battery:
+    disable_modes: [gaming, video-editing, rendering]
+  plugged:
+    allow_all: true
+
+# Define your session modes
+modes:
+  # --- Browsing / Chilling Mode ---
+  browsing:
+    label: "Browsing / Chilling"
+    description: "Casual web browsing, streaming music"
+    
+    # Firefox profile settings
+    firefox:
+      profile: chill
+      urls:
+        - https://reddit.com
+        - https://youtube.com
+        - https://news.ycombinator.com
+    
+    # Workspace assignments
+    workspaces:
+      1:
+        - firefox
+      2:
+        - ytmdesktop
+
+  # --- Work / Research Mode ---
+  work:
+    label: "Work / Research"
+    description: "Coding, research, and productivity tools"
+    
+    # Firefox profile for work
+    firefox:
+      profile: work
+      urls:
+        - https://github.com
+        - https://slack.com
+    
+    # VSCode workspace
+    vscode:
+      workspace: "~/Work/CurrentProject.code-workspace"
+    
+    workspaces:
+      1:
+        - firefox
+        - obsidian
+        - zotero
+      2:
+        - vscode
+        - terminal
+      3:
+        - gnome-pomodoro
+        - ytmdesktop
+
+  # --- Gaming Mode ---
+  gaming:
+    label: "Gaming"
+    description: "Game sessions with Discord in background"
+    
+    workspaces:
+      1:
+        - lutris
+        - steam
+      2:
+        discord:
+          server: none
+          background: true
+
+  # --- Contributor Mode ---
+  contributor:
+    label: "Contributor Mode"
+    description: "Open source contributions"
+    
+    firefox:
+      profile: contributor
+      urls:
+        - https://github.com/fazrigading/yourproject
+        - https://github.com/fazrigading/yourproject/issues
+        - https://github.com/fazrigading/yourproject/pulls
+    
+    vscode:
+      workspace: "~/Work/YourProject.code-workspace"
+    
+    discord:
+      server: YourProject
+    
+    workspaces:
+      1:
+        - firefox
+      2:
+        - vscode
+      3:
+        - discord
+
+  # --- Tinkering Mode ---
+  tinkering:
+    label: "Linux Tweaking"
+    description: "System administration and learning"
+    
+    workspaces:
+      1:
+        firefox:
+          urls:
+            - https://archlinux.org
+            - https://www.youtube.com
+      2:
+        - extension-manager
+        - terminal
+
+  # --- Low Power Mode ---
+  low-power:
+    label: "Battery Saver"
+    description: "Lightweight setup for battery power"
+    
+    # Only available on battery
+    hardware:
+      battery_only: true
+    
+    firefox:
+      profile: minimal
+      urls: []
+    
+    workspaces:
+      1:
+        - firefox
+        - obsidian
+        - terminal
+
+  # --- Presentation Mode ---
+  presentation:
+    label: "Presentation"
+    description: "Focused, distraction-free"
+    
+    firefox:
+      profile: presentation
+      urls:
+        - https://example.com/presentation
+    settings:
+      notifications: "muted"
+    
+    workspaces:
+      1:
+        - firefox
+
+  # --- Debug Mode ---
+  debug:
+    label: "Debug"
+    description: "Troubleshooting and monitoring"
+    
+    workspaces:
+      1:
+        - terminal
+        - firefox:
+            urls: ["https://localhost:8080"]
+      2:
+        - gnome-system-log
+        - wireshark

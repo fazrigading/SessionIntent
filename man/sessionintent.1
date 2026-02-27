@@ -1,0 +1,95 @@
+.\" sessionintent.1
+.\" Manual page for sessionintent
+.\"
+.TH SESSIONINTENT 1 "2026-02-24" "sessionintent 0.2.0" "User Commands"
+
+.SH NAME
+sessionintent \- A declarative session orchestration system for GNOME Wayland
+
+.SH SYNOPSIS
+.B sessionintent
+[\fIOPTION\fR]...
+
+.SH DESCRIPTION
+SessionIntent is a session orchestration system for GNOME Wayland that allows
+you to switch between different "intent-based modes" that automatically launch,
+reuse, and organize your applications across workspaces.
+
+.SH OPTIONS
+.TP
+.BR \-\-prompt
+Prompt for mode selection via UI (requires wofi or rofi).
+
+.TP
+.BR \-\-mode \fIMODE\fR
+Apply a specific mode directly, bypassing the UI selector.
+
+.TP
+.BR \-\-panic
+Clear current session state without killing any processes.
+
+.TP
+.BR \-\-init
+Initialize default configuration files.
+
+.TP
+.BR \-\-config \fIPATH\fR
+Use a custom configuration file instead of the default.
+
+.TP
+.BR \-\-dev
+Enable developer mode: print commands instead of executing them.
+
+.TP
+.BR \-\-help
+Display this help message and exit.
+
+.TP
+.BR \-\-version
+Display version information and exit.
+
+.SH EXAMPLES
+.TP
+.IP "sessionintent --prompt"
+Select a session mode using the UI.
+
+.TP
+.IP "sessionintent --mode work"
+Apply the 'work' mode directly.
+
+.TP
+.IP "sessionintent --dev --mode work"
+See what commands would be executed without running them.
+
+.TP
+.IP "sessionintent --panic"
+Clear the current session state.
+
+.SH CONFIGURATION
+See the configuration guide for details on setting up modes and apps.
+
+Configuration files are located in:
+.IP
+~/.config/sessionintent/config.yaml
+.br
+~/.config/sessionintent/apps.yaml
+
+.SH REQUIREMENTS
+.IP
+• Python 3.10+
+.IP
+• PyYAML
+.IP
+• wofi or rofi (for UI selection)
+.IP
+• GNOME Wayland session
+
+.SH AUTHOR
+SessionIntent is maintained by Fazri Gading and the community.
+
+.SH HOMEPAGE
+https://github.com/fazrigading/SessionIntent
+
+.SH SEE ALSO
+.BR rofi (1),
+.BR wofi (1)
