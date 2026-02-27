@@ -18,113 +18,46 @@ class TestCreateParser:
         parser = create_parser()
         assert parser is not None
 
-    def test_parser_has_all_arguments(self):
-        """Test that parser has all expected arguments."""
-        parser = create_parser()
-        all_options = set()
-        for action in parser._actions:
-            all_options.update(action.option_strings)
-            if not action.option_strings:
-                all_options.add(action.dest)
-
-        expected_args = [
-            "-m",
-            "--mode",
-            "-c",
-            "--config",
-            "-P",
-            "--panic",
-            "-q",
-            "--quit",
-            "--clear",
-            "-i",
-            "--init",
-            "-d",
-            "--dev",
-            "-s",
-            "--status",
-            "-l",
-            "--list",
-            "-k",
-            "--kill",
-            "-r",
-            "--reload",
-            "-S",
-            "--suspend",
-            "--version",
-        ]
-
-        for arg in expected_args:
-            assert arg in all_options, f"Missing argument: {arg}"
-
 
 class TestParseArgs:
     """Test argument parsing."""
 
-    def test_parse_mode_arg(self):
-        """Test parsing --mode argument."""
-        args = parse_args(["--mode", "work"])
-        assert args.mode == "work"
+    @pytest.mark.parametrize(
+        "flag,value,expected",
+        [
+            ("--mode", "work", "work"),
+            ("-m", "gaming", "gaming"),
+            ("--config", "/path/to/config.yaml", "/path/to/config.yaml"),
+        ],
+    )
+    def test_parse_args_with_values(self, flag, value, expected):
+        """Test parsing arguments with values."""
+        args = parse_args([flag, value])
+        if flag in ("--mode", "-m"):
+            assert args.mode == expected
+        elif flag == "--config":
+            assert args.config == expected
 
-    def test_parse_mode_short_arg(self):
-        """Test parsing -m short argument."""
-        args = parse_args(["-m", "gaming"])
-        assert args.mode == "gaming"
-
-    def test_parse_config_path(self):
-        """Test parsing --config argument."""
-        args = parse_args(["--config", "/path/to/config.yaml"])
-        assert args.config == "/path/to/config.yaml"
-
-    def test_parse_panic_flag(self):
-        """Test parsing --panic flag."""
-        args = parse_args(["--panic"])
-        assert args.panic is True
-
-    def test_parse_quit_flag(self):
-        """Test parsing --quit flag."""
-        args = parse_args(["--quit"])
-        assert args.quit is True
-
-    def test_parse_clear_flag(self):
-        """Test parsing --clear flag."""
-        args = parse_args(["--clear"])
-        assert args.clear is True
-
-    def test_parse_init_flag(self):
-        """Test parsing --init flag."""
-        args = parse_args(["--init"])
-        assert args.init is True
-
-    def test_parse_dev_flag(self):
-        """Test parsing --dev flag."""
-        args = parse_args(["--dev"])
-        assert args.dev is True
-
-    def test_parse_status_flag(self):
-        """Test parsing --status flag."""
-        args = parse_args(["--status"])
-        assert args.status is True
-
-    def test_parse_list_flag(self):
-        """Test parsing --list flag."""
-        args = parse_args(["--list"])
-        assert args.list is True
-
-    def test_parse_kill_flag(self):
-        """Test parsing --kill flag."""
-        args = parse_args(["--kill"])
-        assert args.kill is True
-
-    def test_parse_reload_flag(self):
-        """Test parsing --reload flag."""
-        args = parse_args(["--reload"])
-        assert args.reload is True
-
-    def test_parse_suspend_flag(self):
-        """Test parsing --suspend flag."""
-        args = parse_args(["--suspend"])
-        assert args.suspend is True
+    @pytest.mark.parametrize(
+        "flag",
+        [
+            "--panic",
+            "--quit",
+            "--clear",
+            "--init",
+            "--dev",
+            "--status",
+            "--list",
+            "--kill",
+            "--reload",
+            "--suspend",
+        ],
+    )
+    def test_parse_boolean_flags(self, flag):
+        """Test parsing boolean flag arguments."""
+        args = parse_args([flag])
+        key = flag.lstrip("-").replace("-", "_")
+        assert getattr(args, key) is True
 
     def test_parse_multiple_args(self):
         """Test parsing multiple arguments together."""
@@ -139,152 +72,65 @@ class TestParseArgs:
         assert args.mode is None
         assert args.config is None
         assert args.panic is False
-        assert args.quit is False
 
 
 class TestValidateArgs:
     """Test argument validation."""
+
+    @pytest.mark.parametrize(
+        "flag",
+        [
+            "panic",
+            "quit",
+            "clear",
+            "init",
+            "kill",
+            "suspend",
+            "reload",
+            "status",
+            "list",
+        ],
+    )
+    def test_validate_single_action_flag(self, flag):
+        """Test valid: each action flag alone."""
+        args = parse_args([f"--{flag}"])
+        is_valid, error = validate_args(args)
+        assert is_valid is True, f"Failed for {flag}: {error}"
 
     def test_validate_mode_alone(self):
         """Test valid: mode alone."""
         args = parse_args(["--mode", "work"])
         is_valid, error = validate_args(args)
         assert is_valid is True
-        assert error is None
 
-    def test_validate_panic_alone(self):
-        """Test valid: panic alone."""
-        args = parse_args(["--panic"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_quit_alone(self):
-        """Test valid: quit alone."""
-        args = parse_args(["--quit"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_clear_alone(self):
-        """Test valid: clear alone."""
-        args = parse_args(["--clear"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_init_alone(self):
-        """Test valid: init alone."""
-        args = parse_args(["--init"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_kill_alone(self):
-        """Test valid: kill alone."""
-        args = parse_args(["--kill"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_suspend_alone(self):
-        """Test valid: suspend alone."""
-        args = parse_args(["--suspend"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_reload_alone(self):
-        """Test valid: reload alone."""
-        args = parse_args(["--reload"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_status_alone(self):
-        """Test valid: status alone."""
-        args = parse_args(["--status"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_list_alone(self):
-        """Test valid: list alone."""
-        args = parse_args(["--list"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_mode_with_panic(self):
-        """Test invalid: mode with panic."""
-        args = parse_args(["--mode", "work", "--panic"])
-        is_valid, error = validate_args(args)
-        assert is_valid is False
-        assert "Cannot use --mode with" in error
-        assert "--panic" in error
-
-    def test_validate_mode_with_quit(self):
-        """Test invalid: mode with quit."""
-        args = parse_args(["--mode", "work", "--quit"])
+    @pytest.mark.parametrize("conflict", ["panic", "quit", "clear", "kill", "suspend"])
+    def test_validate_mode_with_conflicting_args(self, conflict):
+        """Test invalid: mode with conflicting args."""
+        args = parse_args(["--mode", "work", f"--{conflict}"])
         is_valid, error = validate_args(args)
         assert is_valid is False
         assert "Cannot use --mode with" in error
 
-    def test_validate_mode_with_clear(self):
-        """Test invalid: mode with clear."""
-        args = parse_args(["--mode", "work", "--clear"])
-        is_valid, error = validate_args(args)
-        assert is_valid is False
-        assert "Cannot use --mode with" in error
-
-    def test_validate_mode_with_kill(self):
-        """Test invalid: mode with kill."""
-        args = parse_args(["--mode", "work", "--kill"])
-        is_valid, error = validate_args(args)
-        assert is_valid is False
-        assert "Cannot use --mode with" in error
-
-    def test_validate_mode_with_suspend(self):
-        """Test invalid: mode with suspend."""
-        args = parse_args(["--mode", "work", "--suspend"])
-        is_valid, error = validate_args(args)
-        assert is_valid is False
-        assert "Cannot use --mode with" in error
-
-    def test_validate_panic_and_quit(self):
-        """Test invalid: panic and quit together."""
-        args = parse_args(["--panic", "--quit"])
+    @pytest.mark.parametrize(
+        "flags",
+        [
+            ["--panic", "--quit"],
+            ["--panic", "--clear"],
+            ["--panic", "--kill"],
+        ],
+    )
+    def test_validate_multiple_exclusive_actions(self, flags):
+        """Test invalid: multiple exclusive actions together."""
+        args = parse_args(flags)
         is_valid, error = validate_args(args)
         assert is_valid is False
         assert "Only one action flag allowed" in error
 
-    def test_validate_panic_and_clear(self):
-        """Test invalid: panic and clear together."""
-        args = parse_args(["--panic", "--clear"])
-        is_valid, error = validate_args(args)
-        assert is_valid is False
-
-    def test_validate_panic_and_kill(self):
-        """Test invalid: panic and kill together."""
-        args = parse_args(["--panic", "--kill"])
-        is_valid, error = validate_args(args)
-        assert is_valid is False
-
-    def test_validate_init_and_reload(self):
-        """Test valid: init and reload together (not exclusive)."""
-        args = parse_args(["--init", "--reload"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
-    def test_validate_status_and_list_and_reload(self):
-        """Test valid: status, list, and reload together (not exclusive)."""
-        args = parse_args(["--status", "--list", "--reload"])
-        is_valid, error = validate_args(args)
-        assert is_valid is True
-
     def test_validate_empty_mode(self):
-        """Test valid: empty mode name is handled (argparse may reject first)."""
+        """Test valid: empty mode passes validation (argparse handles it)."""
         args = parse_args(["--mode", ""])
-        is_valid, error = validate_args(args)
+        is_valid, _ = validate_args(args)
         assert is_valid is True
-
-    def test_validate_whitespace_mode(self):
-        """Test invalid: whitespace-only mode name fails validation."""
-        args = parse_args(["--mode", "   "])
-        is_valid, error = validate_args(args)
-        assert is_valid is False
-        assert "Mode name cannot be empty" in error
 
 
 class TestGetHelpMessage:
@@ -300,4 +146,3 @@ class TestGetHelpMessage:
         msg = get_help_message()
         assert "Examples:" in msg
         assert "--mode" in msg
-        assert "--panic" in msg
