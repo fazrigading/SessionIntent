@@ -78,23 +78,23 @@ pip install -e .
 
 ```bash
 # Run all tests
-pytest
+python3 -m pytest
 
 # Run specific test file
-pytest tests/test_sessionintent.py
+python3 -m pytest tests/test_config/
 
 # Run with coverage
-pytest --cov=sessionintent
+python3 -m pytest --cov=src --cov-report=term-missing
 ```
 
 ### Running in Dev Mode
 
 ```bash
 # Test dry-run
-python3 sessionintent.py --dev --mode work
+python3 -m src --dev --mode work
 
 # Test with custom config
-python3 sessionintent.py --dev --mode work --config tests/test_configs/valid.yaml
+python3 -m src --dev --mode work --config tests/test_configs/valid.yaml
 ```
 
 ## Coding Standards
@@ -117,18 +117,28 @@ python3 sessionintent.py --dev --mode work --config tests/test_configs/valid.yam
 
 ```
 SessionIntent/
-├── sessionintent.py          # Main orchestrator
-├── requirements.txt          # Dependencies
-├── pyproject.toml           # Package configuration
-├── tests/                   # Test files
-│   ├── test_sessionintent.py
-│   └── test_configs/        # Test configuration files
-├── docs/                    # Documentation
-│   ├── README.md
-│   ├── configuration-guide.md
-│   └── ...
-└── scripts/                 # Utility scripts
-    └── install.sh
+├── src/                         # Main package
+│   ├── __init__.py              # Package exports
+│   ├── __main__.py              # CLI entry point
+│   ├── constants/               # Configuration constants
+│   ├── config/                  # Configuration management
+│   ├── hardware/                # Hardware detection
+│   ├── app/                     # Application management
+│   ├── workspace/               # Workspace management
+│   ├── extensions/              # GNOME Shell extensions
+│   ├── ui/                      # User interface
+│   ├── session/                 # Session orchestration
+│   └── cli/                     # CLI utilities
+├── tests/                       # Test files
+│   ├── test_config/
+│   ├── test_hardware/
+│   ├── test_app/
+│   └── test_session/
+├── docs/                        # Documentation
+├── scripts/                     # Utility scripts
+├── pyproject.toml               # Package configuration
+├── requirements.txt             # Dependencies
+└── CONTRIBUTING.md
 ```
 
 ## Documentation
@@ -167,7 +177,7 @@ def test_mode_switching():
 1. Update version in `pyproject.toml`
 2. Update changelog in `CHANGELOG.md`
 3. Create git tag
-4. Push to main
+4. Push to master
 5. Create GitHub release
 
 ## Questions?

@@ -17,15 +17,22 @@ SessionIntent/
 ├── LICENSE                          # MIT License
 ├── pyproject.toml                   # Python package configuration
 ├── requirements.txt                 # Python dependencies (PyYAML)
-├── sessionintent.py                 # Main orchestrator script
-├── config.yaml.example              # Example configuration file
-├── apps.yaml.example                # Example apps registry
 ├── .gitignore                       # Git ignore rules
 ├── .editorconfig                    # Code style configuration
 ├── TESTING.md                       # Testing documentation
-├── implementation-plan.md           # Implementation timeline
-├── sessionintent-project-plan.md    # Original project plan
-└── my_personal_config.yaml          # Author's personal config
+├── AGENTS.md                        # AI agent guidelines
+└── src/                             # Main package
+    ├── __init__.py                  # Package exports
+    ├── __main__.py                  # CLI entry point
+    ├── constants/                   # Configuration constants
+    ├── config/                      # Configuration management
+    ├── hardware/                    # Hardware detection
+    ├── app/                         # Application management
+    ├── workspace/                   # Workspace management
+    ├── extensions/                  # GNOME Shell extensions
+    ├── ui/                          # User interface
+    ├── session/                     # Session orchestration
+    └── cli/                         # CLI utilities
 ```
 
 ### Documentation (docs/)
@@ -42,8 +49,13 @@ docs/
 ### Tests (tests/)
 ```
 tests/
-├── test_sessionintent.py            # Unit tests
-└── test_configs/                    # Test configuration files
+├── test_config/
+├── test_hardware/
+├── test_app/
+├── test_extensions/
+├── test_workspace/
+├── test_ui/
+└── test_session/
 ```
 
 ### Scripts (scripts/)
@@ -157,22 +169,22 @@ curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/main/scri
 
 # Method 2: Manual
 pip install -r requirements.txt
-python sessionintent.py --init
+python3 -m src --init
 ```
 
 ### Basic Usage
 ```bash
 # Select mode via UI
-sessionintent --prompt
+python3 -m src --prompt
 
 # Apply mode directly
-sessionintent --mode work
+python3 -m src --mode work
 
 # Dry-run for testing
-sessionintent --dev --mode work
+python3 -m src --dev --mode work
 
 # Clear state
-sessionintent --panic
+python3 -m src --panic
 ```
 
 ## Requirements

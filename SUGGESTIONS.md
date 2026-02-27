@@ -56,10 +56,23 @@ SessionIntent/
 ├── README.md                         # Main project documentation
 ├── LICENSE                           # MIT/Apache-2.0 or similar
 ├── requirements.txt                  # Python dependencies
-├── pyproject.toml                    # Modern Python packaging config
-├── sessionintent.py                  # Main orchestrator
+├── pyproject.toml                    # Modern Python package config
+├── src/                              # Main package
+│   ├── __init__.py                   # Package exports
+│   ├── __main__.py                   # CLI entry point
+│   ├── constants/                    # Configuration constants
+│   ├── config/                       # Configuration management
+│   ├── hardware/                     # Hardware detection
+│   ├── app/                          # Application management
+│   ├── workspace/                    # Workspace management
+│   ├── extensions/                   # GNOME Shell extensions
+│   ├── ui/                           # User interface
+│   ├── session/                      # Session orchestration
+│   │   ├── manager.py                # Main orchestrator class
+│   │   └── state.py                  # State persistence
+│   └── cli/                          # CLI utilities
 ├── apps.yaml.example                 # Example apps registry
-├── config.yaml.example               # Example config (should match my_personal_config.yaml)
+├── config.yaml.example               # Example config
 ├── man/                              # Manual pages
 │   └── sessionintent.1
 ├── scripts/
@@ -70,11 +83,14 @@ SessionIntent/
 │   │   └── sessionintent.spec        # RPM spec file (for COPR)
 │   └── Arch/
 │       └── PKGBUILD                  # AUR package build file
-├── tests/
-│   ├── test_sessionintent.py         # Unit tests
-│   └── test_configs/
-│       ├── valid_config.yaml
-│       └── invalid_config.yaml
+├── tests/                            # Unit tests
+│   ├── test_config/
+│   ├── test_hardware/
+│   ├── test_app/
+│   ├── test_extensions/
+│   ├── test_workspace/
+│   ├── test_ui/
+│   └── test_session/
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml                    # CI/CD pipeline
@@ -82,10 +98,12 @@ SessionIntent/
 ├── .gitignore                        # Exclude config files, build artifacts
 ├── .editorconfig                     # Consistent code style
 ├── CONTRIBUTING.md                   # Contribution guidelines
+├── AGENTS.md                        # AI agent guidelines
 └── docs/                             # Additional documentation
     ├── architecture.md               # Detailed architecture docs
     ├── configuration-guide.md        # Config tutorial
     ├── modes.md                      # Mode examples
+    ├── installation.md               # Installation guide
     └── FAQ.md                        # Common questions
 ```
 
@@ -316,9 +334,9 @@ def launch_app(self, app_key: str, params: Dict[str, Any]) -> None:
 A declarative session orchestration system for GNOME Wayland
 
 ## Quick Start
-1. Install: `./install.sh`
+1. Install: `./install.sh` or `pip install -e .`
 2. Configure: `~/.config/sessionintent/config.yaml`
-3. Launch: `sessionintent --prompt`
+3. Launch: `python3 -m src --prompt`
 
 ## Features
 - Intent-based session modes
@@ -349,10 +367,11 @@ dependencies = [
 ]
 
 [project.scripts]
-sessionintent = "sessionintent:main"
+sessionintent = "src.__main__:main"
 
-[tool.setuptools]
-py-modules = ["sessionintent"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
 ```
 
 ### 4. Add .gitignore (5 minutes)
@@ -370,7 +389,7 @@ build/
 ```
 
 ### 5. Create example configs (30 minutes)
-- Copy `my_personal_config.yaml` → `config.yaml.example`
+- Copy `config.yaml` → `config.yaml.example`
 - Copy `apps.yaml` → `apps.yaml.example`
 - Add comments explaining each option
 
