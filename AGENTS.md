@@ -34,9 +34,9 @@ python3 -m pytest -v --tb=short
 
 ```bash
 # Via Python module
-python3 -m src --help
-python3 -m src --mode browsing
-python3 -m src --dev --mode browsing
+sessionintent --help
+sessionintent --mode browsing
+sessionintent --dev --mode browsing
 ```
 
 ## Code Style Guidelines

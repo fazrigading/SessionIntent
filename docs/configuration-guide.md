@@ -273,7 +273,7 @@ Error: Extension 'unknown-extension' does not exist
 ## Tips
 
 1. **Start simple** - Define 2-3 basic modes first
-2. **Test in dev mode** - `python3 -m src --dev --mode work`
+2. **Test in dev mode** - `sessionintent --dev --mode work`
 3. **Keep configs git-trackable** - Store in `~/.config/sessionintent/`
 4. **Use labels** - Make mode names descriptive
 5. **Profile per mode** - Separate Firefox profiles for cleaner sessions

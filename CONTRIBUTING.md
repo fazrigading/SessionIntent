@@ -91,10 +91,10 @@ python3 -m pytest --cov=src --cov-report=term-missing
 
 ```bash
 # Test dry-run
-python3 -m src --dev --mode work
+sessionintent --dev --mode work
 
 # Test with custom config
-python3 -m src --dev --mode work --config tests/test_configs/valid.yaml
+sessionintent --dev --mode work --config tests/test_configs/valid.yaml
 ```
 
 ## Coding Standards

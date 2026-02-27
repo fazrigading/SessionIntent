@@ -22,21 +22,21 @@ curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/main/scri
 
 # Method 2: Manual installation
 pip install -r requirements.txt
-python3 -m src --init
+sessionintent --init
 ```
 
 ### Configuration
 
 1. Initialize default config:
 ```bash
-python3 -m src --init
+sessionintent --init
 ```
 
 2. Edit `~/.config/sessionintent/config.yaml` to define your modes
 
 3. Launch the mode selector:
 ```bash
-python3 -m src --prompt
+sessionintent --prompt
 ```
 
 ### Example Config
@@ -79,19 +79,19 @@ modes:
 
 ```bash
 # Select mode via UI (requires wofi/rofi)
-python3 -m src --prompt
+sessionintent --prompt
 
 # Apply specific mode directly
-python3 -m src --mode browsing
+sessionintent --mode browsing
 
 # Clear current state
-python3 -m src --panic
+sessionintent --panic
 
 # Initialize default config
-python3 -m src --init
+sessionintent --init
 
 # Dry-run mode (for testing)
-python3 -m src --dev --mode work
+sessionintent --dev --mode work
 ```
 
 ## Key Files
