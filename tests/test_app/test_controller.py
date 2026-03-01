@@ -9,6 +9,7 @@ from src.app.controller import (
     _build_command,
     _print,
     _print_or_launch,
+    resolve_template,
 )
 
 
@@ -117,3 +118,84 @@ class TestPrintFunctions:
         """Test _print_or_launch in real mode."""
         _print_or_launch(["cmd"], dev_mode=False)
         mock_popen.assert_called_once()
+
+
+class TestResolveTemplateController:
+    """Test resolve_template in controller module."""
+
+    def test_resolve_template_basic(self):
+        """Test basic template resolution in controller."""
+        assert resolve_template("hello {name}", {"name": "World"}) == "hello World"
+
+    def test_resolve_template_with_default(self):
+        """Test template with default value."""
+        assert resolve_template("hello {name|stranger}", {}) == "hello stranger"
+
+    def test_resolve_template_none_value(self):
+        """Test template with None value uses default."""
+        assert resolve_template("hi {n|x}", {"n": None}) == "hi x"
+
+    def test_resolve_template_empty_string(self):
+        """Test resolving empty string."""
+        assert resolve_template("", {}) == ""
+
+
+class TestBuildCommandAdvanced:
+    """Test _build_command with more scenarios."""
+
+    def test_build_command_with_template_in_cmd(self):
+        """Test building command with template in cmd parts."""
+        app_def = {"cmd": ["app", "{arg}"]}
+        cmd = _build_command(app_def, {"arg": "value"})
+        assert "value" in cmd
+
+    def test_build_command_with_empty_resolved(self):
+        """Test building command with empty resolved template."""
+        app_def = {"cmd": ["app", "{arg}"]}
+        cmd = _build_command(app_def, {})
+        assert "app" in cmd
+
+    def test_build_command_with_flags_params(self):
+        """Test building command with flag params."""
+        app_def = {"cmd": ["app"], "flags": {"verbose": "-v", "quiet": "-q"}}
+        cmd = _build_command(app_def, {"verbose": True, "quiet": False})
+        assert "-v" in cmd
+        assert "-q" not in cmd
+
+    def test_build_command_append_list(self):
+        """Test building command with append_param as list."""
+        app_def = {"cmd": ["app"], "append_param": "urls"}
+        cmd = _build_command(app_def, {"urls": ["url1", "url2"]})
+        assert "url1" in cmd
+        assert "url2" in cmd
+
+    def test_build_command_append_single(self):
+        """Test building command with append_param as single value."""
+        app_def = {"cmd": ["app"], "append_param": "url"}
+        cmd = _build_command(app_def, {"url": "single_url"})
+        assert "single_url" in cmd
+
+
+class TestLaunchAppAdvanced:
+    """Test launch_app with more scenarios."""
+
+    @patch("subprocess.Popen")
+    @patch("src.app.controller.is_running", return_value=True)
+    def test_launch_app_running_with_reuse(self, mock_is_running, mock_popen, capsys):
+        """Test launching app that's already running with reuse enabled."""
+        apps = {
+            "firefox": {"cmd": ["firefox"], "check": "firefox", "internal_reuse": True}
+        }
+        launch_app("firefox", {}, apps, dev_mode=True)
+        mock_popen.assert_not_called()
+        captured = capsys.readouterr()
+        assert "reusing" in captured.out
+
+    @patch("src.app.controller.is_running")
+    def test_launch_app_check_is_false(self, mock_is_running, capsys):
+        """Test launching app with check=False skips running check."""
+        apps = {"app": {"cmd": ["app"], "check": False}}
+        launch_app("app", {}, apps, dev_mode=True)
+        mock_is_running.assert_not_called()
+        captured = capsys.readouterr()
+        assert "app" in captured.out

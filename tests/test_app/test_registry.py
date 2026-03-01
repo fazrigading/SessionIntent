@@ -22,6 +22,40 @@ class TestAppRegistry:
         assert registry.get("firefox") == {"cmd": ["firefox"]}
         assert registry.get("nonexistent") is None
 
+    def test_registry_load(self, monkeypatch):
+        """Test load method populates registry."""
+
+        def mock_merge():
+            return {"app1": {"cmd": ["app1"]}}
+
+        registry = AppRegistry()
+        monkeypatch.setattr(registry, "_merge_app_sources", mock_merge)
+        registry.load()
+        assert "app1" in registry._apps
+
+    def test_registry_merge_sources(self, tmp_path, monkeypatch):
+        """Test _merge_app_sources merges correctly."""
+        system_apps = tmp_path / "system.yaml"
+        user_apps = tmp_path / "apps.yaml"
+
+        import yaml
+
+        with open(system_apps, "w") as f:
+            yaml.dump({"firefox": {"cmd": ["firefox"]}}, f)
+        with open(user_apps, "w") as f:
+            yaml.dump(
+                {"firefox": {"cmd": ["firefox-mod"]}, "vscode": {"cmd": ["code"]}}, f
+            )
+
+        monkeypatch.setattr("src.app.registry.SYSTEM_APPS_PATH", system_apps)
+        monkeypatch.setattr("src.app.registry.APPS_PATH", user_apps)
+
+        registry = AppRegistry()
+        result = registry._merge_app_sources()
+
+        assert result["firefox"]["cmd"] == ["firefox-mod"]
+        assert "vscode" in result
+
     def test_registry_get_or_default(self):
         """Test get_or_default returns default for missing app."""
         registry = AppRegistry()
