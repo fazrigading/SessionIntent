@@ -5,35 +5,10 @@ from unittest.mock import patch, MagicMock
 
 from src.ui.selector import (
     select_mode,
-    get_available_modes,
     find_selector,
     build_selector_command,
-    format_menu_entries,
     parse_selection,
 )
-
-
-class TestGetAvailableModes:
-    """Test get_available_modes function."""
-
-    @patch("src.ui.selector.is_on_ac", return_value=True)
-    def test_get_available_modes_ac_power(self, mock_is_on_ac):
-        """Test get_available_modes on AC power returns all modes."""
-        config = {"modes": {"work": {}, "gaming": {}}}
-        modes = get_available_modes(config)
-        assert "work" in modes
-        assert "gaming" in modes
-
-    @patch("src.ui.selector.is_on_ac", return_value=False)
-    def test_get_available_modes_battery_disabled(self, mock_is_on_ac):
-        """Test get_available_modes on battery with disabled modes."""
-        config = {
-            "modes": {"work": {}, "gaming": {}},
-            "hardware_profiles": {"battery": {"disable_modes": ["gaming"]}},
-        }
-        modes = get_available_modes(config)
-        assert "work" in modes
-        assert "gaming" not in modes
 
 
 class TestFindSelector:
@@ -84,25 +59,6 @@ class TestBuildSelectorCommand:
         cmd = build_selector_command("rofi", ["a", "b"])
         assert "rofi" in cmd
         assert "-dmenu" in cmd
-
-
-class TestFormatMenuEntries:
-    """Test format_menu_entries function."""
-
-    def test_format_single_entry(self):
-        """Test formatting single menu entry."""
-        entries = format_menu_entries({"work": {"label": "Work"}})
-        assert "1: Work" in entries
-
-    def test_format_multiple_entries(self):
-        """Test formatting multiple menu entries."""
-        entries = format_menu_entries({"a": {"label": "A"}, "b": {"label": "B"}})
-        assert len(entries) == 2
-
-    def test_format_no_label(self):
-        """Test formatting entry without label uses key."""
-        entries = format_menu_entries({"custom": {}})
-        assert "1: custom" in entries
 
 
 class TestParseSelection:

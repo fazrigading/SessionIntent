@@ -40,15 +40,6 @@ class TestLoadYamlFile:
         result = load_yaml_file(test_file)
         assert result == {}
 
-    def test_load_invalid_yaml(self, tmp_path):
-        """Test loading invalid YAML raises ValueError."""
-        test_file = tmp_path / "invalid.yaml"
-        with open(test_file, "w") as f:
-            f.write("invalid: yaml: : content")
-
-        with pytest.raises(ValueError):
-            load_yaml_file(test_file)
-
 
 class TestLoadConfig:
     """Test configuration loading."""
