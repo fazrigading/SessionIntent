@@ -18,17 +18,25 @@ Examples:
   sessionintent                                   # Select mode via UI
   sessionintent [-i / --init]                     # Initialize default configs
   sessionintent [-m / --mode] work                # Apply 'work' mode directly
+  sessionintent [-c / --config] my_config.yaml    # Set specific config 
   sessionintent [-P / --panic]                    # Clear state (no app termination)
   sessionintent [-q / --quit]                     # Close managed applications
   sessionintent --clear                           # Clear state files only
-  sessionintent [-k / --kill]                    # Force kill managed applications
+  sessionintent [-k / --kill]                     # Force kill managed applications
   sessionintent [-s / --status]                   # Show current status
   sessionintent [-l / --list]                     # List available modes
   sessionintent [-r / --reload]                   # Reload configuration
   sessionintent [-S / --suspend]                  # Suspend session
-  sessionintent [-d / --dev] [-m / --mode] work  # Simulate 'work' mode
+  sessionintent -d -m work                        # Dev mode on 'work' mode 
   sessionintent [-h]                              # Show command usage / help
 """,
+    )
+    
+    parser.add_argument(
+        "-i",
+        "--init",
+        action="store_true",
+        help="Initialize default configuration files",
     )
 
     parser.add_argument(
@@ -57,20 +65,6 @@ Examples:
         "--clear",
         action="store_true",
         help="Clear state files only (without touching apps)",
-    )
-
-    parser.add_argument(
-        "-i",
-        "--init",
-        action="store_true",
-        help="Initialize default configuration files",
-    )
-
-    parser.add_argument(
-        "-d",
-        "--dev",
-        action="store_true",
-        help="Dev mode: Print commands instead of executing",
     )
 
     parser.add_argument(
@@ -106,6 +100,13 @@ Examples:
         "--suspend",
         action="store_true",
         help="Suspend session (pause mode switching)",
+    )
+    
+    parser.add_argument(
+        "-d",
+        "--dev",
+        action="store_true",
+        help="Dev mode: Print commands instead of executing",
     )
 
     parser.add_argument(
