@@ -24,10 +24,34 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
 │                        Orchestrator                         │
 │                      SessionManager                         │
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │  Config Loader                                        │  │
+│  │  Config Loader + Watcher                              │  │
 │  │  - Parse YAML configs                                 │  │
 │  │  - Merge system + user configs                        │  │
 │  │  - Validate schema                                    │  │
+│  │  - Hot reload                                         │  │
+│  └───────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  Hardware Detector                                    │  │
+│  │  - AC/Battery detection                               │  │
+│  │  - Apply hardware profiles                            │  │
+│  └───────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  Mode Selector                                        │  │
+│  │  - Present options                                    │  │
+│  │  - Handle user input                                  │  │
+│  │  - Theme support                                      │  │
+│  └───────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  Workspace Manager                                    │  │
+│  │  - Switch GNOME workspaces                            │  │
+│  │  - Track current workspace state                      │  │
+│  └───────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  App Controller                                       │  │
+│  │  - Launch applications                                │  │
+│  │  - Reuse existing instances                           │  │
+│  │  - Async launching                                    │  │
+│  │  - Handle app-specific parameters                     │  │
 │  └───────────────────────────────────────────────────────┘  │
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │  Hardware Detector                                    │  │
@@ -353,9 +377,9 @@ sessionintent --verbose --mode work
 
 ## Future Enhancements
 
-- Async app launching
-- Config caching
-- Live reload (SIGHUP)
-- Plugin system
-- Session snapshots
-- Window state persistence
+- [x] Async app launching
+- [x] Config caching
+- [x] Live reload (file watcher)
+- [x] Plugin system
+- [x] Session snapshots
+- [x] Window state persistence
