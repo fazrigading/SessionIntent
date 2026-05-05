@@ -5,7 +5,7 @@
 ### Method 1: One-liner (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
 ### Method 2: Manual Installation
@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 3. **Run installer**
 ```bash
-./scripts/install.sh
+./INSTALL.sh
 ```
 
 This will:
@@ -55,7 +55,7 @@ This will:
 sessionintent --help
 ```
 
-## Manual Installation (Detailed)
+## Manual Installation
 
 If you prefer to install manually:
 
@@ -106,27 +106,16 @@ X-GNOME-Autostart-Delay=3
 EOF
 ```
 
-## RPM Package (Fedora)
+## Installation with RPM Package (Fedora)
 
 ### Enable COPR Repository
 
 ```bash
 sudo dnf copr enable fazrigading/sessionintent
-```
-
-### Install Package
-
-```bash
 sudo dnf install sessionintent
 ```
 
-### Configure
-
-```bash
-sessionintent --init
-```
-
-## Arch Linux (AUR)
+## Installation with Arch Linux (AUR)
 
 Using an AUR helper:
 
@@ -160,7 +149,7 @@ sudo apt install python3-pip python3-yaml rofi
 git clone https://github.com/fazrigading/SessionIntent.git
 cd SessionIntent
 pip3 install -r requirements.txt
-./scripts/install.sh
+./INSTALL.sh
 ```
 
 ### Other Distributions
@@ -192,7 +181,7 @@ sessionintent --dev --mode browsing
 ### Using Script
 
 ```bash
-./scripts/install.sh --uninstall
+./INSTALL.sh --uninstall
 ```
 
 ### Manual
@@ -253,19 +242,19 @@ chmod 644 ~/.config/sessionintent/*.yaml
 ### Custom Install Location
 
 ```bash
-INSTALL_DIR="/path/to/custom/dir" ./scripts/install.sh
+INSTALL_DIR="/path/to/custom/dir" ./INSTALL.sh
 ```
 
 ### No Autostart
 
 ```bash
-INSTALL_NO_AUTOSTART=1 ./scripts/install.sh
+INSTALL_NO_AUTOSTART=1 ./INSTALL.sh
 ```
 
 ### Skip Dependencies Check
 
 ```bash
-SKIP_DEPS_CHECK=1 ./scripts/install.sh
+SKIP_DEPS_CHECK=1 ./INSTALL.sh
 ```
 
 ## Contributing New Installers

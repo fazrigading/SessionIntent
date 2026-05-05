@@ -215,7 +215,7 @@ See `packaging/fedora/sessionintent.spec`
 ```bash
 git clone https://github.com/fazrigading/SessionIntent.git
 cd SessionIntent
-./scripts/install.sh
+./INSTALL.sh
 ```
 
 ## Future

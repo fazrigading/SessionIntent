@@ -165,7 +165,7 @@ examples/
 ### Installation
 ```bash
 # Method 1: Using installer
-curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/main/INSTALL.sh | bash
 
 # Method 2: Manual
 pip install -r requirements.txt

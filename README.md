@@ -16,13 +16,15 @@ SessionIntent allows you to switch between different "intent-based modes" (Work,
 
 ### Installation
 
-```bash
-# Method 1: Using installer script
-curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/scripts/install.sh | bash
+#### Method 1: Using installer script
 
-# Method 2: Manual installation 
+```bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
+```
+
+#### Method 2: Manual installation 
+```bash
 pip install -r requirements.txt
-sessionintent --init
 ```
 
 Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for more details on manual installation.
