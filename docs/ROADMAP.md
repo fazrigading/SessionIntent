@@ -25,7 +25,7 @@ class GNOMEWorkspaceManager(WorkspaceManager):
     # Current implementation
     
 class KDEWorkspaceManager(WorkspaceManager):
-    # Use qdbus or k什ML for workspace control
+    # Use qdbus or ... for workspace control
 ```
 
 **Relevant files to modify**:
