@@ -32,17 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved template resolution
 - Better error handling
 
-### Deprecated
-- None
-
 ### Removed
 - `--prompt` flag (now default behavior)
-
-### Fixed
-- None
-
-### Security
-- None
 
 ## [0.2.0] - 2026-02-24
 
@@ -54,39 +45,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Application launch/reuse system
 - Device mode for testing
 
-### Changed
-- None
-
-### Deprecated
-- None
-
-### Removed
-- None
-
-### Fixed
-- None
-
-### Security
-- None
-
 ## [0.1.0] - 2026-02-20
 
 ### Added
 - Project planning and documentation
 - Architecture design
 - Initial implementation plan
-
-### Changed
-- None
-
-### Deprecated
-- None
-
-### Removed
-- None
-
-### Fixed
-- None
-
-### Security
-- None
