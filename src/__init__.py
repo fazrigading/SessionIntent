@@ -10,6 +10,7 @@ from .ui import select_mode
 from .workspace import switch_workspace
 from .app import launch_app, is_running
 from .extensions import apply_extensions, resolve_extension_id
+from .plugins import get_plugin_manager
 
 __version__ = "0.2.0"
 __all__ = [
@@ -24,4 +25,5 @@ __all__ = [
     "is_running",
     "apply_extensions",
     "resolve_extension_id",
+    "get_plugin_manager",
 ]
