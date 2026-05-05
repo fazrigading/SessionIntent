@@ -20,11 +20,34 @@ All Core Features from TODO.md have been implemented:
 
 ---
 
+## Linux Desktop Compatibility Initiative
+
+A comprehensive technical plan has been developed to transition SessionIntent beyond GNOME/Wayland to support multiple Linux desktop environments. See [LINUX_DESKTOP_COMPATIBILITY_PLAN.md](../LINUX_DESKTOP_COMPATIBILITY_PLAN.md) for detailed architecture.
+
+### Key Components
+- **Provider Pattern**: Abstract display, workspace, and extension layers
+- **Universal Workspace Manager**: EWMH + wlroots support
+- **Session Detection**: Auto-detect desktop environment at runtime (XDG-compliant)
+- **Testing Matrix**: Multi-DE/distribution validation
+- **Subprocess-Based**: No new Python dependencies - uses existing system tools
+
+### Priority Rollout
+1. **Phase 1**: Foundation - XDG paths, detection system, TUI fallback
+2. **Phase 2**: KDE Plasma + Hyprland (primary targets)
+3. **Phase 3**: wlroots generic + Sway
+4. **Phase 4**: EWMH fallback + testing
+
+---
+
 ## Desktop Environment Support
 
 ### Current State
-- **GNOME Wayland**: Fully supported
-- **GNOME X11**: Not tested (may work with modifications)
+- **GNOME Wayland**: Fully supported (existing)
+- **KDE Plasma**: Planned (Priority 1)
+- **Hyprland**: Planned (Priority 1)
+- **Generic wlroots**: Planned (Priority 2)
+- **Sway**: Planned (Priority 2)
+- **GNOME X11**: May work with existing gdbus
 
 ### Planned: KDE Plasma Support
 **Difficulty**: High
