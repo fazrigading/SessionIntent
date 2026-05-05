@@ -16,6 +16,7 @@ from ..workspace import switch_workspace
 from ..app import launch_app
 from ..session.state import save_state
 from ..extensions import apply_extensions
+from .snapshot import save_snapshot
 
 
 class SessionManager:
@@ -106,6 +107,9 @@ class SessionManager:
 
         # Save state (unless in dev mode)
         save_state(mode_name, self.dev_mode)
+
+        # Save window snapshot
+        save_snapshot(mode_name, self.dev_mode)
 
     def _parse_app_entry(self, app_entry, mode_cfg: dict[str, Any]) -> tuple:
         """
@@ -320,6 +324,25 @@ class SessionManager:
 
         save_state(f"suspend:{current_mode}", self.dev_mode)
         print("Suspend: Session suspended. Use --quit to resume and close apps.")
+
+    def restore(self) -> None:
+        """Restore window positions from snapshot."""
+        if self.dev_mode:
+            print("[DEV] Would restore window snapshot.")
+            return
+
+        from ..session.state import load_state
+
+        current_mode = load_state()
+
+        if not current_mode:
+            print("Restore: No active mode to restore.")
+            return
+
+        from .snapshot import restore_snapshot
+
+        restore_snapshot(current_mode, self.dev_mode)
+        print("Restore: Window positions restored.")
 
 
 # convenience imports for direct use
