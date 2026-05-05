@@ -1,15 +1,12 @@
 """Tests for constants package."""
 
-import pytest
 from pathlib import Path
 
 from src.constants.paths import (
     CONFIG_DIR,
-    SYSTEM_CONFIG_DIR,
     STATE_DIR,
     CONFIG_PATH,
     APPS_PATH,
-    SYSTEM_APPS_PATH,
     STATE_FILE,
     AC_PATH,
 )

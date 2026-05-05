@@ -1,10 +1,8 @@
 """Tests for app registry."""
 
-import pytest
-from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from src.app.registry import AppRegistry, get_registry
+from src.app.registry import AppRegistry
 
 
 class TestAppRegistry:

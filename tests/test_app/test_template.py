@@ -1,6 +1,5 @@
 """Tests for app template resolver."""
 
-import pytest
 
 from src.app.template import (
     resolve_template,

@@ -1,6 +1,5 @@
 """Tests for workspace manager."""
 
-import pytest
 from unittest.mock import patch, MagicMock
 
 from src.workspace.manager import (

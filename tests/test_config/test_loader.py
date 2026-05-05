@@ -1,6 +1,5 @@
 """Tests for config loader."""
 
-import pytest
 import yaml
 from pathlib import Path
 
@@ -10,7 +9,6 @@ from src.config.loader import (
     load_apps,
     init_default_configs,
 )
-from src.constants import CONFIG_DIR, APPS_PATH, DEFAULT_APPS, DEFAULT_CONFIG
 
 
 class TestLoadYamlFile:

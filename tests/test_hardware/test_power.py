@@ -1,10 +1,8 @@
 """Tests for hardware power detection."""
 
-import pytest
-from unittest.mock import patch, mock_open
-from pathlib import Path
+from unittest.mock import patch
 
-from src.hardware.power import is_on_ac, _AC_PATH
+from src.hardware.power import is_on_ac
 
 
 class TestIsOnAC:

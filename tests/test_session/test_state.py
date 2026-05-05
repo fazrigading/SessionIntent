@@ -1,8 +1,6 @@
 """Tests for session state management."""
 
-import pytest
-from pathlib import Path
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 from src.session.state import (
     save_state,

@@ -1,12 +1,8 @@
 """Tests for main session manager functionality."""
 
-import pytest
-from unittest.mock import patch, MagicMock
-from pathlib import Path
+from unittest.mock import patch
 
 from src.session import SessionManager
-from src.config import load_config, load_apps
-from src.constants import CONFIG_DIR, APPS_PATH
 
 
 # Mock data
@@ -56,7 +52,7 @@ class TestSessionManagerInit:
         """Test that non-dev mode creates state directory."""
         monkeypatch.setattr("src.session.manager.STATE_DIR", tmp_path / "state")
 
-        manager = SessionManager(dev_mode=False)
+        SessionManager(dev_mode=False)
 
         assert (tmp_path / "state").exists()
 
