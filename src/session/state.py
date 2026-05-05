@@ -6,6 +6,7 @@ Manages session state persistence (current mode, last session, etc.).
 from __future__ import annotations
 
 from ..constants import STATE_FILE, STATE_DIR
+from .log import info
 
 
 def save_state(mode_name: str, dev_mode: bool = False) -> None:
@@ -26,6 +27,8 @@ def save_state(mode_name: str, dev_mode: bool = False) -> None:
     # Write state file
     with open(STATE_FILE, "w") as f:
         f.write(mode_name)
+
+    info(f"State saved: {mode_name}")
 
 
 def load_state() -> str | None:

@@ -25,5 +25,9 @@ SYSTEM_APPS_PATH = SYSTEM_CONFIG_DIR / "apps.yaml"
 # State file
 STATE_FILE = STATE_DIR / "current"
 
+# Log file
+LOG_DIR = STATE_DIR
+LOG_FILE = LOG_DIR / "sessionintent.log"
+
 # Power supply path
 AC_PATH = "/sys/class/power_supply/AC/online"

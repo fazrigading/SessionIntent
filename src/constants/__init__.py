@@ -13,6 +13,8 @@ from .paths import (
     SYSTEM_APPS_PATH,
     STATE_FILE,
     AC_PATH,
+    LOG_DIR,
+    LOG_FILE,
 )
 
 from .defaults import DEFAULT_APPS, DEFAULT_CONFIG
@@ -28,6 +30,8 @@ __all__ = [
     "SYSTEM_APPS_PATH",
     "STATE_FILE",
     "AC_PATH",
+    "LOG_DIR",
+    "LOG_FILE",
     # Defaults
     "DEFAULT_APPS",
     "DEFAULT_CONFIG",
