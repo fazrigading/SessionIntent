@@ -4,7 +4,7 @@ Provides application management (registry, launching, templates).
 """
 
 from .registry import AppRegistry, get_registry
-from .controller import is_running, launch_app
+from .controller import is_running, launch_app, launch_apps_async
 from .template import (
     resolve_template,
     extract_template_vars,
@@ -19,6 +19,7 @@ __all__ = [
     # Controller
     "is_running",
     "launch_app",
+    "launch_apps_async",
     # Template
     "resolve_template",
     "extract_template_vars",
