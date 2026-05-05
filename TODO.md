@@ -4,15 +4,37 @@ This document tracks planned features and improvements for the SessionIntent pro
 
 ## Desktop Environment Support
 
-### High Priority
+### High Priority (Phase 1: Foundation)
 
-- [ ] Test and verify GNOME X11 support
+- [ ] Implement XDG-compliant config paths in src/constants/paths.py
+- [ ] Implement automated session detection system (src/session/detector.py)
+- [ ] Create TUI provider as universal fallback
+- [ ] Add CLI flags for manual override (--force-backend)
+
+### High Priority (Phase 2: KDE & Hyprland)
+
+- [ ] Refactor src/workspace/manager.py to provider pattern
 - [ ] Add KDE Plasma Support - create abstraction layer with qdbus
 - [ ] Add Hyprland Support - use IPC socket (hyprctl)
+- [ ] Add KDE extension provider for src/extensions/manager.py
+
+### Medium Priority (Phase 3: wlroots & Sway)
+
+- [ ] Add generic Wayland provider (wlr-foreign-toplevel)
 - [ ] Add Sway Support - use swaymsg
+- [ ] Test on wlroots compositors (River, Labwc)
+
+### Lower Priority (Phase 4: EWMH Fallback)
+
+- [ ] Test and verify GNOME X11 support
+- [ ] Implement EWMH fallback provider (wmctrl/xdotool)
+- [ ] Create comprehensive testing matrix for multi-DE support
+
+### Technical Plan
+See LINUX_DESKTOP_COMPATIBILITY_PLAN.md for detailed implementation roadmap.
 
 ### Notes
-Ref: docs/ROADMAP.md
+Ref: docs/ROADMAP.md, LINUX_DESKTOP_COMPATIBILITY_PLAN.md
 
 ## Core Features
 
