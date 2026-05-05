@@ -2,6 +2,24 @@
 
 This document outlines potential future enhancements and areas for community contribution.
 
+## Completed Features
+
+All Core Features from TODO.md have been implemented:
+
+| Feature | Status | File |
+|---------|--------|------|
+| Logging system | ✅ Done | `src/session/log.py` |
+| Async App Launching | ✅ Done | `src/app/controller.py` |
+| Config Hot Reload | ✅ Done | `src/config/watcher.py` |
+| Session Snapshots | ✅ Done | `src/session/snapshot.py` |
+| Window state persistence | ✅ Done | `src/session/snapshot.py` |
+| Plugin system | ✅ Done | `src/plugins/system.py` |
+| Time-based auto-switching | ✅ Done | `src/session/scheduler.py` |
+| Desktop notifications | ✅ Done | `src/session/notify.py` |
+| Theme support | ✅ Done | `src/ui/theme.py` |
+
+---
+
 ## Desktop Environment Support
 
 ### Current State
@@ -23,7 +41,7 @@ class WorkspaceManager(ABC):
 
 class GNOMEWorkspaceManager(WorkspaceManager):
     # Current implementation
-    
+
 class KDEWorkspaceManager(WorkspaceManager):
     # Use qdbus or ... for workspace control
 ```
@@ -47,41 +65,6 @@ hyprctl activeworkspace
 **Difficulty**: Medium
 
 Use swaymsg similar to Hyprland approach.
-
----
-
-## Features
-
-### Async App Launching
-**Difficulty**: Medium
-
-Launch applications in parallel instead of sequentially:
-
-```python
-async def apply_mode_async(mode: dict):
-    tasks = [launch_app(app) for app in apps]
-    await asyncio.gather(*tasks)
-```
-
-### Config Hot Reload
-**Difficulty**: Low
-
-Reload config without restarting:
-
-```python
-# Watch config files for changes
-inotifywait -m ~/.config/sessionintent/
-```
-
-### Session Snapshots
-**Difficulty**: High
-
-Save and restore window positions:
-
-```python
-# Use wmctrl or xdotool for X11
-# Use GNOME's window search for Wayland
-```
 
 ---
 
