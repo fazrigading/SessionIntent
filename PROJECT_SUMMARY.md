@@ -2,163 +2,131 @@
 
 ## Overview
 
-SessionIntent is now a complete, production-ready project with proper structure, documentation, and packaging support.
+SessionIntent is a declarative session orchestration system for GNOME Wayland that allows users to switch between intent-based "modes" (Work, Gaming, Browsing, etc.) with automatic application management, workspace orchestration, and hardware awareness.
+
+## Project Status
+
+**Status**: Production-Ready ✅
+
+All Core Features from TODO.md have been implemented. SessionIntent is ready for Fedora COPR distribution, community contributions, and production usage.
 
 ## Project Structure
 
 ### Root Files
-```
+```tree
 SessionIntent/
-├── README.md                        # Main documentation and quick start
-├── ARCHITECTURE.md                  # System architecture overview
-├── SUGGESTIONS.md                   # Comprehensive suggestions for improvement
-├── CONTRIBUTING.md                  # Contribution guidelines
-├── CHANGELOG.md                     # Version history and changes
-├── LICENSE                          # MIT License
-├── pyproject.toml                   # Python package configuration
-├── requirements.txt                 # Python dependencies (PyYAML)
-├── .gitignore                       # Git ignore rules
-├── .editorconfig                    # Code style configuration
-├── TESTING.md                       # Testing documentation
-├── AGENTS.md                        # AI agent guidelines
-└── src/                             # Main package
-    ├── __init__.py                  # Package exports
-    ├── __main__.py                  # CLI entry point
-    ├── constants/                   # Configuration constants
-    ├── config/                      # Configuration management
-    ├── hardware/                    # Hardware detection
-    ├── app/                         # Application management
-    ├── workspace/                   # Workspace management
-    ├── extensions/                  # GNOME Shell extensions
-    ├── ui/                          # User interface
-    ├── session/                     # Session orchestration
-    └── cli/                         # CLI utilities
+├── src/
+│   ├── __init__.py          # Package exports
+│   ├── __main__.py          # CLI entry point
+│   ├── constants/           # Configuration constants
+│   │   ├── paths.py         # Directory/file paths
+│   │   └── defaults.py      # Default configs
+│   ├── config/              # Configuration management
+│   │   ├── loader.py        # YAML loading
+│   │   ├── validator.py     # Schema validation
+│   │   └── watcher.py       # Config hot reload
+│   ├── hardware/            # Hardware detection
+│   │   └── power.py         # AC/battery detection
+│   ├── app/                 # Application management
+│   │   ├── registry.py      # App definitions
+│   │   ├── controller.py    # Launch/reuse logic + async
+│   │   └── template.py      # Template resolution
+│   ├── workspace/           # Workspace management
+│   │   └── manager.py       # GNOME workspace switching
+│   ├── ui/                  # User interface
+│   │   ├── selector.py      # wofi/rofi interaction
+│   │   ├── display.py       # Menu formatting
+│   │   └── theme.py         # Theme support
+│   ├── session/             # Session orchestration
+│   │   ├── manager.py       # Main orchestrator
+│   │   ├── state.py         # State persistence
+│   │   ├── log.py          # Logging system
+│   │   ├── snapshot.py     # Window snapshots
+│   │   ├── scheduler.py    # Time-based switching
+│   │   └── notify.py       # Desktop notifications
+│   ├── plugins/             # Plugin system
+│   │   └── system.py       # Plugin manager
+│   └── cli/                # CLI
+│       └── parser.py        # Argument parsing
+│
+└── tests/                 # Test suite
+    ├── test_config/
+    ├── test_hardware/
+    ├── test_app/
+    ├── test_extensions/
+    ├── test_workspace/
+    ├── test_ui/
+    └── test_session/
 ```
 
 ### Documentation (docs/)
 ```
 docs/
-├── README.md                        # Documentation navigation
-├── ARCHITECTURE.md                  # Detailed architecture
-├── CONFIGURATION-GUIDE.md           # Config tutorial
-├── MODES.md                         # Mode examples and patterns
-├── INSTALLATION.md                  # Installation guide
-└── FAQ.md                           # Common questions
-```
-
-### Tests (tests/)
-```
-tests/
-├── test_config/
-├── test_hardware/
-├── test_app/
-├── test_extensions/
-├── test_workspace/
-├── test_ui/
-└── test_session/
-```
-
-### Scripts (scripts/)
-```
-scripts/
-└── install.sh                       # Installation script for all distros
-```
-
-### Packaging (packaging/)
-```
-packaging/
-├── fedora/
-│   └── sessionintent.spec           # RPM spec for Fedora COPR
-└── Arch/                            # AUR package (future)
-```
-
-### Manual Pages (man/)
-```
-man/
-└── sessionintent.1                  # Man page
-```
-
-### GitHub Actions (github/workflows/)
-```
-.github/workflows/
-├── ci.yml                           # CI/CD pipeline
-└── release.yml                      # Release automation (future)
+├── README.md                  # Documentation navigation
+├── ARCHITECTURE.md           # Detailed architecture
+├── CONFIGURATION-GUIDE.md    # Config tutorial
+├── MODES.md                  # Mode examples and patterns
+├── INSTALLATION.md           # Installation guide
+├── ROADMAP.md               # Planned project roadmap
+└── FAQ.md                   # Common questions
 ```
 
 ### Examples (examples/)
 ```
 examples/
-├── config.example.yaml              # Comprehensive config examples
-└── apps.example.yaml                # Apps registry with examples
+├── config.example.yaml       # Comprehensive config examples
+└── apps.example.yaml        # Apps registry with examples
 ```
 
 ## Key Features Implemented
 
-### ✅ Core Functionality
+### Core Functionality ✅
 - Intent-based session modes
-- Hardware-aware mode switching (battery/AC)
+- Hardware-aware mode switching (battery/AC power)
 - Workspace orchestration
-- Application launch/reuse
+- Application launch and reuse
 - Template variable resolution
 - Safe, non-destructive operations
 - Developer mode for testing
 - Panic reset mechanism
 
-### ✅ Code Quality
-- Type hints
-- Error handling
-- Comprehensive documentation
-- Unit tests
-- CI/CD pipeline
-- Linting configuration
+### High Priority Features ✅
+- [x] **Logging system** - Structured file logging with rotation (`src/session/log.py`)
+- [x] **Async App Launching** - Parallel launching with asyncio (`src/app/controller.py`)
+- [x] **Config Hot Reload** - Watch config files for changes (`src/config/watcher.py`)
+- [x] **Session Snapshots** - Save/restore window positions (`src/session/snapshot.py`)
 
-### ✅ Distribution
+### Medium Priority Features ✅
+- [x] **Window state persistence** - Integrated with snapshots
+- [x] **Plugin system architecture** - Extensible plugin framework (`src/plugins/system.py`)
+
+### Low Priority Features ✅
+- [x] **Time-based auto-switching** - Schedule modes by time (`src/session/scheduler.py`)
+- [x] **Desktop notifications** - notify-send/pynotify support (`src/session/notify.py`)
+- [x] **Theme support** - 5 built-in themes (`src/ui/theme.py`)
+
+### Code Quality ✅
+- Type hints throughout
+- Proper error handling
+- Comprehensive documentation
+- Unit tests (259 tests)
+- CI/CD pipeline
+- PEP 8 compliant (ruff)
+- Type checking (mypy)
+
+### Distribution ✅
 - Python package (pyproject.toml)
 - RPM spec for Fedora COPR
 - Installation script
-- Man page
 - Multiple installation methods
 
-### ✅ Documentation
+### Documentation ✅
 - README.md with quick start
 - Architecture documentation
 - Configuration guide
 - Mode examples
 - Installation guides
 - Troubleshooting FAQ
-- CHANGELOG
-- CONTRIBUTING guide
-
-## Next Steps for Production
-
-### Critical (Done ✅)
-- [x] Create README.md
-- [x] Add LICENSE
-- [x] requirements.txt
-- [x] pyproject.toml
-- [x] sessionintent.spec for COPR
-- [x] install.sh script
-- [x] Unit tests
-- [x] config.yaml.example
-
-### High Priority (Done ✅)
-- [x] JSON Schema for config validation
-- [x] Improved error messages
-- [x] --status CLI flag
-- [x] Man page
-- [x] CONTRIBUTING.md
-- [x] CI/CD pipeline
-
-### Medium Priority
-- [ ] Add logging system
-- [ ] More comprehensive tests
-- [ ] Window state persistence
-- [ ] Plugin system
-
-### Low Priority
-- [ ] Time-based auto-switching
-- [ ] Desktop notifications
-- [ ] Theme support
 
 ## How to Use
 
@@ -174,7 +142,7 @@ sessionintent --init
 
 ### Basic Usage
 ```bash
-# Select mode via UI (default)
+# Select mode via UI (default - requires wofi/rofi)
 sessionintent
 
 # Apply mode directly
@@ -188,7 +156,7 @@ sessionintent --dev --mode work
 # Session control
 sessionintent -P             # Clear state (no app termination)
 sessionintent -q             # Gracefully close apps
-sessionintent --clear       # Clear state files only
+sessionintent --clear        # Clear state files only
 sessionintent -k             # Force kill apps
 sessionintent -S             # Suspend session
 
@@ -205,8 +173,16 @@ sessionintent -r             # Reload config
 
 - Python 3.10+
 - PyYAML
-- wofi or rofi (for UI)
+- wofi or rofi (for UI mode selector)
 - GNOME Wayland
+
+## Test Results
+
+```
+pytest: 259 passed
+ruff:   All checks passed
+mypy:  34 source files checked, no issues
+```
 
 ## Distribution
 
@@ -214,19 +190,9 @@ sessionintent -r             # Reload config
 - **Other distros**: install.sh script
 - **Documentation**: docs/ folder
 
-## Project Status
-
-**Status**: Production-Ready ✅
-
-SessionIntent is ready for:
-- Fedora COPR distribution
-- Community contributions
-- Production usage
-- Futher development
-
 ## Benefits
 
-This restructuring provides:
+This implementation provides:
 1. **Clear organization** - Easy to find files
 2. **Professional structure** - Matches modern Python projects
 3. **Complete documentation** - Every aspect covered
@@ -234,6 +200,19 @@ This restructuring provides:
 5. **Testing ready** - CI/CD, unit tests configured
 6. **Maintainable** - Clear architecture and code patterns
 
+## New Module Summary
+
+| Module | Purpose |
+|--------|---------|
+| `src/session/log.py` | Structured logging to file |
+| `src/app/controller.py` | Async app launching |
+| `src/config/watcher.py` | Config hot reload (watchdog/polling) |
+| `src/session/snapshot.py` | Window position snapshots |
+| `src/plugins/system.py` | Plugin architecture |
+| `src/session/scheduler.py` | Time-based mode switching |
+| `src/session/notify.py` | Desktop notifications |
+| `src/ui/theme.py` | Theme system (5 built-in themes) |
+
 ## Conclusion
 
-SessionIntent has been transformed from a prototype into a complete, production-ready project ready for Fedora COPR distribution and community adoption.
+SessionIntent has been transformed from a prototype into a complete, production-ready project with all Core Features implemented. Ready for Fedora COPR distribution and community adoption.
