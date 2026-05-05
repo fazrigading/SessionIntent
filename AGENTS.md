@@ -8,6 +8,24 @@ SessionIntent is a declarative session orchestration system for GNOME Wayland wr
 
 ## Build, Lint, and Test Commands
 
+### Prerequisites
+
+```bash
+pip install pytest ruff mypy PyYAML
+```
+
+### Lint and Typecheck
+
+```bash
+# Lint with ruff
+ruff check src/ tests/
+
+# Type check with mypy
+mypy src/
+```
+
+**Order**: lint → typecheck → test (as used in CI)
+
 ### Running Tests
 
 ```bash
