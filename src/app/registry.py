@@ -30,7 +30,6 @@ class AppRegistry:
             bundled_apps = _load_yaml(SYSTEM_APPS_PATH)
 
         # Check current directory for dev purposes
-        local_dev_apps = _load_yaml(SYSTEM_APPS_PATH)
         local_dev_path = SYSTEM_APPS_PATH.parent / "apps.yaml"
         if local_dev_path.exists():
             local_apps = _load_yaml(local_dev_path)

@@ -13,7 +13,7 @@ from ..config import load_config, load_apps, init_default_configs
 from ..hardware import is_on_ac
 from ..ui import select_mode, get_available_modes
 from ..workspace import switch_workspace
-from ..app import launch_app, get_registry
+from ..app import launch_app
 from ..session.state import save_state
 from ..extensions import apply_extensions
 
@@ -319,8 +319,7 @@ class SessionManager:
             return
 
         save_state(f"suspend:{current_mode}", self.dev_mode)
-        print(f"Suspend: Session suspended. Use --quit to resume and close apps.")
+        print("Suspend: Session suspended. Use --quit to resume and close apps.")
 
 
 # convenience imports for direct use
-from ..constants import CONFIG_DIR, STATE_DIR, STATE_FILE, AC_PATH

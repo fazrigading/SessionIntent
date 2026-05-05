@@ -21,7 +21,7 @@ See 'sessionintent --help' for more information.
 
 import sys
 
-from .cli import parse_args, validate_args, get_help_message
+from .cli import parse_args, validate_args
 from .session import SessionManager
 
 
