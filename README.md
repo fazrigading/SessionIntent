@@ -31,9 +31,9 @@ Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for more details on manual ins
 
 ### Configuration
 
-1. Initialize default config:
+1. Set up SessionIntent:
 ```bash
-sessionintent --init
+sessionintent --setup
 ```
 
 2. Edit `~/.config/sessionintent/config.yaml` to define your modes, read [examples/config.example.yaml](examples/config.example.yaml) for reference.
@@ -50,8 +50,7 @@ sessionintent
 sessionintent
 
 # Apply specific mode directly (without wofi/rofi)
-sessionintent --mode browsing
-sessionintent -m browsing
+sessionintent --mode / -m browsing
 
 # Session control
 sessionintent --panic / -P       # Clear state (no app termination)
@@ -65,8 +64,9 @@ sessionintent --status / -s      # Show current status
 sessionintent --list / -l        # List available modes
 
 # Configuration
-sessionintent --init / -i        # Initialize default config
-sessionintent --reload  / -r     # Reload configuration
+sessionintent --setup / -i          # Set up SessionIntent
+sessionintent --scan-apps           # Rescan installed apps
+sessionintent --reload  / -r         # Reload configuration
 
 # Dry-run mode (for dev testing)
 sessionintent --dev --mode work
