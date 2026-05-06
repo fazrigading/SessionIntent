@@ -19,8 +19,11 @@ from ..session.log import info
 CATEGORY_HEADER = {
     "Browsers": "# Browsers",
     "Development": "# Development",
-    "Media & Entertainment": "# Media & Entertainment",
+    "Media Players": "# Media Players",
+    "Art Editing": "# Art Editing",
+    "Communication": "# Communication",
     "Games": "# Games",
+    "Productivity": "# Productivity",
     "Utilities": "# Utilities",
     "System": "# System",
     "Other": "# Other",

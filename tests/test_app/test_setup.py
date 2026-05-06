@@ -35,10 +35,10 @@ class TestCategorizeApp:
         assert categorize_app("code") == "Development"
 
     def test_categorize_discord(self):
-        assert categorize_app("discord") == "Media & Entertainment"
+        assert categorize_app("discord") == "Communication"
 
     def test_categorize_spotify(self):
-        assert categorize_app("spotify") == "Media & Entertainment"
+        assert categorize_app("spotify") == "Media Players"
 
     def test_categorize_steam(self):
         assert categorize_app("steam") == "Games"
@@ -159,17 +159,17 @@ class TestSelectCategories:
             "firefox": {"cmd": ["firefox"], "_category": "Browsers"},
             "chrome": {"cmd": ["chrome"], "_category": "Browsers"},
             "vscode": {"cmd": ["code"], "_category": "Development"},
-            "discord": {"cmd": ["discord"], "_category": "Media & Entertainment"},
+            "discord": {"cmd": ["discord"], "_category": "Communication"},
         }
 
         categorized = get_categorized_apps(mock_apps)
 
         assert "Browsers" in categorized
         assert "Development" in categorized
-        assert "Media & Entertainment" in categorized
+        assert "Communication" in categorized
         assert sorted(categorized["Browsers"].keys()) == ["chrome", "firefox"]
         assert sorted(categorized["Development"].keys()) == ["vscode"]
-        assert sorted(categorized["Media & Entertainment"].keys()) == ["discord"]
+        assert sorted(categorized["Communication"].keys()) == ["discord"]
 
 
 class TestAppSelectionFullFlow:

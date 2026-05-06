@@ -269,8 +269,11 @@ def get_category_list() -> list[tuple[str, int]]:
     categories = [
         "Browsers",
         "Development",
-        "Media & Entertainment",
+        "Media Players",
+        "Art Editing",
+        "Communication",
         "Games",
+        "Productivity",
         "Utilities",
         "System",
         "Other",
