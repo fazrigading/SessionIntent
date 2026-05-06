@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-06
+
+### Added
+- `--setup` flag for interactive setup wizard
+- `--scan-apps` flag for rescan/rescan options
+- App detection system from multiple sources (flatpak, .desktop, dpkg, rpm)
+- Categorized app output in apps.yaml
+- First-run automatic prompt for setup
+- Interactive category and app selection
+
+### Changed
+- Replaced `--init` with `--setup` for more descriptive setup process
+- Apps now scanned and detected from system
+
+## [0.2.0] - 2026-02-24
+
 ### Added
 - Dev mode for dry-run testing
 - Hardware-aware mode switching
@@ -26,28 +42,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `-P` / `--panic`
   - `-i` / `--init`
   - `-d` / `--dev`
-- Default behavior: `--prompt` is now the default when no arguments provided
-
-### Changed
-- Improved template resolution
-- Better error handling
-
-### Removed
-- `--prompt` flag (now default behavior)
-
-## [0.2.0] - 2026-02-24
-
-### Added
-- Initial release with core functionality
-- CLI interface with --prompt, --mode, --panic, --init flags
 - YAML configuration support
 - GNOME workspace switching
 - Application launch/reuse system
 - Device mode for testing
 
+### Removed
+- Default behavior: `--prompt` is now the default when no arguments provided
+
 ## [0.1.0] - 2026-02-20
 
 ### Added
+- Initial release with core functionality
 - Project planning and documentation
 - Architecture design
 - Initial implementation plan
