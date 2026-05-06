@@ -1,11 +1,32 @@
 # SessionIntent - Example Apps Registry
 # Copy this to ~/.config/sessionintent/apps.yaml
 
-# Firefox - Web browser
+# CONTRIBUTORS NEEDED
+
+# ===============
+# Browser
+# ===============
+
+# Firefox
 firefox:
   cmd: ["firefox", "-P", "{profile|default}"]
   append_param: "urls"
   internal_reuse: true
+
+vivaldi:
+  cmd: ["vivaldi", "--profile-directory", "{profile|default}"] # needs to be fixed
+  append_param: "urls"
+  internal_reuse: true
+
+# Chrome
+chrome:
+  cmd: ["chrome"] # needs a profile command, i dont use chrome
+  append_param: "urls"
+  internal_reuse: true
+
+# ===============
+# Tech
+# ===============
 
 # VSCode - Code editor
 vscode:
@@ -13,15 +34,45 @@ vscode:
   primary_param: "workspace"
   internal_reuse: true
 
-# Discord - Communication
+# wireshark - Network analyzer
+wireshark:
+  cmd: ["wireshark"]
+  check: "wireshark"
+  internal_reuse: false
+
+# GNOME terminal - Default terminal emulator for GNOME desktop
+terminal:
+  cmd: ["gnome-terminal"]
+  check: false
+  internal_reuse: true
+
+# Ghostty - Better alternative for Terminal
+ghostty:
+  cmd: ["ghostty"]
+  internal_reuse: true
+
+# ===============
+# Communications
+# ===============
+
+# Discord (for users that does not use autostart)
 discord:
-  cmd: ["discord"]
-  check: "discord"
+  cmd: ["Discord"]
+  check: "Discord"
   flags:
     background: "--start-minimized"
   internal_reuse: false
 
-# Spotify - Listen online music
+# Zoom - Video conference
+zoom:
+  cmd: ["zoom"]
+  internal_reuse: false
+
+# ===============
+# Music
+# ===============
+
+# Spotify
 spotify:
   cmd: ["spotify"]
   check: "spotify"
@@ -33,19 +84,47 @@ ytmdesktop:
   check: "ytmdesktop"
   internal_reuse: false
 
+# Rustune - TUI for searchable Youtube music player
+rustune:
+  cmd: ["rustune"]
+  internal_reuse: true
+
+# ===============
+# Focus
+# ===============
+
 # gnome-pomodoro - Focus timer
 gnome-pomodoro:
   cmd: ["gnome-pomodoro"]
   check: "gnome-pomodoro"
   internal_reuse: false
 
-# terminal - Default terminal emulator
-terminal:
-  cmd: ["gnome-terminal"]
-  check: false
-  internal_reuse: true
+# ===============
+# Productivity
+# ===============
 
-# Steam - Gaming platform
+# obsidian - Note-taking, Knowledge base
+obsidian:
+  cmd: ["obsidian"]
+  check: "obsidian"
+  internal_reuse: false
+
+# zotero - Citation tool
+zotero:
+  cmd: ["zotero"]
+  check: "zotero"
+  internal_reuse: false
+
+onlyoffice:
+  cmd: ["onlyoffice-desktopeditors"]
+  check: "onlyoffice-desktopeditors"
+  internal_reuse: false
+
+# ===============
+# Gaming
+# ===============
+
+# Steam (for users don't use autostart)
 steam:
   cmd: ["steam"]
   check: "steam"
@@ -57,19 +136,11 @@ lutris:
   check: "lutris"
   internal_reuse: false
 
-# obsidian - Knowledge base
-obsidian:
-  cmd: ["obsidian"]
-  check: "obsidian"
-  internal_reuse: false
+# ===============
+# GNOME System
+# ===============
 
-# zotero - Research tool
-zotero:
-  cmd: ["zotero"]
-  check: "zotero"
-  internal_reuse: false
-
-# extension-manager - GNOME extensions
+# extension-manager - GNOME extensions manager
 extension-manager:
   cmd: ["extension-manager"]
   check: "extension-manager"
@@ -79,10 +150,4 @@ extension-manager:
 gnome-system-log:
   cmd: ["gnome-system-log"]
   check: "gnome-system-log"
-  internal_reuse: false
-
-# wireshark - Network analyzer
-wireshark:
-  cmd: ["wireshark"]
-  check: "wireshark"
   internal_reuse: false
