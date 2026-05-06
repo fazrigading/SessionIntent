@@ -59,9 +59,9 @@ class TestCategorizeApp:
 class TestGetCategoryList:
     """Test get_category_list function."""
 
-    def test_returns_seven_categories(self):
+    def test_returns_ten_categories(self):
         categories = get_category_list()
-        assert len(categories) == 7
+        assert len(categories) == 10
 
     def test_first_category_is_browsers(self):
         categories = get_category_list()
@@ -72,11 +72,11 @@ class TestGetCategoryList:
         for cat, num in categories:
             assert isinstance(cat, str)
             assert isinstance(num, int)
-            assert 1 <= num <= 7
+            assert 1 <= num <= 10
 
     def test_last_category_is_other(self):
         categories = get_category_list()
-        assert categories[-1] == ("Other", 7)
+        assert categories[-1] == ("Other", 10)
 
 
 class TestParseSelection:
