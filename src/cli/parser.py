@@ -15,28 +15,36 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  sessionintent                                   # Select mode via UI
-  sessionintent [-i / --init]                     # Initialize default configs
-  sessionintent [-m / --mode] work                # Apply 'work' mode directly
-  sessionintent [-c / --config] my_config.yaml    # Set specific config 
-  sessionintent [-P / --panic]                    # Clear state (no app termination)
-  sessionintent [-q / --quit]                     # Close managed applications
-  sessionintent --clear                           # Clear state files only
-  sessionintent [-k / --kill]                     # Force kill managed applications
-  sessionintent [-s / --status]                   # Show current status
-  sessionintent [-l / --list]                     # List available modes
-  sessionintent [-r / --reload]                   # Reload configuration
-  sessionintent [-S / --suspend]                  # Suspend session
-  sessionintent -d -m work                        # Dev mode on 'work' mode 
-  sessionintent [-h]                              # Show command usage / help
+  sessionintent                                     # Select mode via UI
+  sessionintent [-i / --setup]                      # Set up SessionIntent
+  sessionintent --scan-apps                         # Rescan installed apps
+  sessionintent [-m / --mode] work                  # Apply 'work' mode directly
+  sessionintent [-c / --config] my_config.yaml      # Set specific config
+  sessionintent [-P / --panic]                      # Clear state (no app termination)
+  sessionintent [-q / --quit]                       # Close managed applications
+  sessionintent --clear                             # Clear state files only
+  sessionintent [-k / --kill]                       # Force kill managed applications
+  sessionintent [-s / --status]                     # Show current session status
+  sessionintent [-l / --list]                       # List available modes
+  sessionintent [-r / --reload]                     # Reload configuration
+  sessionintent [-S / --suspend]                    # Suspend session
+  sessionintent -d -m work                          # Dev mode on 'work' mode
+  sessionintent [-h]                                # Show command usage / help
 """,
     )
     
     parser.add_argument(
         "-i",
+        "--setup",
         "--init",
         action="store_true",
-        help="Initialize default configuration files",
+        help="Set up SessionIntent: scan and select apps to include (alias: -i)",
+    )
+
+    parser.add_argument(
+        "--scan-apps",
+        action="store_true",
+        help="Rescan installed apps and update apps.yaml",
     )
 
     parser.add_argument(
@@ -134,7 +142,8 @@ def validate_args(args: argparse.Namespace) -> tuple:
         args.panic,
         args.quit,
         args.clear,
-        args.init,
+        args.setup,
+        args.scan_apps,
         args.kill,
         args.suspend,
     ]

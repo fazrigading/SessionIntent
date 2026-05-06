@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sessionintent"
-version = "0.2.0"
+version = "0.3.0"
 description = "A declarative session orchestration system for GNOME Wayland"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,11 +22,11 @@ Source = "https://github.com/fazrigading/SessionIntent"
 Issues = "https://github.com/fazrigading/SessionIntent/issues"
 
 [tool.setuptools]
-packages = ["src", "src.constants", "src.config", "src.hardware", "src.app", "src.workspace", "src.ui", "src.session", "src.cli"]
+packages = ["src", "src.constants", "src.config", "src.hardware", "src.app", "src.workspace", "src.ui", "src.session", "src.cli", "src.extensions", "src.plugins"]
 py-modules = []
 
 [tool.setuptools.package-data]
-sessionintent = ["py.typed"]
+sessionintent = ["py.typed", "app/app_categories.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
