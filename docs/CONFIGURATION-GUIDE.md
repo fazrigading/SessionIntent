@@ -277,6 +277,25 @@ Error: Extension 'unknown-extension' does not exist
 3. **Keep configs git-trackable** - Store in `~/.config/sessionintent/`
 4. **Use labels** - Make mode names descriptive
 5. **Profile per mode** - Separate Firefox profiles for cleaner sessions
+6. **Use --setup** - Run `sessionintent --setup` to auto-detect installed apps
+
+## App Categories
+
+SessionIntent categorizes detected apps using keywords defined in `src/app/app_categories.yaml`. Contributors can modify this file to add or organize app categories:
+
+```yaml
+Browsers:
+  - firefox
+  - chrome
+  - ...
+
+Development:
+  - code
+  - vscode
+  - ...
+```
+
+The detection system uses partial matching, so "firefox" matches "firefox", "firefox-esr", etc.
 
 ## Troubleshooting
 

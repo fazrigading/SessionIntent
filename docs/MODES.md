@@ -49,7 +49,7 @@ modes:
 ```yaml
 modes:
   gaming:
-    label: "Gaming
+    label: "Gaming"
     workspaces:
       1:
         - lutris
