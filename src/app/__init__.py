@@ -13,6 +13,13 @@ from .template import (
 )
 from .detect import detect_all_apps, get_categorized_apps, get_category_list
 from .setup import setup_interactive, rescan_options
+from .cache import (
+    get_cached_apps,
+    save_app_cache,
+    invalidate_cache,
+    is_cache_valid,
+    get_cache_age_days,
+)
 
 __all__ = [
     # Registry
@@ -34,4 +41,10 @@ __all__ = [
     # Setup
     "setup_interactive",
     "rescan_options",
+    # Cache
+    "get_cached_apps",
+    "save_app_cache",
+    "invalidate_cache",
+    "is_cache_valid",
+    "get_cache_age_days",
 ]

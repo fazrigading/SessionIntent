@@ -18,6 +18,7 @@ Examples:
   sessionintent                                     # Select mode via UI
   sessionintent [-i / --setup]                      # Set up SessionIntent
   sessionintent --scan-apps                         # Rescan installed apps
+  sessionintent --scan-apps --force                 # Rescan, ignore cache
   sessionintent [-m / --mode] work                  # Apply 'work' mode directly
   sessionintent [-c / --config] my_config.yaml      # Set specific config
   sessionintent [-P / --panic]                      # Clear state (no app termination)
@@ -28,6 +29,7 @@ Examples:
   sessionintent [-l / --list]                       # List available modes
   sessionintent [-r / --reload]                     # Reload configuration
   sessionintent [-S / --suspend]                    # Suspend session
+  sessionintent --clear-cache                       # Clear cached app detection
   sessionintent -d -m work                          # Dev mode on 'work' mode
   sessionintent [-h]                                # Show command usage / help
 """,
@@ -118,6 +120,25 @@ Examples:
     )
 
     parser.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Clear the cached app detection results",
+    )
+
+    parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="Force fresh app scan, ignore cache (use with --setup or --scan-apps)",
+    )
+
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Disable cache usage for app detection",
+    )
+
+    parser.add_argument(
         "--version", action="store_true", help="Display version information"
     )
 
@@ -167,6 +188,12 @@ def validate_args(args: argparse.Namespace) -> tuple:
 
     if args.mode and not args.mode.strip():
         return False, "Mode name cannot be empty"
+
+    if args.force and not (args.setup or args.scan_apps):
+        return False, "--force must be used with --setup or --scan-apps"
+
+    if args.no_cache and not (args.setup or args.scan_apps):
+        return False, "--no-cache must be used with --setup or --scan-apps"
 
     return True, None
 

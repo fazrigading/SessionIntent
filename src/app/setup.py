@@ -264,14 +264,20 @@ def write_config_yaml() -> None:
     info(f"Default config written to {CONFIG_PATH}")
 
 
-def setup_interactive(add_new_only: bool = False) -> None:
-    """Run interactive setup wizard."""
+def setup_interactive(add_new_only: bool = False, use_cache: bool = True) -> None:
+    """
+    Run interactive setup wizard.
+
+    Args:
+        add_new_only: If True, only add new detected apps.
+        use_cache: If True, use cached detection results. Defaults to True.
+    """
     if not CONFIG_PATH.exists():
         write_config_yaml()
 
     print("Scanning for installed applications...")
 
-    detected = detect_all_apps()
+    detected = detect_all_apps(use_cache=use_cache)
     if not detected:
         print("No applications detected on this system.")
         use_example = prompt_yes_no(
@@ -330,8 +336,13 @@ def setup_interactive(add_new_only: bool = False) -> None:
     print(f"\nSetup complete! {len(final_apps)} apps configured.")
 
 
-def rescan_options() -> None:
-    """Offer rescan options and run selected."""
+def rescan_options(use_cache: bool = True) -> None:
+    """
+    Offer rescan options and run selected.
+
+    Args:
+        use_cache: If True, use cached detection results. Defaults to True.
+    """
     print("\nRescan options:")
     print("  1. Rescan all apps (re-do entire selection)")
     print("  2. Add only new detected apps")
@@ -346,6 +357,6 @@ def rescan_options() -> None:
             return
 
     if option == 1:
-        setup_interactive(add_new_only=False)
+        setup_interactive(add_new_only=False, use_cache=use_cache)
     else:
-        setup_interactive(add_new_only=True)
+        setup_interactive(add_new_only=True, use_cache=use_cache)

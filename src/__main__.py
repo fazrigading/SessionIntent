@@ -53,16 +53,27 @@ def main() -> int:
         print("Use --help for usage information.")
         return 1
 
+    if args.clear_cache:
+        from .app.cache import invalidate_cache
+
+        if invalidate_cache():
+            print("App cache cleared successfully.")
+        else:
+            print("Failed to clear app cache.")
+        return 0
+
+    use_cache = not args.no_cache
+
     if args.setup:
         from .app.setup import setup_interactive
 
-        setup_interactive()
+        setup_interactive(use_cache=use_cache)
         return 0
 
     if args.scan_apps:
         from .app.setup import rescan_options
 
-        rescan_options()
+        rescan_options(use_cache=use_cache)
         return 0
 
     if check_first_run():

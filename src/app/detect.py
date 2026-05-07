@@ -224,11 +224,24 @@ def categorize_app(app_key: str) -> str:
     return "Other"
 
 
-def detect_all_apps() -> dict[str, dict[str, Any]]:
+def detect_all_apps(use_cache: bool = True) -> dict[str, dict[str, Any]]:
     """
     Detect all installed applications from all sources.
     Priority: flatpak > desktop > dpkg > rpm
+
+    Args:
+        use_cache: If True, use cached results if valid. Defaults to True.
+
+    Returns:
+        Dictionary of detected applications.
     """
+    from .cache import get_cached_apps, is_cache_valid, save_app_cache
+
+    if use_cache and is_cache_valid():
+        cached = get_cached_apps()
+        if cached:
+            return cached
+
     detected: dict[str, dict[str, Any]] = {}
 
     sources = [
@@ -244,6 +257,9 @@ def detect_all_apps() -> dict[str, dict[str, Any]]:
                 detected[app_key] = app_data.copy()
                 detected[app_key]["_source"] = source_name
                 detected[app_key]["_category"] = categorize_app(app_key)
+
+    if use_cache:
+        save_app_cache(detected)
 
     return detected
 
