@@ -87,7 +87,7 @@ def select_categories(categorized: dict[str, dict[str, dict[str, Any]]]) -> list
         count = len(categorized.get(cat, {}))
         print(f"  {num}. {cat} ({count} apps)")
     all_count = sum(len(apps) for apps in categorized.values())
-    print(f"  8. All categories ({all_count} apps)")
+    print(f"  11. All categories ({all_count} apps)")
 
     while True:
         try:
@@ -95,13 +95,13 @@ def select_categories(categorized: dict[str, dict[str, dict[str, Any]]]) -> list
             if not response:
                 return []
 
-            numbers = parse_selection(response, 8)
-            if 8 in numbers:
+            numbers = parse_selection(response, 11)
+            if 11 in numbers:
                 return [cat for cat, _ in categories]
-            if 8 not in numbers and numbers:
+            if 11 not in numbers and numbers:
                 selected = []
                 for num in numbers:
-                    if 1 <= num <= 7:
+                    if 1 <= num <= 10:
                         selected.append(categories[num - 1][0])
                 return selected
         except (KeyboardInterrupt, EOFError):
@@ -113,7 +113,7 @@ def select_apps_option() -> int:
     print("\nSelect apps to include:")
     print("  1. Exclude few apps (include all, then exclude selected)")
     print("  2. Include few apps (start fresh, include only selected)")
-    print("  3. Scan and use all apps")
+    print("  3. Use all apps")
 
     while True:
         try:
