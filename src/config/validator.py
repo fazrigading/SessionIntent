@@ -19,6 +19,7 @@ CONFIG_SCHEMA = {
         "keys": {
             "ask_before_kill": {"type": bool, "required": False},
             "reuse_workspaces": {"type": bool, "required": False},
+            "wait_window": {"type": int, "required": False},
         },
     },
     "hardware_profiles": {
@@ -86,6 +87,18 @@ def validate_config(config: dict[str, Any]) -> list[str]:
             errors.append("'modes' must be a dictionary")
         elif len(modes) == 0:
             errors.append("'modes' must contain at least one mode")
+        else:
+            for mode_name, mode_cfg in modes.items():
+                if not isinstance(mode_cfg, dict):
+                    errors.append(f"Mode '{mode_name}' must be a dictionary")
+                    continue
+                workspaces = mode_cfg.get("workspaces", {})
+                if not isinstance(workspaces, dict):
+                    errors.append(f"Mode '{mode_name}': 'workspaces' must be a dictionary")
+                    continue
+                for ws_num, ws_value in workspaces.items():
+                    ws_errors = _validate_workspace_entry(f"Mode '{mode_name}', workspace '{ws_num}'", ws_value)
+                    errors.extend(ws_errors)
 
     return errors
 
@@ -124,6 +137,14 @@ def validate_apps(apps: dict[str, Any]) -> list[str]:
             if not isinstance(flags, dict):
                 errors.append(f"App '{app_name}': 'flags' must be a dictionary")
 
+        # Check wait_window field if present
+        if "wait_window" in app_def:
+            wait_window = app_def["wait_window"]
+            if not isinstance(wait_window, int):
+                errors.append(f"App '{app_name}': 'wait_window' must be an integer")
+            elif wait_window <= 0:
+                errors.append(f"App '{app_name}': 'wait_window' must be positive")
+
     return errors
 
 
@@ -155,6 +176,31 @@ def validate_apps_file(file_path: Path) -> list[str]:
         return [f"Invalid YAML in {file_path}: {e}"]
     except Exception as e:
         return [f"Error reading {file_path}: {e}"]
+
+
+def _validate_workspace_entry(prefix: str, ws_value: Any) -> list[str]:
+    """Validate a single workspace entry (list of apps or dict with apps/monitor)."""
+    errors = []
+    if isinstance(ws_value, list):
+        for i, item in enumerate(ws_value):
+            if not isinstance(item, (str, dict)):
+                errors.append(f"{prefix}[{i}]: must be a string or dict, got {type(item).__name__}")
+    elif isinstance(ws_value, dict):
+        if "apps" in ws_value:
+            apps = ws_value["apps"]
+            if not isinstance(apps, list):
+                errors.append(f"{prefix}: 'apps' must be a list")
+            else:
+                for i, item in enumerate(apps):
+                    if not isinstance(item, (str, dict)):
+                        errors.append(f"{prefix}['apps'][{i}]: must be a string or dict")
+        if "monitor" in ws_value:
+            monitor = ws_value["monitor"]
+            if not isinstance(monitor, str):
+                errors.append(f"{prefix}: 'monitor' must be a string")
+    else:
+        errors.append(f"{prefix}: workspace entry must be a list or dict with 'apps'/'monitor' keys")
+    return errors
 
 
 def raise_if_invalid(errors: list[str], context: str = "") -> None:

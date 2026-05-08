@@ -34,6 +34,7 @@ DEFAULT_CONFIG = """version: 1
 defaults:
   ask_before_kill: true
   reuse_workspaces: true
+  wait_window: 15
 
 hardware_profiles:
   battery:
