@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.3] - 2026-05-08
+
+### Added
+- `--init` (`-i`) flag for initializing SessionIntent (extension + defaults)
+- `--setup` flag for interactive setup wizard (scan apps)
+
+### Changed
+- Split init and setup into separate commands:
+  - `--init` (`-i`): Install extension and create default configs
+  - `--setup`: Scan and select apps
+- Added `-i` alias for `--init`
 
 ## [0.3.0] - 2026-05-06
 

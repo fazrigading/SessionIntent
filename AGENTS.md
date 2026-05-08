@@ -82,8 +82,8 @@ sessionintent -k
 sessionintent --suspend       # Suspend session
 
 # Configuration
-sessionintent --init          # Initialize default configs
-sessionintent -i
+sessionintent --init / -i      # Initialize default configs and extension
+sessionintent --setup          # Set up SessionIntent (scan apps)
 sessionintent --reload        # Reload configuration
 sessionintent -r
 sessionintent --config <path> # Custom config file

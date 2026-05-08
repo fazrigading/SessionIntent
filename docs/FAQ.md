@@ -62,7 +62,7 @@ firefox:
 ```bash
 sessionintent --panic  # Clear current state
 rm ~/.config/sessionintent/config.yaml
-sessionintent --setup  # Recreate defaults
+sessionintent --init   # Recreate defaults
 ```
 
 ### Where are configs stored?

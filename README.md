@@ -31,12 +31,17 @@ Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for more details on manual ins
 
 ### Configuration
 
-1. Set up SessionIntent:
+1. Initialize SessionIntent:
+```bash
+sessionintent --init
+```
+
+2. Set up your apps:
 ```bash
 sessionintent --setup
 ```
 
-2. Edit `~/.config/sessionintent/config.yaml` to define your modes, read [examples/config.example.yaml](examples/config.example.yaml) for reference.
+3. Edit `~/.config/sessionintent/config.yaml` to define your modes, read [examples/config.example.yaml](examples/config.example.yaml) for reference.
 
 3. Launch the mode selector:
 ```bash
@@ -64,8 +69,9 @@ sessionintent --status / -s      # Show current status
 sessionintent --list / -l        # List available modes
 
 # Configuration
-sessionintent --setup / -i          # Set up SessionIntent
-sessionintent --scan-apps           # Rescan installed apps
+sessionintent --init / -i      # Initialize default configs and extension
+sessionintent --setup          # Set up SessionIntent (scan apps)
+sessionintent --scan-apps      # Rescan installed apps
 sessionintent --reload  / -r         # Reload configuration
 
 # Dry-run mode (for dev testing)

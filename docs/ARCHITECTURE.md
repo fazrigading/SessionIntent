@@ -172,8 +172,11 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
    ├─> --suspend (-S)
    │   └─> Save suspend:<mode> to state
    │
-   ├─> --setup (-i)
-   │   └─> Run interactive setup wizard
+├─> --init (-i)
+    │   └─> Initialize SessionIntent (extension + defaults)
+    │
+    ├─> --setup
+    │   └─> Run interactive setup wizard
 
    ├─> --scan-apps
    │   └─> Rescan installed apps

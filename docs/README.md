@@ -63,8 +63,9 @@ sessionintent -s / --status     # Show current status
 sessionintent -l / --list       # List available modes
 
 # Configuration
-sessionintent -i / --setup      # Set up SessionIntent
-sessionintent --scan-apps       # Rescan installed apps
+sessionintent -i / --init      # Initialize default configs and extension
+sessionintent --setup          # Set up SessionIntent (scan apps)
+sessionintent --scan-apps      # Rescan installed apps
 sessionintent -r / --reload     # Reload configuration
 sessionintent -c / --config     # Custom config file
 
