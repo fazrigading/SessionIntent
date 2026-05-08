@@ -1,0 +1,11 @@
+{
+    "uuid": "sessionintent-ws@fazrigading.github.io",
+    "name": "SessionIntent Workspace Switcher",
+    "description": "Provides a Unix socket IPC interface for SessionIntent to switch GNOME workspaces. Required for GNOME Shell 46+ where the D-Bus Eval method is disabled.",
+    "version": 1,
+    "shell-version": ["46", "47", "48", "49"],
+    "url": "https://github.com/fazrigading/SessionIntent",
+    "author": "fazrigading",
+    "license": "GPL-3.0",
+    "gettext-domain": "sessionintent-ws@fazrigading.github.io"
+}
