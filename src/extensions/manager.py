@@ -16,6 +16,7 @@ from typing import Any
 # Users can reference extensions by name or UUID in config
 EXTENSION_REGISTRY: dict[str, str] = {
     # Popular extensions
+    "sessionintent workspace switcher": "sessionintent-workspace-switcher@sessionintent",
     "dash to panel": "dash-to-panel@jderose9.github.com",
     "dash to dock": "dash-to-dock@micxgx.gmail.com",
     "workspace indicator": "workspace-indicator@gnome-shell-extensions.gcampax.github.com",
