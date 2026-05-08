@@ -56,9 +56,18 @@ def format_mode_info(mode_key: str, mode_config: dict[str, Any]) -> str:
     workspaces = mode_config.get("workspaces", {})
     if workspaces:
         info.append("Workspaces:")
-        for ws_num, apps in sorted(workspaces.items(), key=lambda x: int(x[0])):
-            app_str = ", ".join(str(a) for a in apps)
-            info.append(f"  {ws_num}: {app_str}")
+        for ws_num, ws_value in sorted(workspaces.items(), key=lambda x: int(x[0])):
+            if isinstance(ws_value, dict):
+                apps = ws_value.get("apps", [])
+                monitor = ws_value.get("monitor")
+                app_str = ", ".join(str(a) for a in apps)
+                if monitor:
+                    info.append(f"  {ws_num} ({monitor}): {app_str}")
+                else:
+                    info.append(f"  {ws_num}: {app_str}")
+            else:
+                app_str = ", ".join(str(a) for a in ws_value)
+                info.append(f"  {ws_num}: {app_str}")
 
     return "\n".join(info)
 
