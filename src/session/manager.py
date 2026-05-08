@@ -6,13 +6,14 @@ Main orchestrator that coordinates configuration, hardware, UI, and app launchin
 from __future__ import annotations
 
 import os
+import time
 from typing import Any
 
 from ..constants import CONFIG_PATH, STATE_DIR
 from ..config import load_config, load_apps, init_default_configs
 from ..hardware import is_on_ac
 from ..ui import select_mode, get_available_modes
-from ..workspace import switch_workspace
+from ..workspace import switch_workspace, ensure_extension, wait_for_window
 from ..app import launch_app
 from ..session.state import save_state
 from ..extensions import apply_extensions
@@ -53,8 +54,13 @@ class SessionManager:
         self.apps = load_apps()
 
     def init_config(self) -> None:
-        """Initialize default configuration files if they don't exist."""
+        """Initialize default configuration files and ensure the workspace extension is installed."""
         init_default_configs()
+        ok, msg = ensure_extension(self.dev_mode)
+        if not ok:
+            print(f"Warning: {msg}")
+        elif not self.dev_mode:
+            print(f"Workspace extension: {msg}")
         # Reload config after initialization
         try:
             self._load_config()
@@ -90,20 +96,56 @@ class SessionManager:
             print("Managing GNOME extensions...")
             ext_messages = apply_extensions(extensions_config, self.dev_mode)
             for msg in ext_messages:
-                print(f"  - {msg}")
+                print(f"  {msg}")
 
         # Apply workspaces and apps
         workspaces = mode_cfg.get("workspaces", {})
 
         for ws_num_str in sorted(workspaces.keys(), key=int):
             ws_num = int(ws_num_str)
-            apps_in_ws = workspaces[ws_num_str]
+            ws_value = workspaces[ws_num_str]
 
-            switch_workspace(ws_num, self.dev_mode)
+            if isinstance(ws_value, dict):
+                apps_in_ws = ws_value.get("apps", [])
+                monitor = ws_value.get("monitor")
+            else:
+                apps_in_ws = ws_value
+                monitor = None
+
+            # Check current workspace, skip if already there
+            from ..workspace import get_current_workspace
+            current_ws = get_current_workspace(self.dev_mode)
+            if current_ws == ws_num:
+                print(f"  Already on workspace {ws_num}, launching apps...")
+            else:
+                ok = switch_workspace(ws_num, self.dev_mode, monitor=monitor)
+                if not ok:
+                    print(
+                        f"  Warning: workspace switch to {ws_num} failed. "
+                        "Ensure SessionIntent extension is installed: "
+                        "sessionintent --init"
+                    )
+                else:
+                    monitor_str = f" (monitor: {monitor})" if monitor else ""
+                    print(f"  Switched to workspace {ws_num}{monitor_str}")
+                    # Wait for workspace switch animation to complete
+                    time.sleep(4)
 
             for app_entry in apps_in_ws:
                 app_key, params = self._parse_app_entry(app_entry, mode_cfg)
+                print(f"  Launching {app_key}...")
                 launch_app(app_key, params, self.apps, self.dev_mode)
+                print(f"  {app_key} launched.")
+
+                app_def = self.apps.get(app_key, {})
+                check_pattern = app_def.get("check", app_key)
+                global_wait = self.config.get("defaults", {}).get("wait_window", 15)
+                wait_timeout = app_def.get("wait_window", global_wait)
+
+                if check_pattern is not False:
+                    wait_for_window(check_pattern, ws_num, wait_timeout, self.dev_mode)
+                else:
+                    time.sleep(4)
 
         # Save state (unless in dev mode)
         save_state(mode_name, self.dev_mode)
