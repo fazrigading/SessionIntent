@@ -4,16 +4,17 @@ SessionIntent - Session Orchestration for GNOME Wayland
 
 Usage:
     sessionintent                     # Select mode via UI
-    sessionintent --setup             # Set up SessionIntent
+    sessionintent --init             # Initialize SessionIntent
+    sessionintent --setup            # Set up SessionIntent
     sessionintent --mode <mode>       # Apply specific mode
     sessionintent --panic             # Clear state (no app termination)
     sessionintent --quit              # Gracefully close managed apps
     sessionintent --clear             # Clear state files only
     sessionintent --kill              # Force kill managed apps
-    sessionintent --status            # Show current status
+    sessionintent --status            # Show current session status
     sessionintent --list              # List available modes
     sessionintent --reload            # Reload configuration
-    sessionintent --suspend           # Suspend session 
+    sessionintent --suspend           # Suspend session
     sessionintent --scan-apps         # Rescan installed apps
     sessionintent --dev --mode <mode> # Enable dev mode
 
@@ -74,6 +75,12 @@ def main() -> int:
         from .app.setup import rescan_options
 
         rescan_options(use_cache=use_cache)
+        return 0
+
+    if args.init:
+        manager = SessionManager(dev_mode=args.dev, config_path=args.config)
+        manager.init_config()
+        print("Extension installation complete. Restart GNOME Shell to activate it.")
         return 0
 
     if check_first_run():

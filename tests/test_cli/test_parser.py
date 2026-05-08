@@ -39,26 +39,27 @@ class TestParseArgs:
             assert args.config == expected
 
     @pytest.mark.parametrize(
-        "flag",
+        "flag,expected_attr",
         [
-            "--panic",
-            "--quit",
-            "--clear",
-            "--setup",
-            "--scan-apps",
-            "--dev",
-            "--status",
-            "--list",
-            "--kill",
-            "--reload",
-            "--suspend",
+            ("--panic", "panic"),
+            ("--quit", "quit"),
+            ("--clear", "clear"),
+            ("--init", "init"),
+            ("-i", "init"),
+            ("--setup", "setup"),
+            ("--scan-apps", "scan_apps"),
+            ("--dev", "dev"),
+            ("--status", "status"),
+            ("--list", "list"),
+            ("--kill", "kill"),
+            ("--reload", "reload"),
+            ("--suspend", "suspend"),
         ],
     )
-    def test_parse_boolean_flags(self, flag):
+    def test_parse_boolean_flags(self, flag, expected_attr):
         """Test parsing boolean flag arguments."""
         args = parse_args([flag])
-        key = flag.lstrip("-").replace("-", "_")
-        assert getattr(args, key) is True
+        assert getattr(args, expected_attr) is True
 
     def test_parse_multiple_args(self):
         """Test parsing multiple arguments together."""
@@ -84,6 +85,7 @@ class TestValidateArgs:
             "panic",
             "quit",
             "clear",
+            "init",
             "setup",
             "scan-apps",
             "kill",

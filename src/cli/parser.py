@@ -16,8 +16,9 @@ def create_parser() -> argparse.ArgumentParser:
         epilog="""
 Examples:
   sessionintent                                     # Select mode via UI
-  sessionintent [-i / --setup]                      # Set up SessionIntent
-  sessionintent --scan-apps                         # Rescan installed apps
+  sessionintent --init                            # Initialize SessionIntent
+  sessionintent --setup                            # Set up SessionIntent
+  sessionintent [-i / --scan-apps]                 # Rescan installed apps
   sessionintent --scan-apps --force                 # Rescan, ignore cache
   sessionintent [-m / --mode] work                  # Apply 'work' mode directly
   sessionintent [-c / --config] my_config.yaml      # Set specific config
@@ -37,10 +38,15 @@ Examples:
     
     parser.add_argument(
         "-i",
-        "--setup",
         "--init",
         action="store_true",
-        help="Set up SessionIntent: scan and select apps to include (alias: -i)",
+        help="Initialize SessionIntent: install workspace extension and default configs (alias: -i)",
+    )
+
+    parser.add_argument(
+        "--setup",
+        action="store_true",
+        help="Set up SessionIntent: scan and select apps to include",
     )
 
     parser.add_argument(
@@ -164,6 +170,7 @@ def validate_args(args: argparse.Namespace) -> tuple:
         args.quit,
         args.clear,
         args.setup,
+        args.init,
         args.scan_apps,
         args.kill,
         args.suspend,
