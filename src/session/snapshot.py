@@ -66,7 +66,7 @@ def _get_window_list() -> list[WindowState]:
 
     try:
         result = subprocess.run(
-            ["wmctl", "jd", "-l"],
+            ["wmctrl", "-lG"],
             capture_output=True,
             text=True,
             check=True,
@@ -74,17 +74,18 @@ def _get_window_list() -> list[WindowState]:
         for line in result.stdout.strip().split("\n"):
             if not line:
                 continue
-            parts = line.split(":", 6)
+            # wmctrl -lG: id desktop x y w h host title...
+            parts = line.split(None, 7)
             if len(parts) >= 7:
                 windows.append(
                     WindowState(
                         app_id=parts[0],
-                        window_title=parts[1],
+                        window_title=parts[7] if len(parts) > 7 else "",
                         x=int(parts[2]),
                         y=int(parts[3]),
                         width=int(parts[4]),
                         height=int(parts[5]),
-                        workspace=int(parts[6]),
+                        workspace=int(parts[1]),
                     )
                 )
     except (subprocess.SubprocessError, FileNotFoundError, ValueError):
@@ -149,7 +150,7 @@ def _restore_window(window: WindowState) -> bool:
     """Restore a window to saved position."""
     try:
         subprocess.run(
-            ["wmctl", "jr", "-w", window.app_id, "-x", str(window.x), "-y", str(window.y)],
+            ["wmctrl", "-r", window.app_id, "-e", f"0,{window.x},{window.y},{window.width},{window.height}"],
             check=True,
         )
         return True

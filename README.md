@@ -10,7 +10,7 @@ SessionIntent allows you to switch between different "intent-based modes" (Work,
 - 🔒 **Safe operations** - No data loss, no forced kills
 - 🎛️ **Workspace orchestration** - Advisory workspace placement
 - 🧪 **Dev mode** - Test configurations and system functionality
-- 🔄 **Hot reload** - Edit config and apply without restart
+- 🔄 **Manual reload** - Re-read config on demand (`--reload`)
 
 ## Quick Start
 
@@ -22,9 +22,9 @@ SessionIntent allows you to switch between different "intent-based modes" (Work,
 curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
-#### Method 2: Manual installation 
+#### Method 2: Manual installation
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 
 Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for more details on manual installation.

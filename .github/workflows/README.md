@@ -18,18 +18,18 @@ Runs on tag creation:
 - Build Python package
 - Create GitHub release
 - Upload artifacts
-- Trigger COPR build
+- COPR build is a manual follow-up (see packaging/fedora/sessionintent.spec)
 
 ## Local Development CI
 
 ### Run linting
 ```bash
-ruff check .
+ruff check src/ tests/
 ```
 
 ### Run type checks
 ```bash
-mypy sessionintent.py
+mypy src/
 ```
 
 ### Run tests

@@ -191,7 +191,7 @@ Typically <500ms on modern hardware.Factors:
 Use dev mode:
 
 ```bash
-python3 sessionintent.py --dev --mode work
+sessionintent --dev --mode work
 ```
 
 ### How do I run tests?

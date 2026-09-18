@@ -12,15 +12,6 @@ from .display import (
     format_error,
     format_success,
 )
-from .theme import (
-    load_theme,
-    list_themes,
-    get_current_theme,
-    set_theme,
-    apply_theme_colors,
-    DEFAULT_THEME,
-    BUILT_IN_THEMES,
-)
 
 __all__ = [
     # Selector
@@ -34,12 +25,4 @@ __all__ = [
     "format_app_info",
     "format_error",
     "format_success",
-    # Theme
-    "load_theme",
-    "list_themes",
-    "get_current_theme",
-    "set_theme",
-    "apply_theme_colors",
-    "DEFAULT_THEME",
-    "BUILT_IN_THEMES",
 ]

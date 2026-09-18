@@ -2,21 +2,24 @@
 
 This document outlines potential future enhancements and areas for community contribution.
 
-## Completed Features
+## Stabilized Baseline (Phase 1)
 
-All Core Features from TODO.md have been implemented:
+The rework plan lives in `plans/` (see `plans/04-phases.md`). Phase 1 keeps
+only what is wired into the main flow; the rest returns in later phases:
 
 | Feature | Status | File |
 |---------|--------|------|
-| Logging system | ✅ Done | `src/session/log.py` |
-| Async App Launching | ✅ Done | `src/app/controller.py` |
-| Config Hot Reload | ✅ Done | `src/config/watcher.py` |
-| Session Snapshots | ✅ Done | `src/session/snapshot.py` |
-| Window state persistence | ✅ Done | `src/session/snapshot.py` |
-| Plugin system | ✅ Done | `src/plugins/system.py` |
-| Time-based auto-switching | ✅ Done | `src/session/scheduler.py` |
-| Desktop notifications | ✅ Done | `src/session/notify.py` |
-| Theme support | ✅ Done | `src/ui/theme.py` |
+| Logging system | ✅ Wired | `src/session/log.py` |
+| App launching (sync path) | ✅ Wired | `src/app/controller.py` |
+| Session Snapshots | ✅ Wired | `src/session/snapshot.py` |
+| Window state persistence | ✅ Wired | `src/session/snapshot.py` |
+| Config Hot Reload | ❌ Removed (manual `--reload` only) | deleted `src/config/watcher.py` |
+| Time-based auto-switching | ❌ Removed (unwired) | deleted `src/session/scheduler.py` |
+| Theme support | ❌ Removed (unwired) | deleted `src/ui/theme.py` |
+| Desktop notifications | ⚠️ Present but unwired | `src/session/notify.py` |
+| Plugin system | ⚠️ Present but unwired | `src/plugins/system.py` |
+
+Async `launch_apps_async` exists but `apply_mode` uses the sync path.
 
 ---
 

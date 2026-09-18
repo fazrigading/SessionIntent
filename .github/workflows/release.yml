@@ -80,17 +80,11 @@ jobs:
           sudo dnf install -y copr-cli
 
       - name: Trigger COPR build
+        # Manual follow-up: COPR has no RPM to build (this workflow ships a
+        # wheel only). Build the RPM from packaging/fedora/sessionintent.spec
+        # locally, then submit it with `copr-cli build`.
         run: |
-          # Get the version from tag
-          VERSION=${GITHUB_REF#refs/tags/v}
-          
-          # Clone or update the COPR repo
-          # This assumes you have a COPR project set up
-          # Adjust the project name accordingly
-          copr build \
-            --name sessionintent \
-            --chroot fedora-40-x86_64 \
-            dist/*.rpm || true
+          echo "COPR build is a manual step; see packaging/fedora/sessionintent.spec."
         env:
           COPR_LOGIN: ${{ secrets.COPR_LOGIN }}
           COPR_USERNAME: ${{ secrets.COPR_USERNAME }}

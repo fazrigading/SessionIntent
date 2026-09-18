@@ -54,6 +54,12 @@ def main() -> int:
         print("Use --help for usage information.")
         return 1
 
+    if args.version:
+        from . import __version__
+
+        print(f"sessionintent {__version__}")
+        return 0
+
     if args.clear_cache:
         from .app.cache import invalidate_cache
 
@@ -63,7 +69,7 @@ def main() -> int:
             print("Failed to clear app cache.")
         return 0
 
-    use_cache = not args.no_cache
+    use_cache = not (args.no_cache or args.force)
 
     if args.setup:
         from .app.setup import setup_interactive

@@ -10,6 +10,8 @@ import subprocess
 from typing import Any
 from collections.abc import Sequence
 
+from .template import resolve_template
+
 
 def is_running(pattern: str, dev_mode: bool = False) -> bool:
     """
@@ -204,35 +206,6 @@ def _build_command(app_def: dict[str, Any], params: dict[str, Any]) -> list[str]
             cmd.append(vals)
 
     return cmd
-
-
-def resolve_template(template: str, params: dict[str, Any]) -> str:
-    """
-    Resolve template variables in a string.
-
-    Format: {variable|default}
-    - variable: Key from params dict
-    - default: Optional fallback value
-
-    Args:
-        template: String with template variables
-        params: Dictionary of values for substitution
-
-    Returns:
-        String with variables replaced, or empty string if resolution fails
-    """
-    import re
-
-    def replace(match):
-        parts = match.group(1).split("|", 1)
-        key = parts[0]
-        default = parts[1] if len(parts) > 1 else ""
-        val = params.get(key, default)
-        if val is None:
-            val = default
-        return str(val)
-
-    return re.sub(r"\{([^}]+)\}", replace, template)
 
 
 def _print(dev_mode: bool, message: str) -> None:

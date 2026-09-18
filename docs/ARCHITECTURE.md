@@ -24,34 +24,11 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
 │                        Orchestrator                         │
 │                      SessionManager                         │
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │  Config Loader + Watcher                              │  │
+│  │  Config Loader                                        │  │
 │  │  - Parse YAML configs                                 │  │
 │  │  - Merge system + user configs                        │  │
 │  │  - Validate schema                                    │  │
-│  │  - Hot reload                                         │  │
-│  └───────────────────────────────────────────────────────┘  │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │  Hardware Detector                                    │  │
-│  │  - AC/Battery detection                               │  │
-│  │  - Apply hardware profiles                            │  │
-│  └───────────────────────────────────────────────────────┘  │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │  Mode Selector                                        │  │
-│  │  - Present options                                    │  │
-│  │  - Handle user input                                  │  │
-│  │  - Theme support                                      │  │
-│  └───────────────────────────────────────────────────────┘  │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │  Workspace Manager                                    │  │
-│  │  - Switch GNOME workspaces                            │  │
-│  │  - Track current workspace state                      │  │
-│  └───────────────────────────────────────────────────────┘  │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │  App Controller                                       │  │
-│  │  - Launch applications                                │  │
-│  │  - Reuse existing instances                           │  │
-│  │  - Async launching                                    │  │
-│  │  - Handle app-specific parameters                     │  │
+│  │  - Manual reload (--reload)                           │  │
 │  └───────────────────────────────────────────────────────┘  │
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │  Hardware Detector                                    │  │
@@ -172,12 +149,12 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
    ├─> --suspend (-S)
    │   └─> Save suspend:<mode> to state
    │
-├─> --init (-i)
-    │   └─> Initialize SessionIntent (extension + defaults)
-    │
-    ├─> --setup
-    │   └─> Run interactive setup wizard
-
+   ├─> --init (-i)
+   │   └─> Initialize SessionIntent (extension + defaults)
+   │
+   ├─> --setup
+   │   └─> Run interactive setup wizard
+   │
    ├─> --scan-apps
    │   └─> Rescan installed apps
    │

@@ -34,9 +34,9 @@ git clone https://github.com/fazrigading/SessionIntent.git
 cd SessionIntent
 ```
 
-2. **Install dependencies**
+2. **Install the package**
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 
 3. **Run installer**
@@ -45,9 +45,9 @@ pip install -r requirements.txt
 ```
 
 This will:
-- Copy `sessionintent.py` to `~/.local/bin/sessionintent`
+- Install the `sessionintent` command via `pip install .`
 - Create config directory `~/.config/sessionintent/`
-- Install default configs
+- Install default configs from `examples/`
 - Create autostart entry
 
 4. **Verify installation**
@@ -59,11 +59,10 @@ sessionintent --help
 
 If you prefer to install manually:
 
-### 1. Copy Script
+### 1. Install Package
 
 ```bash
-cp sessionintent.py ~/.local/bin/sessionintent
-chmod +x ~/.local/bin/sessionintent
+pip install .
 ```
 
 Ensure `~/.local/bin` is in your `$PATH`:
@@ -84,8 +83,8 @@ mkdir -p ~/.local/state/sessionintent
 
 ```bash
 # Copy example configs
-cp config.yaml.example ~/.config/sessionintent/config.yaml
-cp apps.yaml.example ~/.config/sessionintent/apps.yaml
+cp examples/config.example.yaml ~/.config/sessionintent/config.yaml
+cp examples/apps.example.yaml ~/.config/sessionintent/apps.yaml
 ```
 
 ### 4. Set Up Autostart (Optional)
@@ -148,7 +147,7 @@ sudo apt install python3-pip python3-yaml rofi
 # Clone and install
 git clone https://github.com/fazrigading/SessionIntent.git
 cd SessionIntent
-pip3 install -r requirements.txt
+pip3 install .
 ./INSTALL.sh
 ```
 

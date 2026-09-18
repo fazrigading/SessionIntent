@@ -82,21 +82,25 @@ pytest
 pytest -v
 
 # Run specific test
-pytest tests/test_sessionintent.py::TestSessionManager::test_init_dev_mode
+pytest tests/test_session/test_manager.py -q
 
 # Run with coverage
-pytest --cov=sessionintent --cov-report=xml
+pytest --cov=src --cov-report=xml
 ```
 
 ### Test Structure
 
 ```
 tests/
-├── test_sessionintent.py      # Core functionality tests
-├── test_configs/              # Valid and invalid test configs
-│   ├── valid_config.yaml
-│   └── invalid_config.yaml
-└── test_app_controllers.py    # App controller tests (future)
+├── test_app/          # App launching, templates, detection, setup, cache
+├── test_cli/          # Argument parsing
+├── test_config/       # Config loading and validation
+├── test_constants/    # Paths and defaults
+├── test_extensions/   # GNOME extension management
+├── test_hardware/     # Power detection
+├── test_session/      # SessionManager and state
+├── test_ui/           # Selector and display formatting
+└── test_workspace/    # Workspace switching
 ```
 
 ### Writing Tests

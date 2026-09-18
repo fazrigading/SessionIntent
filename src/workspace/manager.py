@@ -147,7 +147,7 @@ def switch_workspace(
         if monitor:
             cmd += f" {monitor}"
         cmd += "\n"
-        ok, resp = _socket_call(cmd)
+        ok, resp = _socket_call(cmd, dev_mode=dev_mode)
         if ok and resp == "OK":
             return True
 
@@ -204,7 +204,7 @@ def get_current_workspace(dev_mode: bool = False) -> int | None:
         return 1
 
     if _is_extension_available(dev_mode):
-        ok, resp = _socket_call("CURRENT\n", timeout=1.0)
+        ok, resp = _socket_call("CURRENT\n", timeout=1.0, dev_mode=dev_mode)
         if ok:
             try:
                 return int(resp) + 1  # Convert to 1-indexed
@@ -236,7 +236,7 @@ def get_workspace_count(dev_mode: bool = False) -> int:
         return 1
 
     if _is_extension_available(dev_mode):
-        ok, resp = _socket_call("COUNT\n", timeout=1.0)
+        ok, resp = _socket_call("COUNT\n", timeout=1.0, dev_mode=dev_mode)
         if ok:
             try:
                 return int(resp)

@@ -1,5 +1,8 @@
 # SessionIntent TODO
 
+> Rework source of truth: `plans/` (see `plans/04-phases.md`).
+> This file tracks remaining user-facing work; phase status lives in `plans/README.md`.
+
 This document tracks planned features and improvements for the SessionIntent project.
 
 ## Desktop Environment Support
@@ -41,22 +44,23 @@ Ref: docs/ROADMAP.md, LINUX_DESKTOP_COMPATIBILITY_PLAN.md
 ### High Priority
 
 - [x] Add logging system
-- [x] Implement Async App Launching - parallel app launching with asyncio
-- [x] Implement Config Hot Reload - watch config files for changes
-- [x] Implement Session Snapshots - save and restore window positions
+- [x] Session Snapshots - save and restore window positions
+- [x] Window state persistence
+- [ ] Config Hot Reload - removed in Phase 1 (manual `--reload` only, see `plans/`)
+- [ ] Time-based auto-switching - removed in Phase 1 (unwired, see `plans/`)
+- [ ] Desktop notifications - present but unwired (see `plans/`)
+- [ ] Theme support - removed in Phase 1 (unwired, see `plans/`)
 
 ### Medium Priority
 
-- [x] Window state persistence
-- [x] Plugin system architecture
+- [ ] Plugin system architecture - present but unwired (see `plans/`)
 
 ### Low Priority
 
-- [x] Time-based auto-switching
-- [x] Desktop notifications
-- [x] Theme support
+- [ ] Desktop notifications - present but unwired (see above)
+- [ ] Theme support - removed in Phase 1 (see above)
 
-Ref: docs/ROADMAP.md, PROJECT_SUMMARY.md
+Ref: docs/ROADMAP.md
 
 ## Packaging
 

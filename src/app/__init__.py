@@ -3,7 +3,6 @@ SessionIntent App Package
 Provides application management (registry, launching, templates, detection).
 """
 
-from .registry import AppRegistry, get_registry
 from .controller import is_running, launch_app, launch_apps_async
 from .template import (
     resolve_template,
@@ -22,9 +21,6 @@ from .cache import (
 )
 
 __all__ = [
-    # Registry
-    "AppRegistry",
-    "get_registry",
     # Controller
     "is_running",
     "launch_app",

@@ -11,7 +11,6 @@ from .validator import (
     validate_apps_file,
     raise_if_invalid,
 )
-from .watcher import get_config_watcher, ConfigWatcher, PollingConfigWatcher
 
 __all__ = [
     # Loading
@@ -25,8 +24,4 @@ __all__ = [
     "validate_config_file",
     "validate_apps_file",
     "raise_if_invalid",
-    # Watching
-    "get_config_watcher",
-    "ConfigWatcher",
-    "PollingConfigWatcher",
 ]

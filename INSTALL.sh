@@ -91,23 +91,22 @@ create_directories() {
     log_success "Directories created"
 }
 
-# Install script
+# Install package
 install_script() {
     log_info "Installing SessionIntent..."
-    
-    # Check if running in dev mode
-    if [ -f "$PROJECT_DIR/sessionintent.py" ]; then
-        cp "$PROJECT_DIR/sessionintent.py" "$INSTALL_DIR/sessionintent"
-        chmod +x "$INSTALL_DIR/sessionintent"
-    else
-        # If installed via pip, executable should already be in PATH
-        # or we copy from a known location
-        if command -v sessionintent &> /dev/null; then
-            log_warn "sessionintent already installed"
-            return 0
-        fi
+
+    if command -v sessionintent &> /dev/null; then
+        log_warn "sessionintent already installed"
+        return 0
     fi
-    
+
+    if [ -f "$SCRIPT_DIR/pyproject.toml" ]; then
+        pip3 install "$SCRIPT_DIR" || pip install "$SCRIPT_DIR"
+    else
+        log_error "pyproject.toml not found in $SCRIPT_DIR"
+        exit 1
+    fi
+
     log_success "SessionIntent installed to $INSTALL_DIR/sessionintent"
 }
 
@@ -119,22 +118,18 @@ install_configs() {
     if [ -f "$CONFIG_DIR/config.yaml" ]; then
         log_warn "Config already exists, skipping..."
     else
-        if [ -f "$PROJECT_DIR/config.yaml.example" ]; then
-            cp "$PROJECT_DIR/config.yaml.example" "$CONFIG_DIR/config.yaml"
-        elif [ -f "$PROJECT_DIR/config.yaml" ]; then
-            cp "$PROJECT_DIR/config.yaml" "$CONFIG_DIR/config.yaml"
+        if [ -f "$SCRIPT_DIR/examples/config.example.yaml" ]; then
+            cp "$SCRIPT_DIR/examples/config.example.yaml" "$CONFIG_DIR/config.yaml"
         fi
         log_success "Config installed: $CONFIG_DIR/config.yaml"
     fi
-    
+
     # Apps config
     if [ -f "$CONFIG_DIR/apps.yaml" ]; then
         log_warn "Apps config already exists, skipping..."
     else
-        if [ -f "$PROJECT_DIR/apps.yaml.example" ]; then
-            cp "$PROJECT_DIR/apps.yaml.example" "$CONFIG_DIR/apps.yaml"
-        elif [ -f "$PROJECT_DIR/apps.yaml" ]; then
-            cp "$PROJECT_DIR/apps.yaml" "$CONFIG_DIR/apps.yaml"
+        if [ -f "$SCRIPT_DIR/examples/apps.example.yaml" ]; then
+            cp "$SCRIPT_DIR/examples/apps.example.yaml" "$CONFIG_DIR/apps.yaml"
         fi
         log_success "Apps config installed: $CONFIG_DIR/apps.yaml"
     fi
@@ -199,10 +194,10 @@ setup_path() {
 verify_installation() {
     log_info "Verifying installation..."
     
-    if [ -f "$INSTALL_DIR/sessionintent" ]; then
-        log_success "Script exists at $INSTALL_DIR/sessionintent"
+    if command -v sessionintent &> /dev/null; then
+        log_success "sessionintent found in PATH"
     else
-        log_error "Script not found!"
+        log_error "sessionintent not found in PATH!"
         exit 1
     fi
     
