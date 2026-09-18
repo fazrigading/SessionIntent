@@ -7,37 +7,31 @@ This document tracks planned features and improvements for the SessionIntent pro
 
 ## Desktop Environment Support
 
-### High Priority (Phase 1: Foundation)
+All provider work is shipped (`src/sessionintent/providers/`); unchecked
+items below are manual verification, not implementation.
 
-- [x] XDG-compliant config paths (`XDG_CONFIG_HOME`/`XDG_STATE_HOME` with fallbacks)
-- [ ] Implement automated session detection system (src/session/detector.py)
-- [ ] Create TUI provider as universal fallback
-- [ ] Add CLI flags for manual override (--force-backend)
+### Verification (manual, needs real hardware)
 
-### High Priority (Phase 2: KDE & Hyprland)
-
-- [ ] Refactor src/workspace/manager.py to provider pattern
-- [ ] Add KDE Plasma Support - create abstraction layer with qdbus
-- [ ] Add Hyprland Support - use IPC socket (hyprctl)
-- [ ] Add KDE extension provider for src/extensions/manager.py
-
-### Medium Priority (Phase 3: wlroots & Sway)
-
-- [ ] Add generic Wayland provider (wlr-foreign-toplevel)
-- [ ] Add Sway Support - use swaymsg
 - [ ] Test on wlroots compositors (River, Labwc)
-
-### Lower Priority (Phase 4: EWMH Fallback)
-
 - [ ] Test and verify GNOME X11 support
-- [ ] Implement EWMH fallback provider (wmctrl/xdotool)
-- [ ] Create comprehensive testing matrix for multi-DE support
+- [ ] Create comprehensive testing matrix runs for multi-DE support
+
+### Shipped
+
+- [x] XDG-compliant config paths
+- [x] Automated session detection (`DesktopProfile` + factory)
+- [x] TUI provider as universal fallback
+- [x] Backend override (`--backend`)
+- [x] Provider pattern + KDE (qdbus), Hyprland (hyprctl), Sway (swaymsg)
+- [x] KDE extension provider (applet listing)
+- [x] Generic Wayland/wlroots chain + EWMH fallback (wmctrl/xdotool)
 
 ### Technical Plan
-See LINUX_DESKTOP_COMPATIBILITY_PLAN.md for detailed implementation roadmap.
+Superseded by `plans/` (see `plans/04-phases.md`). The old
+`LINUX_DESKTOP_COMPATIBILITY_PLAN.md` is kept for history only.
 
 ### Notes
-Ref: docs/ROADMAP.md, LINUX_DESKTOP_COMPATIBILITY_PLAN.md
+Ref: docs/ROADMAP.md
 
 ## Core Features
 
@@ -46,7 +40,7 @@ Ref: docs/ROADMAP.md, LINUX_DESKTOP_COMPATIBILITY_PLAN.md
 - [x] Add logging system
 - [x] Session Snapshots - save and restore window positions
 - [x] Window state persistence
-- [ ] Config Hot Reload - removed in Phase 1 (manual `--reload` only, see `plans/`)
+- [ ] Config Hot Reload - removed in Phase 1 (manual `reload` only, see `plans/`)
 - [ ] Time-based auto-switching - removed in Phase 1 (unwired, see `plans/`)
 - [ ] Desktop notifications - present but unwired (see `plans/`)
 - [ ] Theme support - removed in Phase 1 (unwired, see `plans/`)

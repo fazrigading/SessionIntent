@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed (breaking)
+- Flat flags replaced by subcommands: `apply`, `preview`, `select`,
+  `list`, `status`, `panic`, `quit`, `clear`, `kill`, `suspend`,
+  `init`, `setup`, `scan`, `reload`, `version`, with global
+  `--config` / `--dev` / `--backend` (see `docs/MIGRATION.md`)
+- Config schema is now `version: 2`; `version: 1` configs migrate in
+  memory with a notice; retired keys (`schedule`, `settings`,
+  `time_schedules`, `hardware.battery_only`) are rejected
+- Package moved to the `sessionintent` namespace with desktop
+  providers (GNOME, KDE, Hyprland, Sway, wlroots chain, EWMH),
+  auto-detection, and a TUI fallback
+
+### Added
+- `preview <mode>` to show workspaces and apps without applying
+- Desktop notifications on mode applied / not found
+- Plugin discovery and apply hooks (`~/.config/sessionintent/plugins/`)
+- XDG-compliant config and state paths
+- Mode-level params now merge into bare-string app entries
+
 ## [0.3.3] - 2026-05-08
 
 ### Added

@@ -39,7 +39,7 @@ and backward instead of duplicating content.
 |-------|--------|-------|
 | 0 — Planning | Done | Plan set frozen in this folder. |
 | 1 — Stabilize | Done | Bugs fixed, dead code removed, CI/packaging repaired, docs truthful. Gates: 318 pytest passed, ruff/mypy clean, `pip install .` → `sessionintent 0.3.3`. |
-| 2 — Architecture rework | Not started | `src/sessionintent/` namespace + provider layer. |
+| 2 — Architecture rework | Done | `src/sessionintent/` namespace + provider layer (providers, detection, TUI). Gates: 333 pytest passed, ruff/mypy clean. |
 | 3 — Multi-desktop expansion | Done | KDE, Hyprland, Sway, wlroots-chain providers + KDE extensions; `--backend` override; mocked provider tests. Gates: 362 pytest passed, ruff/mypy clean. |
 | 4 — CLI/config redesign + docs | Done | Subcommand CLI, `version: 2` schema + validation, v1 in-memory migration with notice, docs/MIGRATION.md, docs refresh. Gates: 359 pytest passed, ruff/mypy clean. |
 

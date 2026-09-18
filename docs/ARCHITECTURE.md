@@ -371,9 +371,9 @@ SessionIntent logs to `~/.local/state/sessionintent/sessionintent.log`.
 
 ## Future Enhancements
 
-- [x] Async app launching
+- [ ] Async app launching in `apply_mode` (`launch_apps_async` exists, sync path runs)
 - [x] Config caching
-- [x] Live reload (file watcher)
+- [ ] Live reload / time-based switching / themes (removed as unwired, see ROADMAP)
 - [x] Plugin system
 - [x] Session snapshots
 - [x] Window state persistence

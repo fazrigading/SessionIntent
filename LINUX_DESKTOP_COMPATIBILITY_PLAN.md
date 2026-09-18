@@ -1,5 +1,9 @@
 # Linux Desktop Compatibility - Technical Engineering Plan
 
+> **Superseded.** Implemented via `plans/` (Phases 1–4) under
+> `src/sessionintent/providers/`. Kept for history; see
+> `docs/ROADMAP.md` and `docs/MIGRATION.md` for current state.
+
 This document outlines a comprehensive architectural transition for SessionIntent to achieve full Linux desktop compatibility beyond the current GNOME/Wayland focus.
 
 ---

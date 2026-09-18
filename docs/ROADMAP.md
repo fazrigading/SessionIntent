@@ -9,15 +9,16 @@ only what is wired into the main flow; the rest returns in later phases:
 
 | Feature | Status | File |
 |---------|--------|------|
-| Logging system | ✅ Wired | `src/session/log.py` |
-| App launching (sync path) | ✅ Wired | `src/app/controller.py` |
-| Session Snapshots | ✅ Wired | `src/session/snapshot.py` |
-| Window state persistence | ✅ Wired | `src/session/snapshot.py` |
-| Config Hot Reload | ❌ Removed (manual `--reload` only) | deleted `src/config/watcher.py` |
-| Time-based auto-switching | ❌ Removed (unwired) | deleted `src/session/scheduler.py` |
-| Theme support | ❌ Removed (unwired) | deleted `src/ui/theme.py` |
-| Desktop notifications | ✅ Wired (mode applied / not found) | `src/session/notify.py` |
-| Plugin system | ✅ Wired (discovery + apply hooks) | `src/plugins/system.py` |
+| Logging system | ✅ Wired | `src/sessionintent/session/log.py` |
+| App launching (sync path) | ✅ Wired | `src/sessionintent/app/controller.py` |
+| Session Snapshots | ✅ Wired | `src/sessionintent/session/snapshot.py` |
+| Window state persistence | ✅ Wired | `src/sessionintent/session/snapshot.py` |
+| Config Hot Reload | ❌ Removed (manual `reload` only) | deleted `src/sessionintent/config/watcher.py` |
+| Time-based auto-switching | ❌ Removed (unwired) | deleted `src/sessionintent/session/scheduler.py` |
+| Theme support | ❌ Removed (unwired) | deleted `src/sessionintent/ui/theme.py` |
+| Desktop notifications | ✅ Wired (mode applied / not found) | `src/sessionintent/session/notify.py` |
+| Plugin system | ✅ Wired (discovery + apply hooks) | `src/sessionintent/plugins/system.py` |
+| Mode preview | ✅ Wired (`preview <mode>`) | `SessionManager.preview_mode` |
 
 Async `launch_apps_async` exists but `apply_mode` uses the sync path.
 
@@ -53,45 +54,23 @@ A comprehensive technical plan has been developed to transition SessionIntent be
 - **Generic X11**: EWMH fallback (`wmctrl`/`xdotool`)
 - Override with `sessionintent --backend <name>`; auto-detected otherwise
 
-### Planned: KDE Plasma Support
-**Difficulty**: High
+### Shipped: KDE Plasma Support
 
-Add abstraction layer for KDE Plasma workspace management:
+KDE Plasma workspace management via `qdbus org.kde.KWin`, plus applet
+listing via `kpackagetool` (enable/disable is a documented manual step).
+Lives in `src/sessionintent/providers/workspace/kde.py` and
+`src/sessionintent/providers/extensions/kde.py`.
 
-```python
-# Proposed structure
-class WorkspaceManager(ABC):
-    @abstractmethod
-    def switch_workspace(self, num: int) -> bool: ...
-    @abstractmethod
-    def get_current_workspace(self) -> int | None: ...
+### Shipped: Hyprland Support
 
-class GNOMEWorkspaceManager(WorkspaceManager):
-    # Current implementation
+Workspace control via `hyprctl` (`dispatch workspace`, JSON queries).
+Lives in `src/sessionintent/providers/workspace/hyprland.py`.
 
-class KDEWorkspaceManager(WorkspaceManager):
-    # Use qdbus or ... for workspace control
-```
+### Shipped: Sway Support
 
-**Relevant files to modify**:
-- `src/workspace/manager.py`
-- `src/session/manager.py`
-
-### Planned: Hyprland Support
-**Difficulty**: Medium
-
-Use Hyprland's IPC socket for workspace control:
-
-```python
-# Possible approach
-hyprctl workspace <n>
-hyprctl activeworkspace
-```
-
-### Planned: Sway Support
-**Difficulty**: Medium
-
-Use swaymsg similar to Hyprland approach.
+Workspace control via `swaymsg`, plus a best-effort wlroots chain
+(hyprctl → swaymsg → EWMH) for River, Labwc, and friends.
+Lives in `src/sessionintent/providers/workspace/sway.py` and `wlroots.py`.
 
 ---
 
@@ -117,13 +96,10 @@ Create .deb package for Debian-based distributions.
 ## UI/UX Improvements
 
 ### TUI Mode
-**Difficulty**: Low
+**Status**: Done
 
-Add terminal-based mode selector for headless environments:
-
-```bash
-sessionintent --tui
-```
+Terminal fallback ships as `TuiDisplayProvider`: used automatically when
+neither `wofi` nor `rofi` is found.
 
 ### Mode Preview
 **Status**: Done
