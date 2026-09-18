@@ -1,16 +1,21 @@
-# SessionIntent - Declarative session orchestration system for Linux with GNOME Wayland
+# SessionIntent - Declarative session orchestration for Linux desktops
 
-SessionIntent allows you to switch between different "intent-based modes" (Work, Gaming, Browsing, etc.) that automatically launch, reuse, and organize your applications across workspaces.
+SessionIntent switches between intent-based modes (work, gaming, browsing, …) that automatically launch, reuse, and organize applications across workspaces.
+
+Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and an EWMH fallback — override with `--backend`.
 
 ## Features
 
-- 🎯 **Intent-based sessions** - Define your workflow as modes (work, browsing, gaming, etc.)
-- 🔋 **Hardware awareness** - Automatically adjust modes based on battery/AC power
-- 📝 **Declarative configuration** - Single YAML file defines everything
-- 🔒 **Safe operations** - No data loss, no forced kills
-- 🎛️ **Workspace orchestration** - Advisory workspace placement
-- 🧪 **Dev mode** - Test configurations and system functionality
-- 🔄 **Manual reload** - Re-read config on demand (`reload`)
+- 🎯 **Intent-based sessions** - Define workflows as modes (work, browsing, gaming, …)
+- 🖥️ **Multi-desktop** - Provider-based support for GNOME, KDE, Hyprland, Sway, wlroots, EWMH
+- 🔋 **Hardware awareness** - Filter modes on battery vs AC power
+- 📝 **Declarative configuration** - `config.yaml` modes + `apps.yaml` registry (`version: 2` schema)
+- 🔒 **Safe by default** - Reuse before launch; destructive actions are explicit commands
+- 🎛️ **Workspace orchestration** - Per-workspace app placement with optional monitor
+- 👁️ **Mode preview** - `preview <mode>` shows workspaces and apps before applying
+- 🔔 **Notifications** - Desktop notice on every mode switch
+- 🧩 **Plugins** - Drop-in hooks in `~/.config/sessionintent/plugins/`
+- 🧪 **Dev mode** - `--dev` prints commands instead of executing
 
 ## Quick Start
 
@@ -27,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/IN
 pip install .
 ```
 
-Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for more details on manual installation.
+Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for details. Distro packages: PKGBUILD in `packaging/arch/`, Debian sources in `debian/`, Flatpak manifest in `packaging/flatpak/`, RPM spec in `packaging/fedora/` (all pending upload except the installer).
 
 ### Configuration
 
@@ -43,10 +48,12 @@ sessionintent setup
 
 3. Edit `~/.config/sessionintent/config.yaml` to define your modes, read [examples/config.example.yaml](examples/config.example.yaml) for reference.
 
-3. Launch the mode selector:
+4. Launch the mode selector:
 ```bash
 sessionintent
 ```
+
+Upgrading from flag-based CLI or `version: 1` configs? See [docs/MIGRATION.md](docs/MIGRATION.md).
 
 ## Usage
 
@@ -90,22 +97,17 @@ sessionintent --config ~/other.yaml list
 
 | File | Purpose |
 | ---- | ------- |
-| `~/.config/sessionintent/config.yaml` | User mode definitions |
+| `~/.config/sessionintent/config.yaml` | User mode definitions (`$XDG_CONFIG_HOME` honored) |
 | `~/.config/sessionintent/apps.yaml` | User app registry |
 | `/usr/share/sessionintent/apps.yaml` | System app registry |
-| `~/.local/state/sessionintent/current` | Current session state |
+| `~/.local/state/sessionintent/current` | Current session state (`$XDG_STATE_HOME` honored) |
 
 ## Requirements
 
 - Python 3.10+
 - PyYAML
-- wofi or rofi (OPTIONAL, for UI)
-- GNOME Wayland
-
-## Distribution
-
-- **Fedora**: `sudo dnf install sessionintent` (via COPR) **[PLANNED]**
-- **Other distros**: Use `install.sh` script
+- wofi or rofi (OPTIONAL, for UI; terminal fallback otherwise)
+- A supported desktop (GNOME, KDE, Hyprland, Sway, wlroots) or X11/EWMH
 
 ## License
 
@@ -117,5 +119,5 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ROAD
 
 ## Acknowledgments
 
-- Built for GNOME Wayland
+- Provider-based multi-desktop support
 - Inspired by window manager session management tools
