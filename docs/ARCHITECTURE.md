@@ -103,9 +103,11 @@ Providers behind `sessionintent.providers` interfaces; `SessionManager`
 never calls desktop-specific code directly:
 
 - **Workspace** (`providers/workspace/`): `gnome` (extension socket + gdbus),
-  `ewmh` fallback (`wmctrl`/`xdotool`)
+  `kde` (qdbus), `hyprland` (hyprctl), `sway` (swaymsg), `wlroots` chain
+  (hyprctl → swaymsg → EWMH), `ewmh` fallback (`wmctrl`/`xdotool`)
 - **Display** (`providers/display/`): `rofi` (`wofi`/`rofi`), `tui` fallback (stdin)
 - **Extensions** (`providers/extensions/`): `gnome` (`gnome-extensions`),
+  `kde` (applet listing via kpackagetool; enable/disable is manual),
   null provider where unsupported
 - **Detection** (`providers/detect.py`): `DesktopProfile` from XDG variables
   plus tool probing; `get_providers()` factory (unknown desktop keeps GNOME

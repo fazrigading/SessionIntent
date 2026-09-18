@@ -11,9 +11,10 @@ from .base import (
     ToolNotFoundError,
     WorkspaceProvider,
 )
-from .detect import DesktopProfile, detect_desktop, get_providers
+from .detect import BACKENDS, DesktopProfile, detect_desktop, get_providers
 
 __all__ = [
+    "BACKENDS",
     "DesktopProfile",
     "DisplayProvider",
     "ExtensionProvider",

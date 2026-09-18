@@ -65,7 +65,7 @@ class TestGetProviders:
 
     def test_non_gnome_gets_null_extensions(self):
         _, _, ext = get_providers(
-            detect_desktop(_env(DESKTOP_SESSION="kde")), dev_mode=True
+            detect_desktop(_env(DESKTOP_SESSION="i3")), dev_mode=True
         )
         assert isinstance(ext, NullExtensionProvider)
         assert ext.apply({}) != []

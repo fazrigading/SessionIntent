@@ -41,7 +41,10 @@ _WM_TYPES = {
     "hyprland": "hyprland",
     "sway": "sway",
     "i3": "i3",
+    "wlroots": "wlroots",
 }
+
+BACKENDS = ("gnome", "ewmh", "kde", "hyprland", "sway", "wlroots")
 
 
 def detect_desktop(env: dict[str, str] | None = None) -> DesktopProfile:
@@ -67,11 +70,19 @@ def detect_desktop(env: dict[str, str] | None = None) -> DesktopProfile:
         desktop = "sway"
     elif env.get("KDE_FULL_SESSION"):
         desktop = "kde"
+    elif (
+        session_type == "wayland"
+        and desktop == "unknown"
+        and env.get("WAYLAND_DISPLAY")
+    ):
+        desktop = "wlroots"
 
     tools = {tool: shutil.which(tool) is not None for tool in TOOL_REQUIREMENTS}
 
     capabilities: set[str] = set()
     if desktop in ("gnome", "unknown"):
+        capabilities.update({"workspace", "extensions"})
+    elif desktop == "kde":
         capabilities.update({"workspace", "extensions"})
     elif tools.get("wmctrl") or tools.get("xdotool"):
         capabilities.add("workspace")
@@ -109,19 +120,38 @@ def get_providers(
     from .display.rofi import RofiDisplayProvider
     from .display.tui import TuiDisplayProvider
     from .extensions.gnome import GnomeExtensionProvider, NullExtensionProvider
+    from .extensions.kde import KdeExtensionProvider
     from .workspace.ewmh import EwmhWorkspaceProvider
     from .workspace.gnome import GnomeWorkspaceProvider
+    from .workspace.hyprland import HyprlandWorkspaceProvider
+    from .workspace.kde import KdeWorkspaceProvider
+    from .workspace.sway import SwayWorkspaceProvider
+    from .workspace.wlroots import WlrootsWorkspaceProvider
 
     profile = profile if profile is not None else detect_desktop()
 
     desktop = (backend or profile.desktop or "unknown").lower()
-    if backend is not None and desktop not in ("gnome", "ewmh"):
-        raise ProviderError(f"Unknown backend: {backend!r} (expected 'gnome' or 'ewmh')")
+    if backend is not None and desktop not in BACKENDS:
+        raise ProviderError(
+            f"Unknown backend: {backend!r} (expected one of {', '.join(BACKENDS)})"
+        )
 
     # GNOME is the default (preserves pre-provider behavior); ewmh is the fallback.
     if desktop in ("gnome", "unknown"):
         workspace: WorkspaceProvider = GnomeWorkspaceProvider(dev_mode=dev_mode)
         extensions: ExtensionProvider = GnomeExtensionProvider(dev_mode=dev_mode)
+    elif desktop == "kde":
+        workspace = KdeWorkspaceProvider(dev_mode=dev_mode)
+        extensions = KdeExtensionProvider(dev_mode=dev_mode)
+    elif desktop == "hyprland":
+        workspace = HyprlandWorkspaceProvider(dev_mode=dev_mode)
+        extensions = NullExtensionProvider(desktop=desktop, dev_mode=dev_mode)
+    elif desktop == "sway":
+        workspace = SwayWorkspaceProvider(dev_mode=dev_mode)
+        extensions = NullExtensionProvider(desktop=desktop, dev_mode=dev_mode)
+    elif desktop == "wlroots":
+        workspace = WlrootsWorkspaceProvider(dev_mode=dev_mode)
+        extensions = NullExtensionProvider(desktop=desktop, dev_mode=dev_mode)
     else:
         workspace = EwmhWorkspaceProvider(dev_mode=dev_mode)
         extensions = NullExtensionProvider(desktop=desktop, dev_mode=dev_mode)
@@ -136,6 +166,7 @@ def get_providers(
 
 
 __all__: list[str] = [
+    "BACKENDS",
     "DesktopProfile",
     "TOOL_REQUIREMENTS",
     "detect_desktop",

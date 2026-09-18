@@ -148,6 +148,14 @@ Examples:
         "--version", action="store_true", help="Display version information"
     )
 
+    parser.add_argument(
+        "--backend",
+        type=str,
+        choices=["gnome", "ewmh", "kde", "hyprland", "sway", "wlroots"],
+        default=None,
+        help="Workspace backend override (default: auto-detect)",
+    )
+
     return parser
 
 

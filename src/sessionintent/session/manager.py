@@ -33,7 +33,8 @@ class SessionManager:
         Args:
             dev_mode: If True, print commands instead of executing
             config_path: Optional path to custom config file
-            backend: Optional workspace backend override ("gnome" or "ewmh").
+            backend: Optional workspace backend override
+                (gnome, ewmh, kde, hyprland, sway, wlroots).
                 Auto-detected from the desktop environment when None.
         """
         self.config: dict[str, Any] = {}

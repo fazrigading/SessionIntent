@@ -84,7 +84,9 @@ def main() -> int:
         return 0
 
     if args.init:
-        manager = SessionManager(dev_mode=args.dev, config_path=args.config)
+        manager = SessionManager(
+            dev_mode=args.dev, config_path=args.config, backend=args.backend
+        )
         manager.init_config()
         print("Extension installation complete. Restart GNOME Shell to activate it.")
         return 0
@@ -92,7 +94,9 @@ def main() -> int:
     if check_first_run():
         prompt_first_run()
 
-    manager = SessionManager(dev_mode=args.dev, config_path=args.config)
+    manager = SessionManager(
+        dev_mode=args.dev, config_path=args.config, backend=args.backend
+    )
 
     if args.reload:
         manager.reload()

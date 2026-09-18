@@ -45,12 +45,13 @@ A comprehensive technical plan has been developed to transition SessionIntent be
 ## Desktop Environment Support
 
 ### Current State
-- **GNOME Wayland**: Fully supported (existing)
-- **KDE Plasma**: Planned (Priority 1)
-- **Hyprland**: Planned (Priority 1)
-- **Generic wlroots**: Planned (Priority 2)
-- **Sway**: Planned (Priority 2)
-- **GNOME X11**: May work with existing gdbus
+- **GNOME Wayland**: Supported (`gnome` workspace/extension providers)
+- **KDE Plasma**: Supported (`kde` workspace via qdbus; applet listing via kpackagetool, enable/disable is manual)
+- **Hyprland**: Supported (`hyprland` workspace via hyprctl)
+- **Sway**: Supported (`sway` workspace via swaymsg)
+- **Generic wlroots** (River, Labwc, …): Best-effort chain (hyprctl → swaymsg → EWMH)
+- **Generic X11**: EWMH fallback (`wmctrl`/`xdotool`)
+- Override with `sessionintent --backend <name>`; auto-detected otherwise
 
 ### Planned: KDE Plasma Support
 **Difficulty**: High
