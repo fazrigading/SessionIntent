@@ -250,18 +250,18 @@ class SessionManager:
             Tuple of (app_key, params_dict)
         """
         if isinstance(app_entry, str):
-            return app_entry, {}
-
-        # App entry is a dict with app key as first key
-        app_key = list(app_entry.keys())[0]
-        val = app_entry[app_key]
-
-        if isinstance(val, dict):
-            local_params = val
+            app_key, local_params = app_entry, {}
         else:
-            app_def = self.apps.get(app_key, {})
-            primary = app_def.get("primary_param", "value")
-            local_params = {primary: val}
+            # App entry is a dict with app key as first key
+            app_key = list(app_entry.keys())[0]
+            val = app_entry[app_key]
+
+            if isinstance(val, dict):
+                local_params = val
+            else:
+                app_def = self.apps.get(app_key, {})
+                primary = app_def.get("primary_param", "value")
+                local_params = {primary: val}
 
         # Merge with mode-level params
         mode_level_params = mode_cfg.get(app_key, {})

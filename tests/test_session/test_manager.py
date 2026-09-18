@@ -137,6 +137,36 @@ class TestPreviewMode:
         assert "not found" in capsys.readouterr().out
 
 
+class TestParseAppEntry:
+    """Test app entry parsing with mode-level params."""
+
+    def _manager(self, tmp_path):
+        config_path = tmp_path / "config.yaml"
+        config_path.write_text("version: 2\nmodes: {}\n")
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
+            return SessionManager(config_path=str(config_path), dev_mode=True)
+
+    def test_bare_entry_gets_mode_params(self, tmp_path):
+        manager = self._manager(tmp_path)
+        key, params = manager._parse_app_entry(
+            "firefox", {"firefox": {"profile": "work"}}
+        )
+        assert key == "firefox"
+        assert params == {"profile": "work"}
+
+    def test_bare_entry_without_mode_params(self, tmp_path):
+        manager = self._manager(tmp_path)
+        assert manager._parse_app_entry("firefox", {}) == ("firefox", {})
+
+    def test_dict_entry_local_overrides_mode(self, tmp_path):
+        manager = self._manager(tmp_path)
+        _, params = manager._parse_app_entry(
+            {"firefox": {"profile": "local"}},
+            {"firefox": {"profile": "mode", "extra": 1}},
+        )
+        assert params == {"profile": "local", "extra": 1}
+
+
 class TestPanic:
     """Test panic reset functionality."""
 
