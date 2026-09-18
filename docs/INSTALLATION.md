@@ -172,7 +172,7 @@ which sessionintent
 sessionintent --help
 
 # Test in dev mode
-sessionintent --dev --mode browsing
+sessionintent --dev apply browsing
 ```
 
 ## Uninstallation

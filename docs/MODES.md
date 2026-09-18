@@ -109,14 +109,13 @@ modes:
 
 ### Low-Power Mode
 
-Optimized for battery life:
+Optimized for battery life. Pair with a `hardware_profiles` entry that
+disables heavy modes on battery (see below):
 
 ```yaml
 modes:
   low-power:
     label: "Battery Saver"
-    hardware:
-      battery_only: true
     firefox:
       profile: minimal
       urls: []
@@ -146,15 +145,14 @@ modes:
     workspaces:
       1:
         - firefox
-    settings:
-      notifications: "muted"
-      background: "clear"
 ```
 
 **Features**:
 - Single focused app
-- Muted notifications
 - Minimal workspace
+
+> Time-based auto-switching (`schedule`) was removed in Phase 1 as
+> unwired; see `plans/` for its possible return.
 
 ### Debug / Incident Mode
 
@@ -177,28 +175,6 @@ modes:
 - Terminal ready
 - Log viewers
 - Network tools
-
-## Time-Based Modes
-
-You can create modes that auto-switch:
-
-```yaml
-modes:
-  morning:
-    label: "Morning Routine"
-    schedule:
-      time: "08:00"
-      days: [monday, tuesday, wednesday, thursday, friday]
-    firefox:
-      profile: morning
-      urls:
-        - https://news.ycombinator.com
-        - https://reddit.com
-    workspaces:
-      1:
-        - firefox
-        - terminal
-```
 
 ## Custom Mode Template
 

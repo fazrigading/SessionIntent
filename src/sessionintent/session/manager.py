@@ -10,7 +10,15 @@ import time
 from typing import Any
 
 from ..constants import CONFIG_PATH, STATE_DIR
-from ..config import load_config, load_apps, init_default_configs
+from ..config import (
+    load_config,
+    load_apps,
+    init_default_configs,
+    needs_migration,
+    migrate_v1_to_v2,
+    migration_notice,
+)
+from ..config.validator import raise_if_invalid, validate_config
 from ..hardware import is_on_ac
 from ..providers import DisplayProvider, ExtensionProvider, WorkspaceProvider, get_providers
 from ..app import launch_app
@@ -63,8 +71,14 @@ class SessionManager:
             STATE_DIR.mkdir(parents=True, exist_ok=True)
 
     def _load_config(self) -> None:
-        """Load configuration and app registry."""
-        self.config = load_config(str(self.config_path))
+        """Load, migrate, validate, and store configuration and app registry."""
+        raw = load_config(str(self.config_path))
+        if needs_migration(raw):
+            migrated, stripped = migrate_v1_to_v2(raw)
+            print(migration_notice(stripped))
+            raw = migrated
+        raise_if_invalid(validate_config(raw), f" in {self.config_path}")
+        self.config = raw
         self.apps = load_apps()
 
     def init_config(self) -> None:
@@ -144,7 +158,7 @@ class SessionManager:
                     print(
                         f"  Warning: workspace switch to {ws_num} failed. "
                         "Ensure SessionIntent extension is installed: "
-                        "sessionintent --init"
+                        "sessionintent init"
                     )
                 else:
                     monitor_str = f" (monitor: {monitor})" if monitor else ""
@@ -388,7 +402,7 @@ class SessionManager:
             return
 
         save_state(f"suspend:{current_mode}", self.dev_mode)
-        print("Suspend: Session suspended. Use --quit to resume and close apps.")
+        print("Suspend: Session suspended. Use quit to resume and close apps.")
 
     def restore(self) -> None:
         """Restore window positions from snapshot."""

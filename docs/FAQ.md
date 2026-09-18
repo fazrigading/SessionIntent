@@ -60,9 +60,9 @@ firefox:
 ### How do I reset to defaults?
 
 ```bash
-sessionintent --panic  # Clear current state
+sessionintent panic  # Clear current state
 rm ~/.config/sessionintent/config.yaml
-sessionintent --init   # Recreate defaults
+sessionintent init   # Recreate defaults
 ```
 
 ### Where are configs stored?
@@ -77,7 +77,7 @@ sessionintent --init   # Recreate defaults
 
 1. Check if app is in `apps.yaml`
 2. Verify app name matches `pgrep` output
-3. Try `sessionintent --dev --mode work` to see dry-run
+3. Try `sessionintent --dev apply work` to see dry-run
 
 ### App launching multiple times?
 
@@ -97,7 +97,7 @@ Workspaces switch *before* app launches. Ensure you launch while focused on the 
 Check:
 - Hardware profile (battery mode disabled?)
 - Mode name in `modes:` section
-- YAML syntax (use `sessionintent --dev` to check)
+- YAML syntax (use `sessionintent --dev list` to check)
 
 ### UI (wofi/rofi) not working?
 
@@ -115,16 +115,16 @@ sudo apt install rofi
 
 ### Can I use SessionIntent without wofi/rofi?
 
-Yes, use `--mode` directly:
+Yes, use `apply` directly:
 
 ```bash
-sessionintent --mode work
+sessionintent apply work
 ```
 
 ### How do I check current session?
 
 ```bash
-sessionintent --status
+sessionintent status
 # or
 cat ~/.local/state/sessionintent/current
 ```
@@ -149,9 +149,9 @@ No! SessionIntent:
 - Never kills processes by default
 - Only reuses or launches apps
 - Has separate commands for different behaviors:
-  - `--panic`: Clear state only (no app termination)
-  - `--quit`: Gracefully close managed apps (SIGTERM)
-  - `--kill`: Force kill managed apps (SIGKILL)
+  - `panic`: Clear state only (no app termination)
+  - `quit`: Gracefully close managed apps (SIGTERM)
+  - `kill`: Force kill managed apps (SIGKILL)
 
 ## Advanced
 
@@ -191,7 +191,7 @@ Typically <500ms on modern hardware.Factors:
 Use dev mode:
 
 ```bash
-sessionintent --dev --mode work
+sessionintent --dev apply work
 ```
 
 ### How do I run tests?
@@ -222,7 +222,8 @@ cd SessionIntent
 
 ### Will SessionIntent support other window managers?
 
-Possibly, though it's currently GNOME-specific (uses GNOME D-Bus API).
+It already does: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots,
+and an EWMH fallback, auto-detected with a `--backend` override.
 
 ### Will there be a GUI configurator?
 

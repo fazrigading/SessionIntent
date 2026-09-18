@@ -30,7 +30,7 @@ Default session configuration embedded as YAML string.
 Parsed at runtime if no user config exists.
 """
 
-DEFAULT_CONFIG = """version: 1
+DEFAULT_CONFIG = """version: 2
 defaults:
   ask_before_kill: true
   reuse_workspaces: true

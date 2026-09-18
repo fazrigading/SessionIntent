@@ -28,7 +28,7 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
 │  │  - Parse YAML configs                                 │  │
 │  │  - Merge system + user configs                        │  │
 │  │  - Validate schema                                    │  │
-│  │  - Manual reload (--reload)                           │  │
+│  │  - Manual reload (reload command)               │  │
 │  └───────────────────────────────────────────────────────┘  │
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │  Hardware Detector                                    │  │
@@ -131,52 +131,49 @@ never calls desktop-specific code directly:
 ## Data Flow
 
 ```tree
-1. User invokes sessionintent
+1. User invokes sessionintent [--config PATH] [--dev] [--backend NAME] <command>
    │
-   ├─> (no args) - Default
+   ├─> (no command) - Default select
    │   └─> Load modes -> Show UI -> User selects -> Apply mode
    │
-   ├─> --mode <name> (-m)
+   ├─> apply <name>
    │   └─> Load modes -> Validate -> Apply mode
    │
-   ├─> --panic (-P)
+   ├─> panic
    │   └─> Clear state file (no app termination)
    │
-   ├─> --quit (-q)
+   ├─> quit
    │   └─> Get current mode -> Find apps -> SIGTERM apps -> Clear state
    │
-   ├─> --clear
+   ├─> clear
    │   └─> Clear state file only
    │
-   ├─> --kill (-k)
+   ├─> kill
    │   └─> Get current mode -> Find apps -> SIGKILL apps
    │
-   ├─> --status (-s)
+   ├─> status
    │   └─> Show current mode, power state, dev mode
    │
-   ├─> --list (-l)
+   ├─> list
    │   └─> List available modes (hardware-aware)
    │
-   ├─> --reload (-r)
+   ├─> reload
    │   └─> Reload config from disk
    │
-   ├─> --suspend (-S)
+   ├─> suspend
    │   └─> Save suspend:<mode> to state
    │
-   ├─> --init (-i)
+   ├─> init
    │   └─> Initialize SessionIntent (extension + defaults)
    │
-   ├─> --setup
+   ├─> setup
    │   └─> Run interactive setup wizard
    │
-   ├─> --scan-apps
+   ├─> scan [--force] [--no-cache]
    │   └─> Rescan installed apps
    │
-   ├─> --config <path> (-c)
-   │   └─> Use custom config file (modifier)
-   │
-   └─> --dev (-d)
-       └─> Print commands instead of executing
+   └─> version
+       └─> Print version and exit
 
 2. Mode Application
    │
@@ -354,17 +351,14 @@ Total mode switch: <500ms (typical)
 ### Debug Mode
 
 ```bash
-sessionintent --dev --mode work
+sessionintent --dev apply work
 ```
 
 Shows dry-run output without side effects.
 
 ### Log Output
 
-```bash
-# Enable verbose logging (future)
-sessionintent --verbose --mode work
-```
+SessionIntent logs to `~/.local/state/sessionintent/sessionintent.log`.
 
 ### Common Issues
 

@@ -1,29 +1,32 @@
 #!/usr/bin/env python3
 """
-SessionIntent - Session Orchestration for GNOME Wayland
+SessionIntent - Session Orchestration for Linux Desktops
 
 Usage:
-    sessionintent                     # Select mode via UI
-    sessionintent --init             # Initialize SessionIntent
-    sessionintent --setup            # Set up SessionIntent
-    sessionintent --mode <mode>       # Apply specific mode
-    sessionintent --panic             # Clear state (no app termination)
-    sessionintent --quit              # Gracefully close managed apps
-    sessionintent --clear             # Clear state files only
-    sessionintent --kill              # Force kill managed apps
-    sessionintent --status            # Show current session status
-    sessionintent --list              # List available modes
-    sessionintent --reload            # Reload configuration
-    sessionintent --suspend           # Suspend session
-    sessionintent --scan-apps         # Rescan installed apps
-    sessionintent --dev --mode <mode> # Enable dev mode
+    sessionintent [--config PATH] [--dev] [--backend NAME] <command> [args]
+
+Commands:
+    apply <mode>   Apply a specific mode
+    select         Select mode via UI (default when no command is given)
+    list           List available modes
+    status         Show current session status
+    panic          Clear state (no app termination)
+    quit           Gracefully close managed apps
+    clear          Clear state files only
+    kill           Force kill managed apps
+    suspend        Suspend session
+    init           Initialize default configs and extension
+    setup          Interactive app setup wizard
+    scan           Rescan installed apps
+    reload         Reload configuration
+    version        Display version information
 
 See 'sessionintent --help' for more information.
 """
 
 import sys
 
-from .cli import parse_args, validate_args
+from .cli import parse_args
 from .constants import CONFIG_PATH, APPS_PATH
 from .session import SessionManager
 
@@ -44,23 +47,18 @@ def prompt_first_run() -> None:
         setup_interactive()
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main entry point for the CLI."""
-    args = parse_args()
+    args = parse_args(argv)
+    command = args.command or "select"
 
-    is_valid, error = validate_args(args)
-    if not is_valid:
-        print(f"Error: {error}")
-        print("Use --help for usage information.")
-        return 1
-
-    if args.version:
+    if command == "version":
         from . import __version__
 
         print(f"sessionintent {__version__}")
         return 0
 
-    if args.clear_cache:
+    if command == "scan" and args.clear_cache:
         from .app.cache import invalidate_cache
 
         if invalidate_cache():
@@ -69,21 +67,19 @@ def main() -> int:
             print("Failed to clear app cache.")
         return 0
 
-    use_cache = not (args.no_cache or args.force)
-
-    if args.setup:
+    if command == "setup":
         from .app.setup import setup_interactive
 
-        setup_interactive(use_cache=use_cache)
+        setup_interactive()
         return 0
 
-    if args.scan_apps:
+    if command == "scan":
         from .app.setup import rescan_options
 
-        rescan_options(use_cache=use_cache)
+        rescan_options(use_cache=not (args.no_cache or args.force))
         return 0
 
-    if args.init:
+    if command == "init":
         manager = SessionManager(
             dev_mode=args.dev, config_path=args.config, backend=args.backend
         )
@@ -98,31 +94,25 @@ def main() -> int:
         dev_mode=args.dev, config_path=args.config, backend=args.backend
     )
 
-    if args.reload:
+    if command == "reload":
         manager.reload()
-        if args.status:
-            manager.status()
-        if args.list:
-            manager.list_modes()
-    elif args.panic:
+    elif command == "panic":
         manager.panic()
-    elif args.quit:
+    elif command == "quit":
         manager.quit()
-    elif args.clear:
+    elif command == "clear":
         manager.clear()
-    elif args.kill:
+    elif command == "kill":
         manager.kill()
-    elif args.suspend:
+    elif command == "suspend":
         manager.suspend()
-    elif args.status:
+    elif command == "status":
         manager.status()
-        if args.list:
-            manager.list_modes()
-    elif args.list:
+    elif command == "list":
         manager.list_modes()
-    elif args.mode:
+    elif command == "apply":
         manager.apply_mode(args.mode)
-    else:
+    else:  # select
         mode = manager.select_mode()
         if mode:
             manager.apply_mode(mode)

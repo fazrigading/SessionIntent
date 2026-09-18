@@ -10,7 +10,7 @@ SessionIntent allows you to switch between different "intent-based modes" (Work,
 - 🔒 **Safe operations** - No data loss, no forced kills
 - 🎛️ **Workspace orchestration** - Advisory workspace placement
 - 🧪 **Dev mode** - Test configurations and system functionality
-- 🔄 **Manual reload** - Re-read config on demand (`--reload`)
+- 🔄 **Manual reload** - Re-read config on demand (`reload`)
 
 ## Quick Start
 
@@ -33,12 +33,12 @@ Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for more details on manual ins
 
 1. Initialize SessionIntent:
 ```bash
-sessionintent --init
+sessionintent init
 ```
 
 2. Set up your apps:
 ```bash
-sessionintent --setup
+sessionintent setup
 ```
 
 3. Edit `~/.config/sessionintent/config.yaml` to define your modes, read [examples/config.example.yaml](examples/config.example.yaml) for reference.
@@ -53,30 +53,34 @@ sessionintent
 ```bash
 # Select mode via UI (requires wofi/rofi) - default behavior
 sessionintent
+sessionintent select
 
 # Apply specific mode directly (without wofi/rofi)
-sessionintent --mode / -m browsing
+sessionintent apply browsing
 
 # Session control
-sessionintent --panic / -P       # Clear state (no app termination)
-sessionintent --quit / -q        # Gracefully close managed apps
-sessionintent --clear            # Clear state files only
-sessionintent --kill / -k        # Force kill managed apps
-sessionintent --suspend -S       # Suspend session
+sessionintent panic        # Clear state (no app termination)
+sessionintent quit         # Gracefully close managed apps
+sessionintent clear        # Clear state files only
+sessionintent kill         # Force kill managed apps
+sessionintent suspend      # Suspend session
 
 # Status and listing
-sessionintent --status / -s      # Show current status
-sessionintent --list / -l        # List available modes
+sessionintent status       # Show current status
+sessionintent list         # List available modes
 
 # Configuration
-sessionintent --init / -i      # Initialize default configs and extension
-sessionintent --setup          # Set up SessionIntent (scan apps)
-sessionintent --scan-apps      # Rescan installed apps
-sessionintent --reload  / -r         # Reload configuration
+sessionintent init         # Initialize default configs and extension
+sessionintent setup        # Set up SessionIntent (scan apps)
+sessionintent scan         # Rescan installed apps
+sessionintent scan --force # Rescan, ignore cache
+sessionintent reload       # Reload configuration
+sessionintent version      # Display version information
 
-# Dry-run mode (for dev testing)
-sessionintent --dev --mode work
-sessionintent -d -m work
+# Global flags (come before the command)
+sessionintent --dev apply work
+sessionintent --backend sway apply work
+sessionintent --config ~/other.yaml list
 ```
 
 ## Key Files

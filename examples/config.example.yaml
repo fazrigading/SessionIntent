@@ -1,8 +1,8 @@
 # SessionIntent - Example Configuration
 # Copy this to ~/.config/sessionintent/config.yaml
 
-# Current config version (for future migrations)
-version: 1
+# Config schema version (required)
+version: 2
 
 # Global defaults for all modes
 defaults:
@@ -123,14 +123,11 @@ modes:
         - terminal
 
   # --- Low Power Mode ---
+  # Tip: disable heavy modes on battery via top-level hardware_profiles.
   low-power:
     label: "Battery Saver"
     description: "Lightweight setup for battery power"
-    
-    # Only available on battery
-    hardware:
-      battery_only: true
-    
+
     firefox:
       profile: minimal
       urls: []
@@ -150,9 +147,7 @@ modes:
       profile: presentation
       urls:
         - https://example.com/presentation
-    settings:
-      notifications: "muted"
-    
+
     workspaces:
       1:
         - firefox

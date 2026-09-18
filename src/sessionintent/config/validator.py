@@ -10,9 +10,9 @@ from pathlib import Path
 from typing import Any
 
 
-# Schema definition for config.yaml
+# Schema definition for config.yaml (version: 2)
 CONFIG_SCHEMA = {
-    "version": {"type": int, "required": False},
+    "version": {"type": int, "required": True, "equals": 2},
     "defaults": {
         "type": dict,
         "required": False,
@@ -57,12 +57,33 @@ APPS_SCHEMA = {
 
 
 def validate_config(config: dict[str, Any]) -> list[str]:
-    """Validate configuration dictionary against schema. Returns list of errors."""
+    """Validate a version: 2 configuration dictionary. Returns list of errors."""
+    from .migration import (
+        RETIRED_MODE_HARDWARE_KEYS,
+        RETIRED_MODE_KEYS,
+        RETIRED_TOP_LEVEL_KEYS,
+    )
+
     errors = []
 
     if not config:
         errors.append("Configuration is empty")
         return errors
+
+    # version: 2 is required (version: 1 configs go through migration first)
+    if config.get("version") != 2:
+        errors.append(
+            "Config must declare 'version: 2' "
+            "(version: 1 configs need migration, see docs/MIGRATION.md)"
+        )
+
+    # Retired keys from the version: 2 schema
+    for key in RETIRED_TOP_LEVEL_KEYS:
+        if key in config:
+            errors.append(
+                f"Retired key '{key}' was removed in version: 2 "
+                "(see docs/MIGRATION.md)"
+            )
 
     # Check required top-level keys
     if "modes" not in config:
@@ -92,6 +113,21 @@ def validate_config(config: dict[str, Any]) -> list[str]:
                 if not isinstance(mode_cfg, dict):
                     errors.append(f"Mode '{mode_name}' must be a dictionary")
                     continue
+                for key in RETIRED_MODE_KEYS:
+                    if key in mode_cfg:
+                        errors.append(
+                            f"Mode '{mode_name}': retired key '{key}' was removed "
+                            "in version: 2 (see docs/MIGRATION.md)"
+                        )
+                hardware = mode_cfg.get("hardware")
+                if isinstance(hardware, dict):
+                    for key in RETIRED_MODE_HARDWARE_KEYS:
+                        if key in hardware:
+                            errors.append(
+                                f"Mode '{mode_name}': retired key "
+                                f"'hardware.{key}' was removed in version: 2 "
+                                "(see docs/MIGRATION.md)"
+                            )
                 workspaces = mode_cfg.get("workspaces", {})
                 if not isinstance(workspaces, dict):
                     errors.append(f"Mode '{mode_name}': 'workspaces' must be a dictionary")

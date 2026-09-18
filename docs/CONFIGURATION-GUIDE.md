@@ -17,13 +17,13 @@ SessionIntent reads from two main configuration files:
 
 User configs override system configs.
 
-## Config.yaml Structure
+## Config.yaml Structure (`version: 2`)
 
 ```yaml
-version: 1
+version: 2
 
 defaults:
-  ask_before_kill: true
+  wait_window: 15
   reuse_workspaces: true
 
 hardware_profiles:
@@ -48,13 +48,20 @@ modes:
 
 #### version
 
-Optional. Current config version (for future migrations).
+Required. Must be `2`. A `version: 1` config (or one without a version)
+still loads: it is migrated in memory with a notice. See
+[docs/MIGRATION.md](MIGRATION.md).
+
+Retired keys (`schedule`, `settings`, `time_schedules`,
+`hardware.battery_only`) are dropped by the migration and rejected by
+validation.
 
 #### defaults
 
 Global defaults for all modes:
-- `ask_before_kill`: Prompt before killing processes (default: true)
+- `wait_window`: Seconds to wait for an app window (default: 15)
 - `reuse_workspaces`: Keep workspace state between mode switches (default: true)
+- `ask_before_kill`: Prompt before killing processes (default: true)
 
 #### hardware_profiles
 
@@ -273,11 +280,11 @@ Error: Extension 'unknown-extension' does not exist
 ## Tips
 
 1. **Start simple** - Define 2-3 basic modes first
-2. **Test in dev mode** - `sessionintent --dev --mode work`
+2. **Test in dev mode** - `sessionintent --dev apply work`
 3. **Keep configs git-trackable** - Store in `~/.config/sessionintent/`
 4. **Use labels** - Make mode names descriptive
 5. **Profile per mode** - Separate Firefox profiles for cleaner sessions
-6. **Use --setup** - Run `sessionintent --setup` to auto-detect installed apps
+6. **Use setup** - Run `sessionintent setup` to auto-detect installed apps
 
 ## App Categories
 

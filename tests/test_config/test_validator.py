@@ -18,18 +18,20 @@ class TestValidateConfig:
     @pytest.mark.parametrize(
         "config,valid",
         [
-            ({"modes": {"work": {"label": "Work"}}}, True),
+            ({"version": 2, "modes": {"work": {"label": "Work"}}}, True),
             (
                 {
-                    "version": 1,
+                    "version": 2,
                     "defaults": {"ask_before_kill": True},
                     "modes": {"work": {}},
                 },
                 True,
             ),
             ({}, False),
-            ({"version": 1}, False),
-            ({"modes": {}}, False),
+            ({"version": 1, "modes": {"work": {}}}, False),
+            ({"modes": {"work": {}}}, False),
+            ({"version": 2}, False),
+            ({"version": 2, "modes": {}}, False),
         ],
     )
     def test_validate_config(self, config, valid):
@@ -43,15 +45,25 @@ class TestValidateConfig:
     @pytest.mark.parametrize(
         "config",
         [
-            {"modes": "not a dict"},
-            {"modes": {"work": {}}, "defaults": "not a dict"},
-            {"modes": {"work": {}}, "hardware_profiles": "not a dict"},
+            {"version": 2, "modes": "not a dict"},
+            {"version": 2, "modes": {"work": {}}, "defaults": "not a dict"},
+            {"version": 2, "modes": {"work": {}}, "hardware_profiles": "not a dict"},
+            {"version": 2, "modes": {"work": {"schedule": {"time": "08:00"}}}},
+            {"version": 2, "modes": {"work": {"settings": {}}}},
+            {
+                "version": 2,
+                "modes": {"work": {"hardware": {"battery_only": True}}},
+            },
         ],
     )
     def test_validate_config_wrong_types(self, config):
-        """Test config validation with wrong types."""
+        """Test config validation with wrong types and retired keys."""
         errors = validate_config(config)
         assert len(errors) > 0
+
+    def test_version_error_points_to_migration_guide(self):
+        errors = validate_config({"version": 1, "modes": {"work": {}}})
+        assert any("MIGRATION" in error for error in errors)
 
 
 class TestValidateApps:

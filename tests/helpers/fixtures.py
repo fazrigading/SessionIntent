@@ -27,7 +27,7 @@ TEST_APPS = {
 
 # Default test config
 TEST_CONFIG = {
-    "version": 1,
+    "version": 2,
     "defaults": {"ask_before_kill": True, "reuse_workspaces": True},
     "hardware_profiles": {
         "battery": {"disable_modes": ["gaming"]},

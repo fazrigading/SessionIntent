@@ -4,28 +4,27 @@
 
 SessionIntent includes a **Developer Mode** for safe testing without side effects.
 
-### New Arguments
+### Commands
 
-- `--dev` (-d): Enables "dry-run" mode. Prints commands instead of executing them.
-- `--mode <name>` (-m): Directly apply a specific mode, bypassing the selection menu.
-- `--config <path>` (-c): Specify a custom configuration file.
-- `--panic` (-P): Clear current state (no app termination).
-- `--quit` (-q): Gracefully close managed apps.
-- `--clear`: Clear state files only.
-- `--kill` (-k): Force kill managed apps.
-- `--status` (-s): Show current session status.
-- `--list` (-l): List available modes.
-- `--reload` (-r): Reload configuration files.
-- `--suspend` (-S): Suspend session.
+- `apply <name>`: Directly apply a specific mode, bypassing the selection menu.
+- `--config <path>`: Specify a custom configuration file (global flag).
+- `panic`: Clear current state (no app termination).
+- `quit`: Gracefully close managed apps.
+- `clear`: Clear state files only.
+- `kill`: Force kill managed apps.
+- `status`: Show current session status.
+- `list`: List available modes.
+- `reload`: Reload configuration files.
+- `suspend`: Suspend session.
+
+Global flags (`--dev`, `--config`, `--backend`) come before the command.
 
 ### How to Test
 
 #### 1. Test a specific mode
 
 ```bash
-sessionintent -d -m browsing
-# or
-sessionintent --dev --mode browsing
+sessionintent --dev apply browsing
 ```
 
 This will simulate switching workspaces and launching apps defined in the "browsing" mode.
@@ -33,17 +32,13 @@ This will simulate switching workspaces and launching apps defined in the "brows
 #### 2. Test with a custom config
 
 ```bash
-sessionintent -d -m work -c tests/test_configs/valid.yaml
-# or
-sessionintent --dev --mode work --config tests/test_configs/valid.yaml
+sessionintent --dev --config examples/config.example.yaml apply work
 ```
 
 #### 3. Test the Panic reset
 
 ```bash
-sessionintent -d -P
-# or
-sessionintent --dev --panic
+sessionintent --dev panic
 ```
 
 #### 4. Test the UI selector (default behavior)
@@ -59,10 +54,9 @@ sessionintent -d
 #### 5. Test status and listing
 
 ```bash
-sessionintent -s          # Show status
-sessionintent -l          # List modes
-sessionintent -s -l       # Show both
-sessionintent -r -s       # Reload and show status
+sessionintent status   # Show status
+sessionintent list     # List modes
+sessionintent reload   # Reload configuration
 ```
 
 ---
@@ -85,7 +79,7 @@ pytest -v
 pytest tests/test_session/test_manager.py -q
 
 # Run with coverage
-pytest --cov=src --cov-report=xml
+pytest --cov=sessionintent --cov-report=xml
 ```
 
 ### Test Structure

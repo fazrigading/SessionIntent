@@ -19,6 +19,7 @@ This folder contains comprehensive documentation for SessionIntent.
 | `FAQ.md` | Common questions and answers |
 | `INSTALLATION.md` | Installation instructions for all distros |
 | `MODES.md` | Mode examples and patterns |
+| `MIGRATION.md` | Subcommand CLI and `version: 2` migration guide |
 | `ROADMAP.md` | Future enhancements and contribution ideas |
 
 ## For Developers
@@ -46,29 +47,33 @@ This folder contains comprehensive documentation for SessionIntent.
 ```bash
 # Default: Select mode via UI
 sessionintent
+sessionintent select
 
 # Apply mode
-sessionintent -m MODE
-sessionintent --mode MODE
+sessionintent apply MODE
 
 # Session control
-sessionintent -P / --panic      # Clear state (no app termination)
-sessionintent -q / --quit       # Gracefully close apps
-sessionintent --clear           # Clear state files only
-sessionintent -k / --kill       # Force kill apps
-sessionintent -S / --suspend    # Suspend session
+sessionintent panic    # Clear state (no app termination)
+sessionintent quit     # Gracefully close apps
+sessionintent clear    # Clear state files only
+sessionintent kill     # Force kill apps
+sessionintent suspend  # Suspend session
 
 # Info commands
-sessionintent -s / --status     # Show current status
-sessionintent -l / --list       # List available modes
+sessionintent status   # Show current status
+sessionintent list     # List available modes
 
 # Configuration
-sessionintent -i / --init      # Initialize default configs and extension
-sessionintent --setup          # Set up SessionIntent (scan apps)
-sessionintent --scan-apps      # Rescan installed apps
-sessionintent -r / --reload     # Reload configuration
-sessionintent -c / --config     # Custom config file
+sessionintent init     # Initialize default configs and extension
+sessionintent setup    # Set up SessionIntent (scan apps)
+sessionintent scan     # Rescan installed apps
+sessionintent reload   # Reload configuration
+sessionintent version  # Display version information
 
-# Dev mode
-sessionintent -d / --dev        # Dry-run mode
+# Global flags (come before the command)
+sessionintent --config PATH list
+sessionintent --dev apply MODE   # Dry-run mode
+sessionintent --backend NAME apply MODE
 ```
+
+Full flag-to-command table: [MIGRATION.md](MIGRATION.md).

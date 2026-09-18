@@ -88,17 +88,17 @@ python3 -m pytest
 python3 -m pytest tests/test_config/
 
 # Run with coverage
-python3 -m pytest --cov=src --cov-report=term-missing
+python3 -m pytest --cov=sessionintent --cov-report=term-missing
 ```
 
 ### Running in Dev Mode
 
 ```bash
 # Test dry-run
-sessionintent --dev --mode work
+sessionintent --dev apply work
 
 # Test with custom config
-sessionintent --dev --mode work --config tests/test_configs/valid.yaml
+sessionintent --dev --config examples/config.example.yaml apply work
 ```
 
 ## Coding Standards

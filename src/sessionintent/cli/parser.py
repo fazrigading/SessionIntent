@@ -1,153 +1,57 @@
 """
 SessionIntent CLI Argument Parser
-Sets up and parses command-line arguments for the session orchestrator.
+Subcommand interface with global modifiers.
 """
 
 from __future__ import annotations
 
 import argparse
 
+COMMANDS = (
+    "apply",
+    "select",
+    "list",
+    "status",
+    "panic",
+    "quit",
+    "clear",
+    "kill",
+    "suspend",
+    "init",
+    "setup",
+    "scan",
+    "reload",
+    "version",
+)
+
 
 def create_parser() -> argparse.ArgumentParser:
     """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
+        prog="sessionintent",
         description="SessionIntent Orchestrator made by Fazri Gading",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  sessionintent                                     # Select mode via UI
-  sessionintent --init                            # Initialize SessionIntent
-  sessionintent --setup                            # Set up SessionIntent
-  sessionintent [-i / --scan-apps]                 # Rescan installed apps
-  sessionintent --scan-apps --force                 # Rescan, ignore cache
-  sessionintent [-m / --mode] work                  # Apply 'work' mode directly
-  sessionintent [-c / --config] my_config.yaml      # Set specific config
-  sessionintent [-P / --panic]                      # Clear state (no app termination)
-  sessionintent [-q / --quit]                       # Close managed applications
-  sessionintent --clear                             # Clear state files only
-  sessionintent [-k / --kill]                       # Force kill managed applications
-  sessionintent [-s / --status]                     # Show current session status
-  sessionintent [-l / --list]                       # List available modes
-  sessionintent [-r / --reload]                     # Reload configuration
-  sessionintent [-S / --suspend]                    # Suspend session
-  sessionintent --clear-cache                       # Clear cached app detection
-  sessionintent -d -m work                          # Dev mode on 'work' mode
-  sessionintent [-h]                                # Show command usage / help
+  sessionintent select                          # Select mode via UI (default)
+  sessionintent apply work                      # Apply 'work' mode directly
+  sessionintent list                            # List available modes
+  sessionintent status                          # Show current session status
+  sessionintent scan --force                    # Rescan apps, ignore cache
+  sessionintent --dev apply work                # Dry-run 'work' mode
+  sessionintent --backend sway apply work       # Force Sway backend
 """,
-    )
-    
-    parser.add_argument(
-        "-i",
-        "--init",
-        action="store_true",
-        help="Initialize SessionIntent: install workspace extension and default configs (alias: -i)",
-    )
-
-    parser.add_argument(
-        "--setup",
-        action="store_true",
-        help="Set up SessionIntent: scan and select apps to include",
-    )
-
-    parser.add_argument(
-        "--scan-apps",
-        action="store_true",
-        help="Rescan installed apps and update apps.yaml",
-    )
-
-    parser.add_argument(
-        "-m", "--mode", type=str, help="Apply a specific mode (bypasses UI selector)"
     )
 
     parser.add_argument(
         "-c", "--config", type=str, help="Path to custom configuration file"
     )
-
-    parser.add_argument(
-        "-P",
-        "--panic",
-        action="store_true",
-        help="Clear current session state (without killing apps)",
-    )
-
-    parser.add_argument(
-        "-q",
-        "--quit",
-        action="store_true",
-        help="Gracefully close managed applications",
-    )
-
-    parser.add_argument(
-        "--clear",
-        action="store_true",
-        help="Clear state files only (without touching apps)",
-    )
-
-    parser.add_argument(
-        "-s",
-        "--status",
-        action="store_true",
-        help="Show current session status",
-    )
-
-    parser.add_argument(
-        "-l",
-        "--list",
-        action="store_true",
-        help="List available modes",
-    )
-
-    parser.add_argument(
-        "-k",
-        "--kill",
-        action="store_true",
-        help="Force kill managed applications (SIGKILL)",
-    )
-
-    parser.add_argument(
-        "-r",
-        "--reload",
-        action="store_true",
-        help="Reload configuration files",
-    )
-
-    parser.add_argument(
-        "-S",
-        "--suspend",
-        action="store_true",
-        help="Suspend session (pause mode switching)",
-    )
-    
     parser.add_argument(
         "-d",
         "--dev",
         action="store_true",
         help="Dev mode: Print commands instead of executing",
     )
-
-    parser.add_argument(
-        "--clear-cache",
-        action="store_true",
-        help="Clear the cached app detection results",
-    )
-
-    parser.add_argument(
-        "-f",
-        "--force",
-        action="store_true",
-        help="Force fresh app scan, ignore cache (use with --setup or --scan-apps)",
-    )
-
-    parser.add_argument(
-        "--no-cache",
-        action="store_true",
-        help="Disable cache usage for app detection",
-    )
-
-    parser.add_argument(
-        "--version", action="store_true", help="Display version information"
-    )
-
     parser.add_argument(
         "--backend",
         type=str,
@@ -156,6 +60,40 @@ Examples:
         help="Workspace backend override (default: auto-detect)",
     )
 
+    sub = parser.add_subparsers(dest="command", metavar="<command>")
+    sub.add_parser("apply", help="Apply a specific mode").add_argument(
+        "mode", help="Mode to apply"
+    )
+    sub.add_parser("select", help="Select mode via UI (default)")
+    sub.add_parser("list", help="List available modes")
+    sub.add_parser("status", help="Show current session status")
+    sub.add_parser("panic", help="Clear state without killing apps")
+    sub.add_parser("quit", help="Gracefully close managed apps")
+    sub.add_parser("clear", help="Clear state files only")
+    sub.add_parser("kill", help="Force kill managed apps")
+    sub.add_parser("suspend", help="Suspend the current session")
+    sub.add_parser("init", help="Initialize default configs and extension")
+    sub.add_parser("setup", help="Interactive app setup wizard")
+    scan = sub.add_parser("scan", help="Rescan installed apps")
+    scan.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="Force fresh scan, ignore cache",
+    )
+    scan.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Disable cache usage for app detection",
+    )
+    scan.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Clear the cached app detection results",
+    )
+    sub.add_parser("reload", help="Reload configuration files")
+    sub.add_parser("version", help="Display version information")
+
     return parser
 
 
@@ -163,54 +101,6 @@ def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = create_parser()
     return parser.parse_args(args)
-
-
-def validate_args(args: argparse.Namespace) -> tuple:
-    """
-    Validate argument combinations and return error message if invalid.
-
-    Returns:
-        Tuple of (is_valid, error_message)
-    """
-    exclusive_actions = [
-        args.mode is not None,
-        args.panic,
-        args.quit,
-        args.clear,
-        args.setup,
-        args.init,
-        args.scan_apps,
-        args.kill,
-        args.suspend,
-    ]
-
-    conflicting_actions = [
-        args.panic,
-        args.quit,
-        args.clear,
-        args.kill,
-        args.suspend,
-    ]
-
-    if args.mode is not None and sum(conflicting_actions) > 0:
-        return (
-            False,
-            "Cannot use --mode with --panic, --quit, --clear, --kill, or --suspend",
-        )
-
-    if sum(exclusive_actions) > 1:
-        return False, "Only one action flag allowed at a time"
-
-    if args.mode and not args.mode.strip():
-        return False, "Mode name cannot be empty"
-
-    if args.force and not (args.setup or args.scan_apps):
-        return False, "--force must be used with --setup or --scan-apps"
-
-    if args.no_cache and not (args.setup or args.scan_apps):
-        return False, "--no-cache must be used with --setup or --scan-apps"
-
-    return True, None
 
 
 def get_help_message() -> str:

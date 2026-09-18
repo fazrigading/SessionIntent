@@ -6,6 +6,6 @@ SessionIntent CLI Package
 Provides command-line interface utilities.
 """
 
-from .parser import create_parser, parse_args, validate_args, get_help_message
+from .parser import COMMANDS, create_parser, get_help_message, parse_args
 
-__all__ = ["create_parser", "parse_args", "validate_args", "get_help_message"]
+__all__ = ["COMMANDS", "create_parser", "get_help_message", "parse_args"]

@@ -7,7 +7,7 @@ from sessionintent.session import SessionManager
 
 # Mock data
 MOCK_CONFIG = {
-    "version": 1,
+    "version": 2,
     "defaults": {"ask_before_kill": True, "reuse_workspaces": True},
     "hardware_profiles": {
         "battery": {"disable_modes": ["gaming"]},
@@ -494,3 +494,17 @@ modes:
                 modes = manager.get_available_modes()
                 assert "work" in modes
                 assert "gaming" in modes
+
+    def test_v1_config_produces_migration_message(self, tmp_path, capsys):
+        """Test that a version: 1 config prints a migration notice."""
+        config_path = tmp_path / "config.yaml"
+        with open(config_path, "w") as f:
+            f.write("modes:\n  work:\n    label: Work\n")
+
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
+            manager = SessionManager(config_path=str(config_path), dev_mode=True)
+
+        captured = capsys.readouterr()
+        assert "migration" in captured.out.lower()
+        assert manager.config.get("version") == 2
+        assert "work" in manager.config.get("modes", {})
