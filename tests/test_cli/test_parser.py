@@ -29,12 +29,18 @@ class TestCreateParser:
 class TestParseCommands:
     @pytest.mark.parametrize("command", list(COMMANDS))
     def test_each_command_parses(self, command):
-        argv = [command] if command != "apply" else [command, "work"]
+        if command in ("apply", "preview"):
+            argv = [command, "work"]
+        else:
+            argv = [command]
         args = parse_args(argv)
         assert args.command == command
 
     def test_apply_takes_mode(self):
         assert parse_args(["apply", "work"]).mode == "work"
+
+    def test_preview_takes_mode(self):
+        assert parse_args(["preview", "work"]).mode == "work"
 
     def test_no_command_defaults_to_none(self):
         assert parse_args([]).command is None

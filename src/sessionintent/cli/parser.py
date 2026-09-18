@@ -9,6 +9,7 @@ import argparse
 
 COMMANDS = (
     "apply",
+    "preview",
     "select",
     "list",
     "status",
@@ -35,6 +36,7 @@ def create_parser() -> argparse.ArgumentParser:
 Examples:
   sessionintent select                          # Select mode via UI (default)
   sessionintent apply work                      # Apply 'work' mode directly
+  sessionintent preview work                    # Preview 'work' mode
   sessionintent list                            # List available modes
   sessionintent status                          # Show current session status
   sessionintent scan --force                    # Rescan apps, ignore cache
@@ -63,6 +65,9 @@ Examples:
     sub = parser.add_subparsers(dest="command", metavar="<command>")
     sub.add_parser("apply", help="Apply a specific mode").add_argument(
         "mode", help="Mode to apply"
+    )
+    sub.add_parser("preview", help="Preview a mode without applying").add_argument(
+        "mode", help="Mode to preview"
     )
     sub.add_parser("select", help="Select mode via UI (default)")
     sub.add_parser("list", help="List available modes")

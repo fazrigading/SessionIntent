@@ -7,6 +7,7 @@ Usage:
 
 Commands:
     apply <mode>   Apply a specific mode
+    preview <mode> Preview a mode without applying
     select         Select mode via UI (default when no command is given)
     list           List available modes
     status         Show current session status
@@ -112,6 +113,8 @@ def main(argv: list[str] | None = None) -> int:
         manager.list_modes()
     elif command == "apply":
         manager.apply_mode(args.mode)
+    elif command == "preview":
+        manager.preview_mode(args.mode)
     else:  # select
         mode = manager.select_mode()
         if mode:

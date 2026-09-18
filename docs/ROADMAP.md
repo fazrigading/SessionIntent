@@ -126,15 +126,16 @@ sessionintent --tui
 ```
 
 ### Mode Preview
-**Difficulty**: Medium
+**Status**: Done
 
 Show what apps will launch before confirming:
 
 ```bash
-sessionintent --preview work
+sessionintent preview work
 # Output:
-# Workspace 1: firefox (profile: work), vscode
-# Workspace 2: slack, thunderbird
+# Preview: work (Work)
+#   Workspace 1: firefox, vscode
+#   Workspace 2: discord (background: True)
 ```
 
 ---

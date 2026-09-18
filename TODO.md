@@ -79,7 +79,7 @@ Ref: docs/ROADMAP.md
 ### High Priority
 
 - [ ] Add TUI Mode - terminal-based mode selector for headless
-- [ ] Add Mode Preview - show apps before confirming
+- [x] Add Mode Preview - `preview <mode>` shows apps before applying
 
 Ref: docs/ROADMAP.md
 

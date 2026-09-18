@@ -107,6 +107,36 @@ class TestApplyMode:
                     assert state_file.exists()
 
 
+class TestPreviewMode:
+    """Test previewing a mode without applying it."""
+
+    def _manager(self, tmp_path, config_yaml):
+        config_path = tmp_path / "config.yaml"
+        with open(config_path, "w") as f:
+            f.write(config_yaml)
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
+            return SessionManager(config_path=str(config_path), dev_mode=True)
+
+    def test_preview_lists_workspaces_and_params(self, tmp_path, capsys):
+        manager = self._manager(
+            tmp_path,
+            "version: 2\nmodes:\n  work:\n    label: Work\n"
+            "    workspaces:\n      1:\n        - firefox\n      2:\n"
+            "        - vscode:\n            workspace: ~/proj.code-workspace\n",
+        )
+        manager.preview_mode("work")
+        out = capsys.readouterr().out
+        assert "Preview: work (Work)" in out
+        assert "  Workspace 1: firefox" in out
+        assert "  Workspace 2: vscode (workspace:" in out
+        assert "proj.code-workspace" in out
+
+    def test_preview_unknown_mode(self, tmp_path, capsys):
+        manager = self._manager(tmp_path, "version: 2\nmodes: {}\n")
+        manager.preview_mode("nope")
+        assert "not found" in capsys.readouterr().out
+
+
 class TestPanic:
     """Test panic reset functionality."""
 

@@ -328,6 +328,44 @@ class SessionManager:
         clear_state(self.dev_mode)
         print("Clear: State files cleared.")
 
+    def preview_mode(self, mode_name: str) -> None:
+        """
+        Print what applying a mode would do, without launching anything.
+
+        Args:
+            mode_name: Key of the mode to preview
+        """
+        mode_cfg = self.config.get("modes", {}).get(mode_name, {})
+
+        if not mode_cfg:
+            print(f"Mode '{mode_name}' not found.")
+            return
+
+        label = mode_cfg.get("label", mode_name)
+        print(f"Preview: {mode_name} ({label})")
+
+        workspaces = mode_cfg.get("workspaces", {})
+        for ws_num_str in sorted(workspaces.keys(), key=int):
+            ws_value = workspaces[ws_num_str]
+            if isinstance(ws_value, dict):
+                apps_in_ws = ws_value.get("apps", [])
+                monitor = ws_value.get("monitor")
+            else:
+                apps_in_ws = ws_value
+                monitor = None
+
+            entries = []
+            for app_entry in apps_in_ws:
+                app_key, params = self._parse_app_entry(app_entry, mode_cfg)
+                if params:
+                    detail = ", ".join(f"{k}: {v}" for k, v in params.items())
+                    entries.append(f"{app_key} ({detail})")
+                else:
+                    entries.append(app_key)
+
+            monitor_str = f" on {monitor}" if monitor else ""
+            print(f"  Workspace {ws_num_str}{monitor_str}: {', '.join(entries)}")
+
     def _get_managed_apps(self, mode_cfg: dict[str, Any]) -> list[str]:
         """Get list of app keys managed by the current mode."""
         apps = []

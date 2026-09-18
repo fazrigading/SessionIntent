@@ -139,6 +139,9 @@ never calls desktop-specific code directly:
    ├─> apply <name>
    │   └─> Load modes -> Validate -> Apply mode
    │
+   ├─> preview <name>
+   │   └─> Load modes -> Print workspaces and apps (no side effects)
+   │
    ├─> panic
    │   └─> Clear state file (no app termination)
    │

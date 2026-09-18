@@ -58,6 +58,9 @@ sessionintent select
 # Apply specific mode directly (without wofi/rofi)
 sessionintent apply browsing
 
+# Preview a mode without applying
+sessionintent preview browsing
+
 # Session control
 sessionintent panic        # Clear state (no app termination)
 sessionintent quit         # Gracefully close managed apps

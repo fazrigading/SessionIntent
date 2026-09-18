@@ -26,6 +26,7 @@ Phase 4 replaces the flat flag soup with subcommands and enforces a
 | `-f` / `--force` | `scan --force` |
 | `--no-cache` | `scan --no-cache` |
 | `--clear-cache` | `scan --clear-cache` |
+| (new) | `preview <mode>` — show apps/workspaces without applying |
 
 Global flags come before the command:
 
