@@ -1,0 +1,6 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://github.com/fazrigading/SessionIntent
+
+Files: *
+Copyright: 2026 Fazri Gading
+License: GPL-3.0-or-later

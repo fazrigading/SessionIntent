@@ -59,8 +59,8 @@ Ref: docs/ROADMAP.md
 
 ### High Priority
 
-- [ ] Create AUR Package (PKGBUILD for Arch Linux)
-- [ ] Create Debian/Ubuntu Packages (.deb)
+- [ ] Publish AUR Package (files: `packaging/arch/PKGBUILD`; needs checksums + upload)
+- [ ] Publish Debian/Ubuntu Packages (files: `debian/`; needs upload)
 
 ### Medium Priority
 

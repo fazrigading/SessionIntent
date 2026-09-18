@@ -109,7 +109,7 @@ sessionintent --config ~/other.yaml list
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+GPL-3.0-or-later - see [LICENSE](LICENSE) for details.
 
 ## Contributing
 

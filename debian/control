@@ -1,0 +1,17 @@
+Source: sessionintent
+Section: utils
+Priority: optional
+Maintainer: Fazri Gading <fazrigading@gmail.com>
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools, python3-yaml
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: sessionintent
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, python3-yaml
+Recommends: wofi | rofi, wmctrl, xdotool
+Description: declarative session orchestration for Linux desktops
+ SessionIntent switches between intent-based modes (work, gaming,
+ browsing) that launch, reuse, and organize applications across
+ workspaces. Backends are auto-detected: GNOME, KDE Plasma, Hyprland,
+ Sway, generic wlroots, and an EWMH fallback.

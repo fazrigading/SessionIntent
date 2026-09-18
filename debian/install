@@ -1,0 +1,2 @@
+examples/apps.example.yaml usr/share/sessionintent
+examples/config.example.yaml usr/share/sessionintent/examples

@@ -1,0 +1,6 @@
+sessionintent (0.3.3) unstable; urgency=medium
+
+  * Subcommand CLI, version 2 config schema, multi-desktop providers.
+  * See CHANGELOG.md for details.
+
+ -- Fazri Gading <fazrigading@gmail.com>  Fri, 18 Sep 2026 20:30:00 +0800

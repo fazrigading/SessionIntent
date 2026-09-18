@@ -77,9 +77,7 @@ Lives in `src/sessionintent/providers/workspace/sway.py` and `wlroots.py`.
 ## Packaging
 
 ### AUR Package (Arch Linux)
-**Difficulty**: Low
-
-Create PKGBUILD for Arch User Repository.
+**Status**: PKGBUILD in `packaging/arch/` (needs `updpkgsums` on release + AUR upload).
 
 ### Flatpak
 **Difficulty**: Medium
@@ -87,9 +85,7 @@ Create PKGBUILD for Arch User Repository.
 Package as Flatpak for universal Linux distribution.
 
 ### Debian/Ubuntu Packages
-**Difficulty**: Low
-
-Create .deb package for Debian-based distributions.
+**Status**: Native source package in `debian/` (needs Salsa/PPA upload).
 
 ---
 

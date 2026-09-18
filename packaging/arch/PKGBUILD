@@ -1,0 +1,30 @@
+# Maintainer: Fazri Gading <fazrigading@gmail.com>
+pkgname=sessionintent
+pkgver=0.3.3
+pkgrel=1
+pkgdesc='Declarative session orchestration for Linux desktops'
+arch=('any')
+url='https://github.com/fazrigading/SessionIntent'
+license=('GPL-3.0-or-later')
+depends=('python' 'python-yaml')
+optdepends=('wofi: Wayland mode selector'
+            'rofi: X11/Wayland mode selector'
+            'wmctrl: EWMH workspace fallback'
+            'xdotool: window waiting')
+makedepends=('python-build' 'python-installer' 'python-setuptools')
+# Fill checksums on release with: updpkgsums
+source=("$pkgname-$pkgver.tar.gz::https://github.com/fazrigading/SessionIntent/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+	cd "$pkgname-$pkgver"
+	python -m build --wheel --no-isolation
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+	python -m installer --destdir="$pkgdir" dist/*.whl
+	install -Dm644 examples/apps.example.yaml "$pkgdir/usr/share/sessionintent/apps.yaml"
+	install -Dm644 examples/config.example.yaml "$pkgdir/usr/share/sessionintent/examples/config.yaml.example"
+	install -Dm644 man/sessionintent.1 "$pkgdir/usr/share/man/man1/sessionintent.1"
+}
