@@ -3,20 +3,6 @@
 ## Developer Mode
 
 SessionIntent includes a **Developer Mode** for safe testing without side effects.
-
-### Commands
-
-- `apply <name>`: Directly apply a specific mode, bypassing the selection menu.
-- `--config <path>`: Specify a custom configuration file (global flag).
-- `panic`: Clear current state (no app termination).
-- `quit`: Gracefully close managed apps.
-- `clear`: Clear state files only.
-- `kill`: Force kill managed apps.
-- `status`: Show current session status.
-- `list`: List available modes.
-- `reload`: Reload configuration files.
-- `suspend`: Suspend session.
-
 Global flags (`--dev`, `--config`, `--backend`) come before the command.
 
 ### How to Test
@@ -27,7 +13,7 @@ Global flags (`--dev`, `--config`, `--backend`) come before the command.
 sessionintent --dev apply browsing
 ```
 
-This will simulate switching workspaces and launching apps defined in the "browsing" mode.
+This simulates switching workspaces and launching apps defined in the "browsing" mode.
 
 #### 2. Test with a custom config
 
@@ -46,70 +32,98 @@ sessionintent --dev panic
 ```bash
 sessionintent
 # or with dev mode
-sessionintent -d
+sessionintent --dev select
 ```
 
-> Note: UI still shows, but actions are dry-run.
+> Note: UI still shows, but actions are dry-run. Without `wofi`/`rofi`,
+> selection falls back to the terminal (TUI).
 
-#### 5. Test status and listing
+#### 5. Test status, listing, and preview
 
 ```bash
 sessionintent status   # Show status
 sessionintent list     # List modes
+sessionintent preview work  # Show what apply would do
 sessionintent reload   # Reload configuration
 ```
 
----
+#### 6. Test another backend
+
+```bash
+sessionintent --dev --backend ewmh apply browsing
+sessionintent --dev --backend sway list
+```
 
 ## Unit Tests
 
 ### Running Tests
 
 ```bash
-# Installpytest
-pip install pytest
+# Install test dependencies
+pip install pytest PyYAML
 
 # Run all tests
-pytest
+python3 -m pytest
 
 # Run with verbosity
-pytest -v
+python3 -m pytest -v --tb=short
 
-# Run specific test
-pytest tests/test_session/test_manager.py -q
+# Run a single test file
+python3 -m pytest tests/test_session/test_manager.py
 
 # Run with coverage
-pytest --cov=sessionintent --cov-report=xml
+python3 -m pytest --cov=sessionintent --cov-report=term-missing
 ```
+
+### Quality Gates
+
+Every change must pass, in order:
+
+```bash
+ruff check src/ tests/
+mypy src/
+python3 -m pytest
+pip install . && sessionintent version
+```
+
+See `.github/workflows/ci.yml` — CI runs the same checks.
 
 ### Test Structure
 
 ```
 tests/
 ├── test_app/          # App launching, templates, detection, setup, cache
-├── test_cli/          # Argument parsing
-├── test_config/       # Config loading and validation
-├── test_constants/    # Paths and defaults
+├── test_cli/          # Subcommand parsing
+├── test_config/       # Loading, validation, v1→v2 migration
+├── test_constants/    # Paths (incl. XDG) and defaults
 ├── test_extensions/   # GNOME extension management
 ├── test_hardware/     # Power detection
-├── test_session/      # SessionManager and state
+├── test_plugins/      # Plugin system and manager wiring
+├── test_providers/    # Detection, factory, TUI, per-desktop providers
+├── test_session/      # SessionManager, state, notifications
 ├── test_ui/           # Selector and display formatting
-└── test_workspace/    # Workspace switching
+└── test_workspace/    # GNOME workspace manager
 ```
+
+Provider and detection tests mock `subprocess` and the environment —
+no desktop session is needed. Anything requiring real hardware
+(River/Labwc runs, multi-DE matrix) is a manual checklist, see
+`plans/05-testing-and-ci.md`.
 
 ### Writing Tests
 
-1. **Unit Tests**: Test individual functions
-2. **Integration Tests**: Test full workflows
-3. **Config Tests**: Validate YAML parsing
+1. **Unit Tests**: Test individual functions; mock `subprocess` and I/O.
+2. **Provider Tests**: Assert command construction, not execution.
+3. **Config Tests**: Validate YAML parsing and schema errors.
 
 Example:
 
 ```python
-def test_config_loading():
-    manager = SessionManager(dev_mode=True)
-    manager.load_config()
-    assert manager.config is not None
+def test_config_loading(tmp_path):
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text("version: 2\nmodes:\n  work:\n    workspaces: {}\n")
+    manager = SessionManager(config_path=str(config_path), dev_mode=True)
+    assert manager.config.get("version") == 2
 ```
 
 ---
@@ -120,7 +134,7 @@ def test_config_loading():
 
 1. **Initialize Config**
    ```bash
-   sessionintent -i
+   sessionintent init
    ```
 
 2. **Edit config** (add test mode)
@@ -130,7 +144,7 @@ def test_config_loading():
 
 3. **Test dry-run**
    ```bash
-   sessionintent -d -m test-mode
+   sessionintent --dev apply test-mode
    ```
 
 4. **Test selection** (if UI available)
@@ -140,7 +154,7 @@ def test_config_loading():
 
 5. **Verify state**
    ```bash
-   sessionintent -s
+   sessionintent status
    # or
    cat ~/.local/state/sessionintent/current
    ```
@@ -148,13 +162,6 @@ def test_config_loading():
 ---
 
 ## Debugging
-
-### Enable Verbose Output
-
-```bash
-# Add print statements or use logging
-python3 -c "import logging; logging.basicConfig(level=logging.DEBUG)"
-```
 
 ### Check Config Validation
 
@@ -172,9 +179,13 @@ which firefox
 pgrep -f firefox
 ```
 
+### Logs
+
+SessionIntent logs to `~/.local/state/sessionintent/sessionintent.log`.
+
 ---
 
-##常见 Testing Scenarios
+## Testing Scenarios
 
 ### Scenario 1: App Not Launching
 
@@ -185,7 +196,7 @@ pgrep -f firefox
 ### Scenario 2: Wrong Workspace
 
 1. Check workspace numbers in config
-2. Verify GNOME shell D-Bus commands
+2. Verify backend with `sessionintent --dev --backend <name> apply <mode>`
 3. Test with `--dev` to see output
 
 ### Scenario 3: Template Not Resolving
@@ -193,16 +204,3 @@ pgrep -f firefox
 1. Check YAML syntax
 2. Verify parameter in mode config
 3. Test with simple example
-
----
-
-## CI Testing
-
-SessionIntent uses GitHub Actions for CI:
-
-```bash
-# Run all checks locally
-make test
-```
-
-See `.github/workflows/ci.yml` for details.

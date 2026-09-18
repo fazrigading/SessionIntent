@@ -128,14 +128,14 @@ paru -S sessionintent
 
 ### Fedora
 
-SessionIntent is designed for Linux with GNOME Wayland.
+SessionIntent supports GNOME, KDE, Hyprland, Sway, wlroots, and EWMH (auto-detected).
 
 ```bash
-# Install dependencies
+# Install dependencies (GNOME/Wayland example)
 sudo dnf install python3-pyyaml wofi gnome-shell
 
 # Install SessionIntent
-curl -fsSL https://example.com/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
 ### Ubuntu/Debian
@@ -157,7 +157,7 @@ Use the general installation method:
 
 ```bash
 pip3 install PyYAML
-curl -fsSL https://example.com/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
 ## Verification

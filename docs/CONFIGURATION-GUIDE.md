@@ -229,9 +229,11 @@ modes:
     # Heavy mode (disabled on battery)
 ```
 
-## GNOME Extensions
+## Desktop Extensions
 
-SessionIntent can enable or disable GNOME Shell extensions per mode.
+SessionIntent can enable or disable desktop extensions per mode
+(GNOME Shell extensions; Plasma applets are listed, with enable/disable
+as a manual step).
 
 ### Extension Configuration
 
@@ -264,7 +266,7 @@ The resolver handles all these formats.
 
 ### Available Extensions
 
-SessionIntent includes a registry of common GNOME extensions. You can use any of these names in your config:
+SessionIntent includes a registry of common extensions. You can use any of these names in your config:
 
 - `dash to panel` - Dash to panel
 - `caffeine` - Prevent auto-suspend

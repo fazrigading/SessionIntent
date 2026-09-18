@@ -4,7 +4,7 @@
 
 ### What is SessionIntent?
 
-SessionIntent is a session orchestration system for GNOME Wayland. It lets you switch between different "modes" (work, gaming, browsing, etc.) that automatically launch and organize your applications across workspaces.
+SessionIntent is a session orchestration system for Linux desktops (GNOME, KDE Plasma, Hyprland, Sway, wlroots, EWMH). It lets you switch between different "modes" (work, gaming, browsing, etc.) that automatically launch and organize your applications across workspaces.
 
 ### Why create another session manager?
 
@@ -14,7 +14,7 @@ Existing tools either:
 - Lack hardware awareness
 - Are destructive (kill processes)
 
-SessionIntent focuses on simplicity, safety, and GNOME integration.
+SessionIntent focuses on simplicity, safety, and desktop integration.
 
 ### Is SessionIntent production-ready?
 
@@ -26,10 +26,9 @@ Yes! We have:
 
 ### Is SessionIntent distro-agnostic?
 
-Designed for Linux with GNOME Wayland. It should work on any Linux distribution running GNOME.
+Designed for Linux. Supported desktops: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and X11/EWMH (auto-detected, `--backend` overrides).
 - Python 3.10+
 - PyYAML
-- GNOME Wayland session
 
 ## Configuration
 
@@ -131,7 +130,7 @@ cat ~/.local/state/sessionintent/current
 
 ### Can I bind to keyboard shortcut?
 
-Yes! In GNOME Settings → Keyboard → Custom Shortcuts:
+Yes! In your desktop's keyboard settings (e.g. GNOME Settings → Keyboard → Custom Shortcuts):
 
 ```
 Name: Session Intent

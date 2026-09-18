@@ -4,7 +4,7 @@ This document provides a high-level overview of SessionIntent's architecture.
 
 ## Overview
 
-SessionIntent is a CLI tool that orchestrates GNOME session states based on user-defined "modes". Each mode declaratively specifies:
+SessionIntent is a CLI tool that orchestrates desktop session states based on user-defined "modes". Each mode declaratively specifies:
 - Which applications to launch
 - Which workspaces to use
 - Application-specific parameters (profiles, workspaces, URLs)
@@ -42,7 +42,7 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
 │  └───────────────────────────────────────────────────────┘  │
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │  Workspace Manager                                    │  │
-│  │  - Switch GNOME workspaces                            │  │
+│  │  - Switch workspaces (per-DE provider)              │  │
 │  │  - Track current workspace state                      │  │
 │  └───────────────────────────────────────────────────────┘  │
 │  ┌───────────────────────────────────────────────────────┐  │
@@ -56,7 +56,7 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                      System Services                        │
-│  GNOME Shell (gdbus)                                        │
+│  GNOME Shell / KWin / Hyprland / Sway / EWMH            │
 │  Process Manager (pgrep)                                    │
 │  Power Supply (/sys/class/power_supply/)                    │
 │  XDG Directories (~/.config/sessionintent/)                 │
@@ -111,9 +111,12 @@ never calls desktop-specific code directly:
   null provider where unsupported
 - **Detection** (`providers/detect.py`): `DesktopProfile` from XDG variables
   plus tool probing; `get_providers()` factory (unknown desktop keeps GNOME
-  behavior; `backend="gnome"|"ewmh"` overrides)
+  behavior; `--backend` overrides with one of gnome, ewmh, kde,
+  hyprland, sway, wlroots)
 
-**GNOME Shell (D-Bus)**:
+**Desktop backends** (one per environment, see above):
+
+**GNOME (D-Bus example)**:
 - Workspace switching
 - Method: `org.gnome.Shell.Eval`
 
@@ -222,7 +225,8 @@ Launch sequence:
 
 ### 4. Workspace Manager
 
-Uses GNOME shell D-Bus API:
+Delegates to the active workspace provider. The GNOME provider, for
+example, uses the shell D-Bus API:
 
 ```bash
 gdbus call --session \
@@ -337,7 +341,7 @@ modes:
 
 - Config load: <10ms (YAML is fast)
 - App check: ~5ms (pgrep overhead)
-- Workspace switch: ~200ms (GNOME D-Bus)
+- Workspace switch: ~200ms (backend call)
 - App launch: Variable (depends on app)
 
 Total mode switch: <500ms (typical)

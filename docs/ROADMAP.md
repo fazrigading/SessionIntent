@@ -1,6 +1,7 @@
 # SessionIntent Roadmap
 
-This document outlines potential future enhancements and areas for community contribution.
+Shipped work is recorded as done below; remaining ideas are marked planned.
+The rework plan lives in `plans/`.
 
 ## Stabilized Baseline (Phase 1)
 
@@ -116,7 +117,7 @@ sessionintent preview work
 ### CI/CD Improvements
 - Add more unit tests
 - Add integration tests
-- Test on multiple GNOME versions
+- Test on multiple desktops and versions
 
 ---
 
