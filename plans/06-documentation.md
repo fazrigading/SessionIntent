@@ -18,7 +18,7 @@ source of the drift.
 | `docs/FAQ.md` | Sync | Update commands and answers to the new CLI. |
 | `docs/ROADMAP.md` | Rewrite | Make it a single source of future-work status; remove completed-feature claims that are not wired. |
 | `TODO.md` | Update | Point to `plans/` as the source of truth for the rework. |
-| `LINUX_DESKTOP_COMPATIBILITY_PLAN.md` | Fold into `plans/` or mark as superseded | Its provider plan is now absorbed by `02-vision.md` and `03-cli-and-config.md`. |
+| `LINUX_DESKTOP_COMPATIBILITY_PLAN.md` | Done: moved to `plans/00-superseded-compatibility-plan.md`, as-built record at `plans/08-desktop-compatibility.md` |
 
 ## 2. Principles
 

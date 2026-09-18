@@ -26,7 +26,7 @@ Async `launch_apps_async` exists but `apply_mode` uses the sync path.
 
 ## Linux Desktop Compatibility Initiative
 
-A comprehensive technical plan has been developed to transition SessionIntent beyond GNOME/Wayland to support multiple Linux desktop environments. See [LINUX_DESKTOP_COMPATIBILITY_PLAN.md](../LINUX_DESKTOP_COMPATIBILITY_PLAN.md) for detailed architecture.
+A comprehensive technical plan has been developed to transition SessionIntent beyond GNOME/Wayland to support multiple Linux desktop environments. See [plans/08-desktop-compatibility.md](../plans/08-desktop-compatibility.md) for the as-built record (the original proposal is kept at `plans/00-superseded-compatibility-plan.md`).
 
 ### Key Components
 - **Provider Pattern**: Abstract display, workspace, and extension layers

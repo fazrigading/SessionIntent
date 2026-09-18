@@ -27,8 +27,8 @@ items below are manual verification, not implementation.
 - [x] Generic Wayland/wlroots chain + EWMH fallback (wmctrl/xdotool)
 
 ### Technical Plan
-Superseded by `plans/` (see `plans/04-phases.md`). The old
-`LINUX_DESKTOP_COMPATIBILITY_PLAN.md` is kept for history only.
+Superseded by `plans/` (see `plans/04-phases.md`). The original
+compatibility proposal is kept at `plans/00-superseded-compatibility-plan.md`.
 
 ### Notes
 Ref: docs/ROADMAP.md

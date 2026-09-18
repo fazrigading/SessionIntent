@@ -13,6 +13,7 @@ docs. Where the current documentation claims features that are not wired up, the
 
 | File | Purpose |
 |------|---------|
+| [`00-superseded-compatibility-plan.md`](00-superseded-compatibility-plan.md) | Original desktop-compat proposal (superseded, kept for history). |
 | [`01-audit.md`](01-audit.md) | Current-state audit: real architecture, concrete bugs, dead code, doc drift. |
 | [`02-vision.md`](02-vision.md) | Target architecture, design principles, package layout, provider interfaces. |
 | [`03-cli-and-config.md`](03-cli-and-config.md) | Target CLI surface and config schema (breaking redesign). |
@@ -20,6 +21,7 @@ docs. Where the current documentation claims features that are not wired up, the
 | [`05-testing-and-ci.md`](05-testing-and-ci.md) | Test strategy, CI/CD fixes, packaging fixes. |
 | [`06-documentation.md`](06-documentation.md) | Documentation rewrite and consolidation plan. |
 | [`07-decisions-and-risks.md`](07-decisions-and-risks.md) | Architecture decision records, trade-offs, and risks. |
+| [`08-desktop-compatibility.md`](08-desktop-compatibility.md) | As-built record: what the compat plan became in code. |
 
 ## How to read this plan
 
