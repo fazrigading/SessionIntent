@@ -6,15 +6,24 @@ All path constants are defined here for easy configuration.
 import pathlib
 import os
 
-# Directories
-CONFIG_DIR = pathlib.Path.home() / ".config" / "sessionintent"
-SYSTEM_CONFIG_DIR = pathlib.Path("/usr/share/sessionintent")
-STATE_DIR = (
-    pathlib.Path(
-        os.environ.get("XDG_STATE_HOME", pathlib.Path.home() / ".local" / "state")
-    )
-    / "sessionintent"
+
+def _xdg_dir(env_var: str, fallback: pathlib.Path) -> pathlib.Path:
+    """Resolve an XDG base directory (empty counts as unset per spec)."""
+    override = os.environ.get(env_var)
+    if override:
+        return pathlib.Path(override)
+    return fallback
+
+
+XDG_CONFIG_HOME = _xdg_dir("XDG_CONFIG_HOME", pathlib.Path.home() / ".config")
+XDG_STATE_HOME = _xdg_dir(
+    "XDG_STATE_HOME", pathlib.Path.home() / ".local" / "state"
 )
+
+# Directories
+CONFIG_DIR = XDG_CONFIG_HOME / "sessionintent"
+SYSTEM_CONFIG_DIR = pathlib.Path("/usr/share/sessionintent")
+STATE_DIR = XDG_STATE_HOME / "sessionintent"
 
 # Config files
 CONFIG_PATH = CONFIG_DIR / "config.yaml"

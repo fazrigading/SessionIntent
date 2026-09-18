@@ -4,6 +4,8 @@ Provides centralized access to all configuration constants.
 """
 
 from .paths import (
+    XDG_CONFIG_HOME,
+    XDG_STATE_HOME,
     CONFIG_DIR,
     SYSTEM_CONFIG_DIR,
     STATE_DIR,
@@ -21,6 +23,8 @@ from .defaults import DEFAULT_APPS, DEFAULT_CONFIG
 
 __all__ = [
     # Paths
+    "XDG_CONFIG_HOME",
+    "XDG_STATE_HOME",
     "CONFIG_DIR",
     "SYSTEM_CONFIG_DIR",
     "STATE_DIR",

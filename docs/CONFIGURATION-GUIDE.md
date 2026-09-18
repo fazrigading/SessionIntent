@@ -15,6 +15,9 @@ SessionIntent reads from two main configuration files:
 - **user apps**: `~/.config/sessionintent/apps.yaml`
 - **system apps**: `/usr/share/sessionintent/apps.yaml`
 
+The user config directory honors `XDG_CONFIG_HOME` (and state honors
+`XDG_STATE_HOME`); the paths above are the defaults.
+
 User configs override system configs.
 
 ## Config.yaml Structure (`version: 2`)

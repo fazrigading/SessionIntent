@@ -9,7 +9,7 @@ This document tracks planned features and improvements for the SessionIntent pro
 
 ### High Priority (Phase 1: Foundation)
 
-- [ ] Implement XDG-compliant config paths in src/constants/paths.py
+- [x] XDG-compliant config paths (`XDG_CONFIG_HOME`/`XDG_STATE_HOME` with fallbacks)
 - [ ] Implement automated session detection system (src/session/detector.py)
 - [ ] Create TUI provider as universal fallback
 - [ ] Add CLI flags for manual override (--force-backend)
