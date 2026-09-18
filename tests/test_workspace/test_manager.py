@@ -3,7 +3,7 @@
 from unittest.mock import patch, MagicMock
 import subprocess
 
-from src.workspace.manager import (
+from sessionintent.providers.workspace.gnome import (
     switch_workspace,
     get_current_workspace,
     get_workspace_count,
@@ -38,7 +38,7 @@ class TestSocketCall:
 
     
 
-    @patch("src.workspace.manager._get_socket_path")
+    @patch("sessionintent.providers.workspace.gnome._get_socket_path")
     def test_socket_call_no_runtime_dir(self, mock_get_path):
         """Test socket call when XDG_RUNTIME_DIR not set."""
         mock_get_path.return_value = None
@@ -46,7 +46,7 @@ class TestSocketCall:
         assert ok is False
         assert "XDG_RUNTIME_DIR" in resp
 
-    @patch("src.workspace.manager._get_socket_path")
+    @patch("sessionintent.providers.workspace.gnome._get_socket_path")
     def test_socket_call_socket_not_found(self, mock_get_path):
         """Test socket call when socket doesn't exist."""
         mock_get_path.return_value = "/tmp/nonexistent.sock"
@@ -62,13 +62,13 @@ class TestIsExtensionAvailable:
         """Test extension availability check in dev mode."""
         assert _is_extension_available(dev_mode=True) is True
 
-    @patch("src.workspace.manager._socket_call")
+    @patch("sessionintent.providers.workspace.gnome._socket_call")
     def test_socket_available(self, mock_socket_call):
         """Test when socket is available."""
         mock_socket_call.return_value = (True, "0")
         assert _is_extension_available(dev_mode=False) is True
 
-    @patch("src.workspace.manager._socket_call")
+    @patch("sessionintent.providers.workspace.gnome._socket_call")
     def test_socket_not_available(self, mock_socket_call):
         """Test when socket is not available."""
         mock_socket_call.return_value = (False, "Socket not found")
@@ -92,14 +92,14 @@ class TestGdbusWorkspaceCall:
         assert ok is True
         assert "uint32" in resp
 
-    @patch("src.workspace.manager.subprocess.run")
+    @patch("sessionintent.providers.workspace.gnome.subprocess.run")
     def test_real_mode_failure(self, mock_run):
         """Test failed gdbus call."""
         mock_run.return_value = MagicMock(returncode=1, stdout="")
         ok, resp = _gdbus_workspace_call("Main.wm.get_active_workspace_index()", dev_mode=False)
         assert ok is False
 
-    @patch("src.workspace.manager.subprocess.run")
+    @patch("sessionintent.providers.workspace.gnome.subprocess.run")
     def test_timeout(self, mock_run):
         """Test gdbus call timeout."""
         mock_run.side_effect = subprocess.TimeoutExpired("cmd", 5)
@@ -125,22 +125,22 @@ class TestSwitchWorkspace:
         assert "workspace 2" in captured.out
         assert "HDMI-1" in captured.out
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_switch_workspace_socket_success(self, mock_available):
         """Test switching via socket."""
         mock_available.return_value = True
-        with patch("src.workspace.manager._socket_call") as mock_call:
+        with patch("sessionintent.providers.workspace.gnome._socket_call") as mock_call:
             mock_call.return_value = (True, "OK")
             result = switch_workspace(3, dev_mode=False)
             assert result is True
             mock_call.assert_called_once()
             assert "SWITCH 2" in mock_call.call_args[0][0]
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_switch_workspace_socket_with_monitor(self, mock_available):
         """Test switching via socket with monitor."""
         mock_available.return_value = True
-        with patch("src.workspace.manager._socket_call") as mock_call:
+        with patch("sessionintent.providers.workspace.gnome._socket_call") as mock_call:
             mock_call.return_value = (True, "OK")
             result = switch_workspace(2, dev_mode=False, monitor="DP-1")
             assert result is True
@@ -148,22 +148,22 @@ class TestSwitchWorkspace:
             assert "SWITCH 1" in call_str
             assert "DP-1" in call_str
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_switch_workspace_gdbus_fallback(self, mock_available):
         """Test gdbus fallback when socket unavailable."""
         mock_available.return_value = False
-        with patch("src.workspace.manager._gdbus_workspace_call") as mock_gdbus:
+        with patch("sessionintent.providers.workspace.gnome._gdbus_workspace_call") as mock_gdbus:
             with patch("time.sleep"):
                 mock_gdbus.return_value = (True, "")
                 result = switch_workspace(2, dev_mode=False)
                 assert result is True
                 mock_gdbus.assert_called_once()
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_switch_workspace_all_methods_fail(self, mock_available):
         """Test failure when both socket and gdbus fail."""
         mock_available.return_value = False
-        with patch("src.workspace.manager._gdbus_workspace_call") as mock_gdbus:
+        with patch("sessionintent.providers.workspace.gnome._gdbus_workspace_call") as mock_gdbus:
             mock_gdbus.return_value = (False, "error")
             result = switch_workspace(1, dev_mode=False)
             assert result is False
@@ -176,7 +176,7 @@ class TestWaitForWorkspace:
         """Test wait in dev mode returns immediately."""
         assert wait_for_workspace(1, dev_mode=True) is True
 
-    @patch("src.workspace.manager.get_current_workspace")
+    @patch("sessionintent.providers.workspace.gnome.get_current_workspace")
     def test_wait_success(self, mock_current):
         """Test successful wait."""
         mock_current.side_effect = [1, 2, 3]
@@ -184,7 +184,7 @@ class TestWaitForWorkspace:
         assert result is True
         assert mock_current.call_count == 2
 
-    @patch("src.workspace.manager.get_current_workspace")
+    @patch("sessionintent.providers.workspace.gnome.get_current_workspace")
     def test_wait_timeout(self, mock_current):
         """Test wait times out."""
         mock_current.return_value = 1
@@ -200,29 +200,29 @@ class TestGetCurrentWorkspace:
         result = get_current_workspace(dev_mode=True)
         assert result == 1
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_get_current_workspace_socket(self, mock_available):
         """Test getting current workspace via socket."""
         mock_available.return_value = True
-        with patch("src.workspace.manager._socket_call") as mock_call:
+        with patch("sessionintent.providers.workspace.gnome._socket_call") as mock_call:
             mock_call.return_value = (True, "2")
             result = get_current_workspace(dev_mode=False)
             assert result == 3
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_get_current_workspace_gdbus_fallback(self, mock_available):
         """Test getting current workspace via gdbus."""
         mock_available.return_value = False
-        with patch("src.workspace.manager._gdbus_workspace_call") as mock_gdbus:
+        with patch("sessionintent.providers.workspace.gnome._gdbus_workspace_call") as mock_gdbus:
             mock_gdbus.return_value = (True, "(uint32 2,)")
             result = get_current_workspace(dev_mode=False)
             assert result == 3
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_get_current_workspace_no_gnome(self, mock_available):
         """Test getting current workspace when GNOME not available."""
         mock_available.return_value = False
-        with patch("src.workspace.manager._gdbus_workspace_call") as mock_gdbus:
+        with patch("sessionintent.providers.workspace.gnome._gdbus_workspace_call") as mock_gdbus:
             mock_gdbus.return_value = (False, "error")
             result = get_current_workspace(dev_mode=False)
             assert result is None
@@ -236,29 +236,29 @@ class TestGetWorkspaceCount:
         result = get_workspace_count(dev_mode=True)
         assert result == 1
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_get_workspace_count_socket(self, mock_available):
         """Test getting workspace count via socket."""
         mock_available.return_value = True
-        with patch("src.workspace.manager._socket_call") as mock_call:
+        with patch("sessionintent.providers.workspace.gnome._socket_call") as mock_call:
             mock_call.return_value = (True, "4")
             result = get_workspace_count(dev_mode=False)
             assert result == 4
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_get_workspace_count_gdbus_fallback(self, mock_available):
         """Test getting workspace count via gdbus."""
         mock_available.return_value = False
-        with patch("src.workspace.manager._gdbus_workspace_call") as mock_gdbus:
+        with patch("sessionintent.providers.workspace.gnome._gdbus_workspace_call") as mock_gdbus:
             mock_gdbus.return_value = (True, "(uint32 3,)")
             result = get_workspace_count(dev_mode=False)
             assert result == 3
 
-    @patch("src.workspace.manager._is_extension_available")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_available")
     def test_get_workspace_count_error(self, mock_available):
         """Test error handling for workspace count."""
         mock_available.return_value = False
-        with patch("src.workspace.manager._gdbus_workspace_call") as mock_gdbus:
+        with patch("sessionintent.providers.workspace.gnome._gdbus_workspace_call") as mock_gdbus:
             mock_gdbus.return_value = (False, "error")
             result = get_workspace_count(dev_mode=False)
             assert result == 1
@@ -273,7 +273,7 @@ class TestEnsureExtension:
         assert ok is True
         assert "DEV" in msg
 
-    @patch("src.workspace.manager._is_extension_enabled")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_enabled")
     @patch("os.path.exists")
     def test_ensure_extension_already_installed(self, mock_exists, mock_enabled):
         """Test when extension is already installed but not enabled."""
@@ -281,14 +281,14 @@ class TestEnsureExtension:
             return "sessionintent" in str(path)
         mock_exists.side_effect = exists_side_effect
         mock_enabled.return_value = False
-        with patch("src.workspace.manager._enable_extension") as mock_enable:
+        with patch("sessionintent.providers.workspace.gnome._enable_extension") as mock_enable:
             mock_enable.return_value = (True, "Enabled")
             ok, msg = ensure_extension(dev_mode=False)
             assert ok is True
             assert "Restart GNOME Shell" in msg
 
-    @patch("src.workspace.manager._is_extension_enabled")
-    @patch("src.workspace.manager._enable_extension")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_enabled")
+    @patch("sessionintent.providers.workspace.gnome._enable_extension")
     @patch("os.path.exists")
     def test_ensure_extension_enable_fails(self, mock_exists, mock_enable, mock_enabled):
         """Test when enabling the extension fails."""
@@ -306,7 +306,7 @@ class TestEnsureExtension:
         assert ok is False
         assert "Failed to enable" in msg
 
-    @patch("src.workspace.manager._is_extension_enabled")
+    @patch("sessionintent.providers.workspace.gnome._is_extension_enabled")
     @patch("os.path.exists")
     def test_ensure_extension_already_enabled(self, mock_exists, mock_enabled):
         """Test when extension is already enabled."""

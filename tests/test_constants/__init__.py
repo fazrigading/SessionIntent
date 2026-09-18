@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from src.constants.paths import (
+from sessionintent.constants.paths import (
     CONFIG_DIR,
     STATE_DIR,
     CONFIG_PATH,
@@ -44,7 +44,7 @@ class TestDefaults:
 
     def test_default_apps_is_string(self):
         """Test DEFAULT_APPS is a string."""
-        from src.constants.defaults import DEFAULT_APPS
+        from sessionintent.constants.defaults import DEFAULT_APPS
 
         assert isinstance(DEFAULT_APPS, str)
         assert "firefox" in DEFAULT_APPS
@@ -52,7 +52,7 @@ class TestDefaults:
 
     def test_default_config_is_string(self):
         """Test DEFAULT_CONFIG is a string."""
-        from src.constants.defaults import DEFAULT_CONFIG
+        from sessionintent.constants.defaults import DEFAULT_CONFIG
 
         assert isinstance(DEFAULT_CONFIG, str)
         assert "modes" in DEFAULT_CONFIG

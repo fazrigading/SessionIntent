@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.ui.display import (
+from sessionintent.ui.display import (
     format_mode_menu,
     format_menu_entries,
     format_mode_info,

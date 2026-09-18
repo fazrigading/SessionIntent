@@ -8,7 +8,7 @@ from __future__ import annotations
 import subprocess
 from typing import Any
 
-from ..hardware import is_on_ac
+from ...hardware import is_on_ac
 
 
 def select_mode(config: dict[str, Any]) -> str | None:
@@ -22,11 +22,23 @@ def select_mode(config: dict[str, Any]) -> str | None:
         Selected mode key, or None if no selection
     """
     available_modes = get_available_modes(config)
+    return present_modes(available_modes)
 
-    if not available_modes:
+
+def present_modes(modes: dict[str, Any]) -> str | None:
+    """
+    Present already-filtered modes in wofi/rofi and return the selection.
+
+    Args:
+        modes: Filtered mode configurations
+
+    Returns:
+        Selected mode key, or None if no selection
+    """
+    if not modes:
         return None
 
-    menu_entries = format_menu_entries(available_modes)
+    menu_entries = format_menu_entries(modes)
     input_str = "\n".join(menu_entries)
 
     selector = find_selector()
@@ -42,7 +54,7 @@ def select_mode(config: dict[str, Any]) -> str | None:
         if result.returncode == 0:
             choice = result.stdout.strip()
             if choice:
-                return parse_selection(choice, available_modes)
+                return parse_selection(choice, modes)
 
         return None
     except Exception as e:
@@ -116,3 +128,31 @@ def parse_selection(choice: str, modes: dict[str, Any]) -> str | None:
             return key
 
     return None
+
+
+class RofiDisplayProvider:
+    """Mode selection via wofi/rofi."""
+
+    def __init__(self, dev_mode: bool = False) -> None:
+        self._dev_mode = dev_mode
+
+    def select_mode(self, modes: dict[str, Any]) -> str | None:
+        return present_modes(modes)
+
+    def format_menu(self, modes: dict[str, Any]) -> list[str]:
+        return format_menu_entries(modes)
+
+    def find_selector(self) -> str | None:
+        return find_selector()
+
+
+__all__ = [
+    "select_mode",
+    "present_modes",
+    "get_available_modes",
+    "find_selector",
+    "build_selector_command",
+    "format_menu_entries",
+    "parse_selection",
+    "RofiDisplayProvider",
+]

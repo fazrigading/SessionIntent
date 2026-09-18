@@ -1,7 +1,7 @@
 """Tests for app template resolver."""
 
 
-from src.app.template import (
+from sessionintent.app.template import (
     resolve_template,
     extract_template_vars,
     is_template,

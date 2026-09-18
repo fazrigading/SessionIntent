@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from src.session.state import (
+from sessionintent.session.state import (
     save_state,
     load_state,
     clear_state,
@@ -25,8 +25,8 @@ class TestSaveState:
         state_file = tmp_path / "state" / "current"
         state_file.parent.mkdir(parents=True, exist_ok=True)
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
-        monkeypatch.setattr("src.session.state.STATE_DIR", tmp_path / "state")
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_DIR", tmp_path / "state")
 
         save_state("work", dev_mode=False)
 
@@ -40,7 +40,7 @@ class TestLoadState:
     def test_load_state_no_file(self, tmp_path, monkeypatch):
         """Test load_state when no state file exists."""
         state_file = tmp_path / "state" / "current"
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         result = load_state()
         assert result is None
@@ -51,7 +51,7 @@ class TestLoadState:
         state_file.parent.mkdir(parents=True, exist_ok=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         result = load_state()
         assert result == "work"
@@ -62,7 +62,7 @@ class TestLoadState:
         state_file.parent.mkdir(parents=True, exist_ok=True)
         state_file.write_text("  work  \n")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         result = load_state()
         assert result == "work"
@@ -73,7 +73,7 @@ class TestLoadState:
         state_file.parent.mkdir(parents=True, exist_ok=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         with patch("builtins.open", side_effect=IOError("Permission denied")):
             result = load_state()
@@ -95,7 +95,7 @@ class TestClearState:
         state_file.parent.mkdir(parents=True, exist_ok=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         clear_state(dev_mode=False)
 
@@ -105,7 +105,7 @@ class TestClearState:
         """Test clear_state when no file exists."""
         state_file = tmp_path / "state" / "current"
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         clear_state(dev_mode=False)
 
@@ -117,7 +117,7 @@ class TestClearState:
         state_file.parent.mkdir(parents=True, exist_ok=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         with patch("pathlib.Path.unlink", side_effect=IOError("Permission denied")):
             clear_state(dev_mode=False)
@@ -134,7 +134,7 @@ class TestGetCurrentState:
         state_file.parent.mkdir(parents=True, exist_ok=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         result = get_current_state()
         assert result == "work"
@@ -149,7 +149,7 @@ class TestStateExists:
         state_file.parent.mkdir(parents=True, exist_ok=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         assert state_exists() is True
 
@@ -157,6 +157,6 @@ class TestStateExists:
         """Test state_exists returns False when file doesn't exist."""
         state_file = tmp_path / "state" / "current"
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         assert state_exists() is False

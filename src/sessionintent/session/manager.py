@@ -12,24 +12,29 @@ from typing import Any
 from ..constants import CONFIG_PATH, STATE_DIR
 from ..config import load_config, load_apps, init_default_configs
 from ..hardware import is_on_ac
-from ..ui import select_mode, get_available_modes
-from ..workspace import switch_workspace, ensure_extension, wait_for_window
+from ..providers import DisplayProvider, ExtensionProvider, WorkspaceProvider, get_providers
 from ..app import launch_app
 from ..session.state import save_state
-from ..extensions import apply_extensions
 from .snapshot import save_snapshot
 
 
 class SessionManager:
     """Main session manager class that orchestrates all session operations."""
 
-    def __init__(self, dev_mode: bool = False, config_path: str | None = None):
+    def __init__(
+        self,
+        dev_mode: bool = False,
+        config_path: str | None = None,
+        backend: str | None = None,
+    ):
         """
         Initialize the session manager.
 
         Args:
             dev_mode: If True, print commands instead of executing
             config_path: Optional path to custom config file
+            backend: Optional workspace backend override ("gnome" or "ewmh").
+                Auto-detected from the desktop environment when None.
         """
         self.config: dict[str, Any] = {}
         self.apps: dict[str, dict[str, Any]] = {}
@@ -44,6 +49,14 @@ class SessionManager:
             print(f"Warning: Could not load config: {e}")
             self.config = {}
 
+        # Resolve desktop providers (detection + factory).
+        self._workspace: WorkspaceProvider
+        self._display: DisplayProvider
+        self._extensions: ExtensionProvider
+        self._workspace, self._display, self._extensions = get_providers(
+            dev_mode=dev_mode, backend=backend
+        )
+
         # Initialize state directory (unless in dev mode)
         if not self.dev_mode:
             STATE_DIR.mkdir(parents=True, exist_ok=True)
@@ -56,7 +69,7 @@ class SessionManager:
     def init_config(self) -> None:
         """Initialize default configuration files and ensure the workspace extension is installed."""
         init_default_configs()
-        ok, msg = ensure_extension(self.dev_mode)
+        ok, msg = self._extensions.ensure()
         if not ok:
             print(f"Warning: {msg}")
         elif not self.dev_mode:
@@ -69,11 +82,19 @@ class SessionManager:
 
     def get_available_modes(self) -> dict[str, Any]:
         """Get modes available based on current hardware state."""
-        return get_available_modes(self.config)
+        all_modes = self.config.get("modes", {})
+        if not is_on_ac():
+            disabled = (
+                self.config.get("hardware_profiles", {})
+                .get("battery", {})
+                .get("disable_modes", [])
+            )
+            return {k: v for k, v in all_modes.items() if k not in disabled}
+        return all_modes
 
     def select_mode(self) -> str | None:
         """Display UI and return selected mode key."""
-        return select_mode(self.config)
+        return self._display.select_mode(self.get_available_modes())
 
     def apply_mode(self, mode_name: str) -> None:
         """
@@ -94,7 +115,7 @@ class SessionManager:
         extensions_config = mode_cfg.get("extensions", {})
         if extensions_config:
             print("Managing GNOME extensions...")
-            ext_messages = apply_extensions(extensions_config, self.dev_mode)
+            ext_messages = self._extensions.apply(extensions_config)
             for msg in ext_messages:
                 print(f"  {msg}")
 
@@ -113,12 +134,11 @@ class SessionManager:
                 monitor = None
 
             # Check current workspace, skip if already there
-            from ..workspace import get_current_workspace
-            current_ws = get_current_workspace(self.dev_mode)
+            current_ws = self._workspace.get_current_workspace()
             if current_ws == ws_num:
                 print(f"  Already on workspace {ws_num}, launching apps...")
             else:
-                ok = switch_workspace(ws_num, self.dev_mode, monitor=monitor)
+                ok = self._workspace.switch_workspace(ws_num, monitor=monitor)
                 if not ok:
                     print(
                         f"  Warning: workspace switch to {ws_num} failed. "
@@ -143,7 +163,9 @@ class SessionManager:
                 wait_timeout = app_def.get("wait_window", global_wait)
 
                 if check_pattern is not False:
-                    wait_for_window(check_pattern, ws_num, wait_timeout, self.dev_mode)
+                    self._workspace.wait_for_window(
+                        check_pattern, ws_num, wait_timeout
+                    )
                 else:
                     time.sleep(4)
 

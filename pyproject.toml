@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-sessionintent = "src.__main__:main"
+sessionintent = "sessionintent.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/fazrigading/SessionIntent"
@@ -22,24 +22,24 @@ Source = "https://github.com/fazrigading/SessionIntent"
 Issues = "https://github.com/fazrigading/SessionIntent/issues"
 
 [tool.setuptools.dynamic]
-version = { attr = "src.__version__" }
+version = { attr = "sessionintent.__version__" }
 
-[tool.setuptools]
-packages = ["src", "src.constants", "src.config", "src.hardware", "src.app", "src.workspace", "src.ui", "src.session", "src.cli", "src.extensions", "src.plugins"]
-py-modules = []
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.package-data]
-src = ["app/app_categories.yaml"]
+sessionintent = ["app/app_categories.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short --cov=src --cov-report=term-missing"
+addopts = "-v --tb=short --cov=sessionintent --cov-report=term-missing"
 
 [tool.coverage.run]
-source = ["src"]
+source = ["sessionintent"]
 omit = ["*/__init__.py", "*/__main__.py", "tests/*"]
 
 [tool.coverage.report]

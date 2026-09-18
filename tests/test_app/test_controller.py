@@ -2,7 +2,7 @@
 
 from unittest.mock import patch, MagicMock
 
-from src.app.controller import (
+from sessionintent.app.controller import (
     is_running,
     launch_app,
     _build_command,
@@ -79,7 +79,7 @@ class TestLaunchApp:
         assert "unknown" in captured.out
 
     @patch("subprocess.Popen")
-    @patch("src.app.controller.is_running", return_value=False)
+    @patch("sessionintent.app.controller.is_running", return_value=False)
     def test_launch_app_real_mode(self, mock_is_running, mock_popen):
         """Test launching app in real mode."""
         apps = {"firefox": {"cmd": ["firefox"]}}
@@ -87,7 +87,7 @@ class TestLaunchApp:
         mock_popen.assert_called_once()
 
     @patch("subprocess.Popen")
-    @patch("src.app.controller.is_running", return_value=True)
+    @patch("sessionintent.app.controller.is_running", return_value=True)
     def test_launch_app_skip_when_running_no_reuse(self, mock_is_running, mock_popen):
         """Test launching app skips when already running and internal_reuse=False."""
         apps = {
@@ -179,7 +179,7 @@ class TestLaunchAppAdvanced:
     """Test launch_app with more scenarios."""
 
     @patch("subprocess.Popen")
-    @patch("src.app.controller.is_running", return_value=True)
+    @patch("sessionintent.app.controller.is_running", return_value=True)
     def test_launch_app_running_with_reuse(self, mock_is_running, mock_popen, capsys):
         """Test launching app that's already running with reuse enabled."""
         apps = {
@@ -190,7 +190,7 @@ class TestLaunchAppAdvanced:
         captured = capsys.readouterr()
         assert "reusing" in captured.out
 
-    @patch("src.app.controller.is_running")
+    @patch("sessionintent.app.controller.is_running")
     def test_launch_app_check_is_false(self, mock_is_running, capsys):
         """Test launching app with check=False skips running check."""
         apps = {"app": {"cmd": ["app"], "check": False}}

@@ -3,7 +3,7 @@
 import yaml
 from pathlib import Path
 
-from src.config.loader import (
+from sessionintent.config.loader import (
     load_yaml_file,
     load_config,
     load_apps,
@@ -46,7 +46,7 @@ class TestLoadConfig:
         """Test loading non-existent config returns empty dict."""
         # Monkeypatch to use temp dir
         monkeypatch.setattr(
-            "src.config.loader.CONFIG_PATH", Path("/nonexistent/config.yaml")
+            "sessionintent.config.loader.CONFIG_PATH", Path("/nonexistent/config.yaml")
         )
         result = load_config()
         assert result == {}
@@ -68,9 +68,9 @@ class TestLoadApps:
     def test_load_empty_apps(self, tmp_path, monkeypatch):
         """Test loading when no apps files exist."""
         monkeypatch.setattr(
-            "src.config.loader.SYSTEM_APPS_PATH", tmp_path / "system.yaml"
+            "sessionintent.config.loader.SYSTEM_APPS_PATH", tmp_path / "system.yaml"
         )
-        monkeypatch.setattr("src.config.loader.APPS_PATH", tmp_path / "user.yaml")
+        monkeypatch.setattr("sessionintent.config.loader.APPS_PATH", tmp_path / "user.yaml")
 
         result = load_apps()
         assert result == {}
@@ -86,8 +86,8 @@ class TestLoadApps:
         with open(user_path, "w") as f:
             yaml.dump({"app1": {"cmd": ["modified"]}, "app2": {"cmd": ["app2"]}}, f)
 
-        monkeypatch.setattr("src.config.loader.SYSTEM_APPS_PATH", system_path)
-        monkeypatch.setattr("src.config.loader.APPS_PATH", user_path)
+        monkeypatch.setattr("sessionintent.config.loader.SYSTEM_APPS_PATH", system_path)
+        monkeypatch.setattr("sessionintent.config.loader.APPS_PATH", user_path)
 
         result = load_apps()
         # User should override bundled
@@ -104,9 +104,9 @@ class TestInitDefaultConfigs:
         config_path = config_dir / "config.yaml"
         apps_path = config_dir / "apps.yaml"
 
-        monkeypatch.setattr("src.config.loader.CONFIG_DIR", config_dir)
-        monkeypatch.setattr("src.config.loader.CONFIG_PATH", config_path)
-        monkeypatch.setattr("src.config.loader.APPS_PATH", apps_path)
+        monkeypatch.setattr("sessionintent.config.loader.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("sessionintent.config.loader.CONFIG_PATH", config_path)
+        monkeypatch.setattr("sessionintent.config.loader.APPS_PATH", apps_path)
 
         init_default_configs()
 
@@ -120,9 +120,9 @@ class TestInitDefaultConfigs:
         config_path = config_dir / "config.yaml"
         apps_path = config_dir / "apps.yaml"
 
-        monkeypatch.setattr("src.config.loader.CONFIG_DIR", config_dir)
-        monkeypatch.setattr("src.config.loader.CONFIG_PATH", config_path)
-        monkeypatch.setattr("src.config.loader.APPS_PATH", apps_path)
+        monkeypatch.setattr("sessionintent.config.loader.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("sessionintent.config.loader.CONFIG_PATH", config_path)
+        monkeypatch.setattr("sessionintent.config.loader.APPS_PATH", apps_path)
 
         init_default_configs()
 

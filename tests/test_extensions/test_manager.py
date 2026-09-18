@@ -3,7 +3,7 @@
 from unittest.mock import patch, MagicMock
 from subprocess import CalledProcessError
 
-from src.extensions.manager import (
+from sessionintent.providers.extensions.gnome import (
     resolve_extension_id,
     list_extensions,
     get_enabled_extensions,
@@ -234,7 +234,7 @@ class TestEnableExtension:
         assert success is True
         assert "Enabled" in msg
 
-    @patch("src.extensions.manager.get_extension_info")
+    @patch("sessionintent.providers.extensions.gnome.get_extension_info")
     def test_enable_extension_not_found(self, mock_get_info):
         """Test enable_extension when extension doesn't exist."""
         mock_get_info.return_value = None
@@ -242,7 +242,7 @@ class TestEnableExtension:
         assert success is False
         assert "does not exist" in msg
 
-    @patch("src.extensions.manager.get_extension_info")
+    @patch("sessionintent.providers.extensions.gnome.get_extension_info")
     @patch("subprocess.run")
     def test_enable_extension_file_not_found(self, mock_run, mock_get_info):
         """Test enable_extension when gnome-extensions not found."""
@@ -252,7 +252,7 @@ class TestEnableExtension:
         assert success is False
         assert "not found" in msg
 
-    @patch("src.extensions.manager.get_extension_info")
+    @patch("sessionintent.providers.extensions.gnome.get_extension_info")
     @patch("subprocess.run")
     def test_enable_extension_called_process_error(self, mock_run, mock_get_info):
         """Test enable_extension when command fails."""
@@ -274,7 +274,7 @@ class TestDisableExtension:
         assert success is True
         assert "Disabled" in msg
 
-    @patch("src.extensions.manager.get_extension_info")
+    @patch("sessionintent.providers.extensions.gnome.get_extension_info")
     def test_disable_extension_not_found(self, mock_get_info):
         """Test disable_extension when extension doesn't exist."""
         mock_get_info.return_value = None
@@ -282,7 +282,7 @@ class TestDisableExtension:
         assert success is False
         assert "does not exist" in msg
 
-    @patch("src.extensions.manager.get_extension_info")
+    @patch("sessionintent.providers.extensions.gnome.get_extension_info")
     @patch("subprocess.run")
     def test_disable_extension_file_not_found(self, mock_run, mock_get_info):
         """Test disable_extension when gnome-extensions not found."""
@@ -292,7 +292,7 @@ class TestDisableExtension:
         assert success is False
         assert "not found" in msg
 
-    @patch("src.extensions.manager.get_extension_info")
+    @patch("sessionintent.providers.extensions.gnome.get_extension_info")
     @patch("subprocess.run")
     def test_disable_extension_called_process_error(self, mock_run, mock_get_info):
         """Test disable_extension when command fails."""

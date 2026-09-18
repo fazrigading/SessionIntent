@@ -2,7 +2,7 @@
 
 from unittest.mock import patch, MagicMock
 
-from src.ui.selector import (
+from sessionintent.providers.display.rofi import (
     select_mode,
     get_available_modes,
     find_selector,
@@ -15,7 +15,7 @@ from src.ui.selector import (
 class TestGetAvailableModes:
     """Test get_available_modes function."""
 
-    @patch("src.ui.selector.is_on_ac", return_value=True)
+    @patch("sessionintent.providers.display.rofi.is_on_ac", return_value=True)
     def test_get_available_modes_ac_power(self, mock_is_on_ac):
         """Test get_available_modes on AC power returns all modes."""
         config = {"modes": {"work": {}, "gaming": {}}}
@@ -23,7 +23,7 @@ class TestGetAvailableModes:
         assert "work" in modes
         assert "gaming" in modes
 
-    @patch("src.ui.selector.is_on_ac", return_value=False)
+    @patch("sessionintent.providers.display.rofi.is_on_ac", return_value=False)
     def test_get_available_modes_battery_disabled(self, mock_is_on_ac):
         """Test get_available_modes on battery with disabled modes."""
         config = {
@@ -39,7 +39,7 @@ class TestSelectMode:
     """Test select_mode function."""
 
     @patch("subprocess.run")
-    @patch("src.ui.selector.find_selector")
+    @patch("sessionintent.providers.display.rofi.find_selector")
     def test_select_mode_no_modes(self, mock_find, mock_run):
         """Test select_mode with no available modes."""
         mock_find.return_value = "wofi"
@@ -48,7 +48,7 @@ class TestSelectMode:
         assert result is None
 
     @patch("subprocess.run")
-    @patch("src.ui.selector.find_selector")
+    @patch("sessionintent.providers.display.rofi.find_selector")
     def test_select_mode_no_selector(self, mock_find, mock_run):
         """Test select_mode when no selector is found."""
         mock_find.return_value = None
@@ -57,7 +57,7 @@ class TestSelectMode:
         assert result is None
 
     @patch("subprocess.run")
-    @patch("src.ui.selector.find_selector")
+    @patch("sessionintent.providers.display.rofi.find_selector")
     def test_select_mode_user_selects(self, mock_find, mock_run):
         """Test select_mode when user makes selection."""
         mock_find.return_value = "wofi"
@@ -69,7 +69,7 @@ class TestSelectMode:
         assert result == "work"
 
     @patch("subprocess.run")
-    @patch("src.ui.selector.find_selector")
+    @patch("sessionintent.providers.display.rofi.find_selector")
     def test_select_mode_user_cancels(self, mock_find, mock_run):
         """Test select_mode when user cancels."""
         mock_find.return_value = "wofi"

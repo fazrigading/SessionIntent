@@ -10,6 +10,8 @@ import socket
 import subprocess
 import time
 
+from .ewmh import EwmhWorkspaceProvider
+
 SOCKET_NAME = "sessionintent-ws.sock"
 EXTENSION_UUID = "sessionintent-ws@fazrigading.github.io"
 EXTENSION_SOURCE_DIR = "sessionintent-ws"
@@ -339,67 +341,44 @@ def ensure_extension(dev_mode: bool = False) -> tuple[bool, str]:
     )
 
 
-_WAIT_WINDOW_POLL_INTERVAL: float = 0.5
+class GnomeWorkspaceProvider:
+    """GNOME workspace management via extension socket with gdbus fallback."""
+
+    def __init__(self, dev_mode: bool = False) -> None:
+        self._dev_mode = dev_mode
+        self._ewmh = EwmhWorkspaceProvider(dev_mode=dev_mode)
+
+    def switch_workspace(
+        self,
+        num: int,
+        monitor: str | None = None,
+    ) -> bool:
+        return switch_workspace(num, self._dev_mode, monitor=monitor)
+
+    def get_current_workspace(self) -> int | None:
+        return get_current_workspace(self._dev_mode)
+
+    def get_workspace_count(self) -> int:
+        return get_workspace_count(self._dev_mode)
+
+    def wait_for_workspace(self, target: int, timeout: float = 2.0) -> bool:
+        return wait_for_workspace(target, self._dev_mode, timeout=timeout)
+
+    def wait_for_window(
+        self,
+        app_pattern: str,
+        target_workspace: int,
+        timeout: float = 15.0,
+    ) -> bool:
+        # xdotool-based wait is desktop-agnostic; shared with the EWMH provider.
+        return self._ewmh.wait_for_window(app_pattern, target_workspace, timeout)
 
 
-def wait_for_window(
-    app_pattern: str,
-    target_workspace: int,
-    timeout: float = 15.0,
-    dev_mode: bool = False,
-) -> bool:
-    """
-    Wait for an app window to appear on the target workspace.
-
-    Args:
-        app_pattern: Window class pattern to search for (passed to xdotool)
-        target_workspace: 1-indexed workspace number to wait for
-        timeout: Maximum seconds to wait (default 15s)
-        dev_mode: If True, return True immediately
-
-    Returns:
-        True if window found on target workspace, False if timeout
-    """
-    if dev_mode:
-        return True
-
-    target_idx = target_workspace - 1
-    deadline = time.monotonic() + timeout
-
-    while time.monotonic() < deadline:
-        try:
-            result = subprocess.run(
-                ["xdotool", "search", "--class", app_pattern],
-                capture_output=True,
-                text=True,
-                timeout=2,
-            )
-            if result.returncode == 0:
-                window_ids = result.stdout.strip().split("\n")
-                for wid in window_ids:
-                    if not wid:
-                        continue
-                    try:
-                        desk_result = subprocess.run(
-                            ["xdotool", "getwindowenv", wid, "_NET_WM_DESKTOP"],
-                            capture_output=True,
-                            text=True,
-                            timeout=1,
-                        )
-                        if desk_result.returncode == 0:
-                            try:
-                                ws_index = int(desk_result.stdout.strip())
-                                if ws_index == target_idx:
-                                    return True
-                            except ValueError:
-                                pass
-                    except subprocess.TimeoutExpired:
-                        pass
-        except FileNotFoundError:
-            return False
-        except (subprocess.SubprocessError, OSError):
-            pass
-
-        time.sleep(_WAIT_WINDOW_POLL_INTERVAL)
-
-    return False
+__all__ = [
+    "switch_workspace",
+    "get_current_workspace",
+    "get_workspace_count",
+    "wait_for_workspace",
+    "ensure_extension",
+    "GnomeWorkspaceProvider",
+]

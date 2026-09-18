@@ -3,7 +3,7 @@
 import pytest
 from pathlib import Path
 
-from src.config.validator import (
+from sessionintent.config.validator import (
     validate_config,
     validate_apps,
     validate_config_file,

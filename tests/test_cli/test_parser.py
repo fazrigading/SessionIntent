@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.cli.parser import (
+from sessionintent.cli.parser import (
     create_parser,
     parse_args,
     validate_args,

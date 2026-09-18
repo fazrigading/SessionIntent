@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from src.session import SessionManager
+from sessionintent.session import SessionManager
 
 
 # Mock data
@@ -42,15 +42,15 @@ class TestSessionManagerInit:
 
     def test_init_dev_mode(self, tmp_path, monkeypatch):
         """Test initialization with dev mode enabled."""
-        with patch("src.session.manager.load_config", return_value={}):
-            with patch("src.session.manager.load_apps", return_value={}):
+        with patch("sessionintent.session.manager.load_config", return_value={}):
+            with patch("sessionintent.session.manager.load_apps", return_value={}):
                 manager = SessionManager(dev_mode=True)
                 assert manager.dev_mode is True
                 assert manager.config == {}
 
     def test_init_no_dev_mode_creates_state_dir(self, tmp_path, monkeypatch):
         """Test that non-dev mode creates state directory."""
-        monkeypatch.setattr("src.session.manager.STATE_DIR", tmp_path / "state")
+        monkeypatch.setattr("sessionintent.session.manager.STATE_DIR", tmp_path / "state")
 
         SessionManager(dev_mode=False)
 
@@ -75,7 +75,7 @@ class TestApplyMode:
         with open(config_path, "w") as f:
             f.write("modes: {}")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path))
 
             # Should print error and return without error
@@ -86,13 +86,13 @@ class TestApplyMode:
         state_file = tmp_path / "state" / "current"
         state_file.parent.mkdir(parents=True, exist_ok=True)
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n    workspaces: {}\n")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
 
             manager.apply_mode("work")
@@ -110,7 +110,7 @@ class TestPanic:
         state_dir.mkdir(parents=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
         manager = SessionManager(dev_mode=False)
         manager.panic()
 
@@ -134,8 +134,8 @@ class TestQuit:
         captured = capsys.readouterr()
         assert "[DEV] Quit" in captured.out
 
-    @patch("src.session.manager.SessionManager._get_managed_apps")
-    @patch("src.session.manager.SessionManager._close_apps")
+    @patch("sessionintent.session.manager.SessionManager._get_managed_apps")
+    @patch("sessionintent.session.manager.SessionManager._close_apps")
     def test_quit_with_apps(self, mock_close, mock_get_apps, tmp_path, monkeypatch):
         """Test quit closes managed apps."""
         mock_get_apps.return_value = ["firefox", "discord"]
@@ -143,7 +143,7 @@ class TestQuit:
         state_file.parent.mkdir(parents=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
@@ -151,13 +151,13 @@ class TestQuit:
                 "modes:\n  work:\n    label: Work\n    workspaces:\n      1: [firefox]\n"
             )
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
             manager.quit()
 
         mock_close.assert_called_once_with(["firefox", "discord"], graceful=True)
 
-    @patch("src.session.manager.SessionManager._get_managed_apps")
+    @patch("sessionintent.session.manager.SessionManager._get_managed_apps")
     def test_quit_no_apps(self, mock_get_apps, tmp_path, monkeypatch, capsys):
         """Test quit with no managed apps."""
         mock_get_apps.return_value = []
@@ -165,13 +165,13 @@ class TestQuit:
         state_file.parent.mkdir(parents=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
             manager.quit()
 
@@ -183,13 +183,13 @@ class TestQuit:
         state_file = tmp_path / "state" / "current"
         state_file.parent.mkdir(parents=True)
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
             manager.quit()
 
@@ -207,8 +207,8 @@ class TestKill:
         captured = capsys.readouterr()
         assert "[DEV] Kill" in captured.out
 
-    @patch("src.session.manager.SessionManager._get_managed_apps")
-    @patch("src.session.manager.SessionManager._close_apps")
+    @patch("sessionintent.session.manager.SessionManager._get_managed_apps")
+    @patch("sessionintent.session.manager.SessionManager._close_apps")
     def test_kill_with_apps(self, mock_close, mock_get_apps, tmp_path, monkeypatch):
         """Test kill force kills managed apps."""
         mock_get_apps.return_value = ["firefox"]
@@ -216,7 +216,7 @@ class TestKill:
         state_file.parent.mkdir(parents=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
@@ -224,7 +224,7 @@ class TestKill:
                 "modes:\n  work:\n    label: Work\n    workspaces:\n      1: [firefox]\n"
             )
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
             manager.kill()
 
@@ -235,13 +235,13 @@ class TestKill:
         state_file = tmp_path / "state" / "current"
         state_file.parent.mkdir(parents=True)
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
             manager.kill()
 
@@ -266,7 +266,7 @@ class TestClear:
         state_dir.mkdir(parents=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
         manager = SessionManager(dev_mode=False)
         manager.clear()
 
@@ -282,14 +282,14 @@ class TestStatus:
         state_file.parent.mkdir(parents=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
-            with patch("src.hardware.power.is_on_ac", return_value=True):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
+            with patch("sessionintent.hardware.power.is_on_ac", return_value=True):
                 manager = SessionManager(config_path=str(config_path), dev_mode=False)
                 manager.status()
 
@@ -318,8 +318,8 @@ modes:
     label: Gaming
 """)
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
-            with patch("src.session.manager.is_on_ac", return_value=False):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
+            with patch("sessionintent.session.manager.is_on_ac", return_value=False):
                 manager = SessionManager(config_path=str(config_path))
                 manager.list_modes()
 
@@ -335,7 +335,7 @@ modes:
         with open(config_path, "w") as f:
             f.write("modes: {}")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path))
             manager.list_modes()
 
@@ -390,7 +390,7 @@ class TestReload:
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n")
 
-        monkeypatch.setattr("src.session.manager.CONFIG_PATH", config_path)
+        monkeypatch.setattr("sessionintent.session.manager.CONFIG_PATH", config_path)
         manager = SessionManager(dev_mode=False)
         manager.reload()
 
@@ -414,13 +414,13 @@ class TestSuspend:
         state_file.parent.mkdir(parents=True)
         state_file.write_text("work")
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
             manager.suspend()
 
@@ -432,13 +432,13 @@ class TestSuspend:
         state_file = tmp_path / "state" / "current"
         state_file.parent.mkdir(parents=True)
 
-        monkeypatch.setattr("src.session.state.STATE_FILE", state_file)
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
 
         config_path = tmp_path / "config.yaml"
         with open(config_path, "w") as f:
             f.write("modes:\n  work:\n    label: Work\n")
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
             manager = SessionManager(config_path=str(config_path), dev_mode=False)
             manager.suspend()
 
@@ -464,8 +464,8 @@ modes:
     label: Gaming
 """)
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
-            with patch("src.ui.selector.is_on_ac", return_value=False):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
+            with patch("sessionintent.session.manager.is_on_ac", return_value=False):
                 manager = SessionManager(config_path=str(config_path))
 
                 modes = manager.get_available_modes()
@@ -487,8 +487,8 @@ modes:
     label: Gaming
 """)
 
-        with patch("src.constants.paths.CONFIG_PATH", config_path):
-            with patch("src.hardware.power.is_on_ac", return_value=True):
+        with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
+            with patch("sessionintent.session.manager.is_on_ac", return_value=True):
                 manager = SessionManager(config_path=str(config_path))
 
                 modes = manager.get_available_modes()

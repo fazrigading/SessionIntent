@@ -99,6 +99,18 @@ SessionIntent is a CLI tool that orchestrates GNOME session states based on user
 
 ### 3. System Integration Layer
 
+Providers behind `sessionintent.providers` interfaces; `SessionManager`
+never calls desktop-specific code directly:
+
+- **Workspace** (`providers/workspace/`): `gnome` (extension socket + gdbus),
+  `ewmh` fallback (`wmctrl`/`xdotool`)
+- **Display** (`providers/display/`): `rofi` (`wofi`/`rofi`), `tui` fallback (stdin)
+- **Extensions** (`providers/extensions/`): `gnome` (`gnome-extensions`),
+  null provider where unsupported
+- **Detection** (`providers/detect.py`): `DesktopProfile` from XDG variables
+  plus tool probing; `get_providers()` factory (unknown desktop keeps GNOME
+  behavior; `backend="gnome"|"ewmh"` overrides)
+
 **GNOME Shell (D-Bus)**:
 - Workspace switching
 - Method: `org.gnome.Shell.Eval`

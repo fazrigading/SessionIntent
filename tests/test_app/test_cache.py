@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.app.cache import (
+from sessionintent.app.cache import (
     CACHE_VERSION,
     DEFAULT_CACHE_TTL_DAYS,
     get_cache_age_days,
@@ -34,7 +34,7 @@ def temp_state_dir(tmp_path: Path) -> Path:
 @pytest.fixture
 def mock_state_dir(temp_state_dir: Path) -> None:
     """Patch STATE_DIR to use temporary directory."""
-    with patch("src.app.cache.STATE_DIR", temp_state_dir):
+    with patch("sessionintent.app.cache.STATE_DIR", temp_state_dir):
         yield temp_state_dir
 
 

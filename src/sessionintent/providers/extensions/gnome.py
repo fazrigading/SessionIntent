@@ -9,7 +9,7 @@ Handles enabling and disabling GNOME Shell extensions.
 from __future__ import annotations
 
 import subprocess
-from typing import Any
+from typing import Any, List
 
 
 # Common GNOME extensions with UUID and display name
@@ -342,3 +342,74 @@ def is_extension_installed(uuid: str, dev_mode: bool = False) -> bool:
 
     extensions = list_extensions(dev_mode=False)
     return uuid in extensions
+
+
+class GnomeExtensionProvider:
+    """GNOME Shell extension management via gnome-extensions."""
+
+    def __init__(self, dev_mode: bool = False) -> None:
+        self._dev_mode = dev_mode
+
+    def enable(self, ext_id: str) -> tuple[bool, str]:
+        return enable_extension(ext_id, self._dev_mode)
+
+    def disable(self, ext_id: str) -> tuple[bool, str]:
+        return disable_extension(ext_id, self._dev_mode)
+
+    def list(self) -> List[str]:
+        return list_extensions(self._dev_mode)
+
+    def get_info(self, ext_id: str) -> dict[str, Any] | None:
+        return get_extension_info(ext_id, self._dev_mode)
+
+    def apply(self, config: dict[str, List[str]]) -> List[str]:
+        return apply_extensions(config, self._dev_mode)
+
+    def ensure(self) -> tuple[bool, str]:
+        from ..workspace.gnome import ensure_extension
+
+        return ensure_extension(self._dev_mode)
+
+
+class NullExtensionProvider:
+    """No-op provider for desktops without extension support."""
+
+    def __init__(self, desktop: str = "unknown", dev_mode: bool = False) -> None:
+        self._desktop = desktop
+        self._dev_mode = dev_mode
+
+    def _unsupported(self, action: str) -> str:
+        return f"Extensions not supported on {self._desktop} ({action} skipped)"
+
+    def enable(self, ext_id: str) -> tuple[bool, str]:
+        return False, self._unsupported(f"enable {ext_id}")
+
+    def disable(self, ext_id: str) -> tuple[bool, str]:
+        return False, self._unsupported(f"disable {ext_id}")
+
+    def list(self) -> List[str]:
+        return []
+
+    def get_info(self, ext_id: str) -> dict[str, Any] | None:
+        return None
+
+    def apply(self, config: dict[str, List[str]]) -> List[str]:
+        return [self._unsupported("apply")]
+
+    def ensure(self) -> tuple[bool, str]:
+        return False, self._unsupported("ensure")
+
+
+__all__ = [
+    "EXTENSION_REGISTRY",
+    "resolve_extension_id",
+    "list_extensions",
+    "get_enabled_extensions",
+    "get_extension_info",
+    "enable_extension",
+    "disable_extension",
+    "apply_extensions",
+    "is_extension_installed",
+    "GnomeExtensionProvider",
+    "NullExtensionProvider",
+]

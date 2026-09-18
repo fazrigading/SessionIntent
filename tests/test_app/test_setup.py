@@ -4,12 +4,12 @@ Tests for SessionIntent app detection and setup.
 
 from unittest.mock import patch
 
-from src.app.detect import (
+from sessionintent.app.detect import (
     categorize_app,
     get_category_list,
     get_categorized_apps,
 )
-from src.app.setup import (
+from sessionintent.app.setup import (
     parse_selection,
     prompt_yes_no,
     select_apps_option,
@@ -110,23 +110,23 @@ class TestParseSelection:
 class TestPromptYesNo:
     """Test prompt_yes_no function."""
 
-    @patch("src.app.setup.input", return_value="y")
+    @patch("sessionintent.app.setup.input", return_value="y")
     def test_yes_returns_true(self, mock_input):
         assert prompt_yes_no("Test?") is True
 
-    @patch("src.app.setup.input", return_value="Y")
+    @patch("sessionintent.app.setup.input", return_value="Y")
     def test_capital_yes_returns_true(self, mock_input):
         assert prompt_yes_no("Test?") is True
 
-    @patch("src.app.setup.input", return_value="")
+    @patch("sessionintent.app.setup.input", return_value="")
     def test_empty_returns_true(self, mock_input):
         assert prompt_yes_no("Test?") is True
 
-    @patch("src.app.setup.input", return_value="n")
+    @patch("sessionintent.app.setup.input", return_value="n")
     def test_no_returns_false(self, mock_input):
         assert prompt_yes_no("Test?") is False
 
-    @patch("src.app.setup.input", return_value="no")
+    @patch("sessionintent.app.setup.input", return_value="no")
     def test_no_word_returns_false(self, mock_input):
         assert prompt_yes_no("Test?") is False
 
@@ -134,19 +134,19 @@ class TestPromptYesNo:
 class TestSelectAppsOption:
     """Test select_apps_option function."""
 
-    @patch("src.app.setup.input", return_value="1")
+    @patch("sessionintent.app.setup.input", return_value="1")
     def test_option_1(self, mock_input):
         assert select_apps_option() == 1
 
-    @patch("src.app.setup.input", return_value="2")
+    @patch("sessionintent.app.setup.input", return_value="2")
     def test_option_2(self, mock_input):
         assert select_apps_option() == 2
 
-    @patch("src.app.setup.input", return_value="3")
+    @patch("sessionintent.app.setup.input", return_value="3")
     def test_option_3(self, mock_input):
         assert select_apps_option() == 3
 
-    @patch("src.app.setup.input", side_effect=["invalid", "2"])
+    @patch("sessionintent.app.setup.input", side_effect=["invalid", "2"])
     def test_invalid_then_valid(self, mock_input):
         assert select_apps_option() == 2
 
