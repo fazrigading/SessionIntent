@@ -64,7 +64,7 @@ Ref: docs/ROADMAP.md
 
 ### Medium Priority
 
-- [ ] Package as Flatpak for universal Linux distribution
+- [ ] Publish Flatpak (files: `packaging/flatpak/`; needs checksum + submission)
 
 Ref: docs/ROADMAP.md
 

@@ -80,9 +80,8 @@ Lives in `src/sessionintent/providers/workspace/sway.py` and `wlroots.py`.
 **Status**: PKGBUILD in `packaging/arch/` (needs `updpkgsums` on release + AUR upload).
 
 ### Flatpak
-**Difficulty**: Medium
-
-Package as Flatpak for universal Linux distribution.
+**Status**: Manifest in `packaging/flatpak/` (needs checksum fill + Flathub submission).
+Sandbox note: host process control needs `flatpak-spawn` support, not yet implemented.
 
 ### Debian/Ubuntu Packages
 **Status**: Native source package in `debian/` (needs Salsa/PPA upload).

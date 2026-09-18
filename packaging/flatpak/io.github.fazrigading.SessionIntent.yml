@@ -1,0 +1,45 @@
+# Flatpak manifest for SessionIntent.
+#
+# Sandbox limits (by design, documented not hidden):
+# - SessionIntent orchestrates HOST processes (pgrep, gdbus, hyprctl,
+#   wmctrl, wofi/rofi). Inside the sandbox it can only see its own
+#   processes unless run with extra permissions.
+# - Full host control needs: --talk-name=org.freedesktop.Flatpak plus
+#   flatpak-spawn support in the launched commands (not implemented).
+# - Practical use today: TUI/display and config handling; workspace
+#   switching works where the compositor socket is reachable.
+#
+# Build locally with: flatpak-builder --user --install build-dir
+#   packaging/flatpak/io.github.fazrigading.SessionIntent.yml
+app-id: io.github.fazrigading.SessionIntent
+runtime: org.gnome.Platform
+runtime-version: '47'
+sdk: org.gnome.Sdk
+command: sessionintent
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --socket=session-bus
+  - --filesystem=home
+modules:
+  - name: pyyaml
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=/app PyYAML
+    sources:
+      # Fill sha256 on release: curl -sL <url> | sha256sum
+      - type: file
+        url: https://files.pythonhosted.org/packages/source/P/PyYAML/PyYAML-6.0.2.tar.gz
+        sha256: FILL-ME-ON-RELEASE
+  - name: sessionintent
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=/app .
+      - install -Dm644 examples/apps.example.yaml /app/share/sessionintent/apps.yaml
+      - install -Dm644 examples/config.example.yaml /app/share/sessionintent/examples/config.yaml.example
+      - install -Dm644 man/sessionintent.1 /app/share/man/man1/sessionintent.1
+    sources:
+      - type: git
+        url: https://github.com/fazrigading/SessionIntent.git
+        tag: v0.3.3
