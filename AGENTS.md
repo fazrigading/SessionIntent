@@ -56,38 +56,33 @@ sessionintent --help
 
 # Select mode via UI (default)
 sessionintent
+sessionintent select
 
 # Apply specific mode directly
-sessionintent --mode browsing
-sessionintent -m browsing
+sessionintent apply browsing
 
 # Dev mode (dry-run)
-sessionintent --dev --mode browsing
-sessionintent -d -m browsing
+sessionintent --dev apply browsing
 
 # Status and listing
-sessionintent --status
-sessionintent -s
-sessionintent --list
-sessionintent -l
+sessionintent status
+sessionintent list
 
 # Session control
-sessionintent --panic          # Clear state (no app termination)
-sessionintent -P
-sessionintent --quit          # Gracefully close managed apps
-sessionintent -q
-sessionintent --clear         # Clear state files only
-sessionintent --kill          # Force kill managed apps
-sessionintent -k
-sessionintent --suspend       # Suspend session
+sessionintent panic          # Clear state (no app termination)
+sessionintent quit           # Gracefully close managed apps
+sessionintent clear          # Clear state files only
+sessionintent kill           # Force kill managed apps
+sessionintent suspend        # Suspend session
 
 # Configuration
-sessionintent --init / -i      # Initialize default configs and extension
-sessionintent --setup          # Set up SessionIntent (scan apps)
-sessionintent --reload        # Reload configuration
-sessionintent -r
-sessionintent --config <path> # Custom config file
-sessionintent -c <path>
+sessionintent init           # Initialize default configs and extension
+sessionintent setup          # Set up SessionIntent (scan apps)
+sessionintent scan --force   # Rescan installed apps, ignore cache
+sessionintent reload         # Reload configuration
+sessionintent version        # Display version information
+sessionintent --config <path> list  # Custom config file
+sessionintent --backend sway apply browsing  # Backend override
 ```
 
 ## Code Style Guidelines
@@ -256,3 +251,17 @@ __all__ = [
     "resolve_extension_id",
 ]
 ```
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `.scratch/<feature-slug>/` (one spec, one file per ticket). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical label strings: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout: `CONTEXT.md` at the repo root plus `docs/adr/`. See `docs/agents/domain.md`.
