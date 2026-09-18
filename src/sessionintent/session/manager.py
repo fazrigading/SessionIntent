@@ -19,6 +19,8 @@ from ..config import (
     migration_notice,
 )
 from ..config.validator import raise_if_invalid, validate_config
+from ..plugins import PluginManager, get_plugin_manager
+from .notify import notify_error, notify_mode_change
 from ..hardware import is_on_ac
 from ..providers import DisplayProvider, ExtensionProvider, WorkspaceProvider, get_providers
 from ..app import launch_app
@@ -122,9 +124,11 @@ class SessionManager:
 
         if not mode_cfg:
             print(f"Mode '{mode_name}' not found.")
+            notify_error(f"Mode '{mode_name}' not found.", self.dev_mode)
             return
 
         print(f"Applying mode: {mode_name}")
+        mode_cfg = self._run_apply_hooks(mode_name, mode_cfg)
 
         # Apply extensions first
         extensions_config = mode_cfg.get("extensions", {})
@@ -189,6 +193,50 @@ class SessionManager:
 
         # Save window snapshot
         save_snapshot(mode_name, self.dev_mode)
+
+        notify_mode_change(
+            mode_name, mode_cfg.get("label", mode_name), self.dev_mode
+        )
+        self._run_applied_hooks(mode_name)
+
+    def _plugin_manager(self) -> PluginManager | None:
+        """Plugin manager, or None in dev mode (no discovery side effects)."""
+        if self.dev_mode:
+            return None
+        try:
+            return get_plugin_manager()
+        except Exception as e:
+            print(f"Warning: plugin discovery failed: {e}")
+            return None
+
+    def _run_apply_hooks(
+        self, mode_name: str, mode_cfg: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Let plugins adjust the mode config before it is applied."""
+        manager = self._plugin_manager()
+        if manager is None:
+            return mode_cfg
+        for plugin in manager.get_plugins().values():
+            try:
+                result = plugin.on_mode_apply(mode_name, mode_cfg)
+                if isinstance(result, dict):
+                    mode_cfg = result
+            except Exception as e:
+                print(f"Warning: plugin '{plugin.name}' on_mode_apply failed: {e}")
+        manager.trigger_hook("on_mode_apply", mode_name, mode_cfg)
+        return mode_cfg
+
+    def _run_applied_hooks(self, mode_name: str) -> None:
+        """Notify plugins that a mode was applied."""
+        manager = self._plugin_manager()
+        if manager is None:
+            return
+        for plugin in manager.get_plugins().values():
+            try:
+                plugin.on_mode_applied(mode_name)
+            except Exception as e:
+                print(f"Warning: plugin '{plugin.name}' on_mode_applied failed: {e}")
+        manager.trigger_hook("on_mode_applied", mode_name)
 
     def _parse_app_entry(self, app_entry, mode_cfg: dict[str, Any]) -> tuple:
         """

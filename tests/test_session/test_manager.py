@@ -76,10 +76,13 @@ class TestApplyMode:
             f.write("modes: {}")
 
         with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
-            manager = SessionManager(config_path=str(config_path))
+            with patch("sessionintent.session.manager.notify_error") as mock_notify:
+                manager = SessionManager(config_path=str(config_path))
 
-            # Should print error and return without error
-            manager.apply_mode("nonexistent")
+                # Should print error and return without error
+                manager.apply_mode("nonexistent")
+
+                mock_notify.assert_called_once()
 
     def test_apply_mode_saves_state(self, tmp_path, monkeypatch):
         """Test that applying a mode saves state."""
@@ -93,11 +96,15 @@ class TestApplyMode:
             f.write("modes:\n  work:\n    label: Work\n    workspaces: {}\n")
 
         with patch("sessionintent.constants.paths.CONFIG_PATH", config_path):
-            manager = SessionManager(config_path=str(config_path), dev_mode=False)
+            with patch("sessionintent.session.manager.notify_mode_change"):
+                with patch("sessionintent.session.manager.get_plugin_manager"):
+                    manager = SessionManager(
+                        config_path=str(config_path), dev_mode=False
+                    )
 
-            manager.apply_mode("work")
+                    manager.apply_mode("work")
 
-            assert state_file.exists()
+                    assert state_file.exists()
 
 
 class TestPanic:

@@ -57,7 +57,6 @@ Ref: docs/ROADMAP.md, LINUX_DESKTOP_COMPATIBILITY_PLAN.md
 
 ### Low Priority
 
-- [ ] Desktop notifications - present but unwired (see above)
 - [ ] Theme support - removed in Phase 1 (see above)
 
 Ref: docs/ROADMAP.md

@@ -60,7 +60,11 @@ class PluginManager:
         for file_path in PLUGIN_DIR.glob("*.py"):
             if file_path.stem.startswith("_"):
                 continue
-            self._load_plugin_file(file_path)
+            try:
+                self._load_plugin_file(file_path)
+            except Exception as e:
+                # A broken user plugin must never break startup.
+                warning(f"Skipping plugin {file_path.name}: {e}")
 
     def _load_plugin_file(self, file_path: Path) -> None:
         """Load a plugin from file."""

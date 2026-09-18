@@ -16,8 +16,8 @@ only what is wired into the main flow; the rest returns in later phases:
 | Config Hot Reload | ❌ Removed (manual `--reload` only) | deleted `src/config/watcher.py` |
 | Time-based auto-switching | ❌ Removed (unwired) | deleted `src/session/scheduler.py` |
 | Theme support | ❌ Removed (unwired) | deleted `src/ui/theme.py` |
-| Desktop notifications | ⚠️ Present but unwired | `src/session/notify.py` |
-| Plugin system | ⚠️ Present but unwired | `src/plugins/system.py` |
+| Desktop notifications | ✅ Wired (mode applied / not found) | `src/session/notify.py` |
+| Plugin system | ✅ Wired (discovery + apply hooks) | `src/plugins/system.py` |
 
 Async `launch_apps_async` exists but `apply_mode` uses the sync path.
 

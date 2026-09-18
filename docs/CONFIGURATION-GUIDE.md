@@ -277,6 +277,33 @@ If an extension doesn't exist, SessionIntent will show:
 Error: Extension 'unknown-extension' does not exist
 ```
 
+## Notifications
+
+SessionIntent sends a desktop notification on every mode switch
+(`notify-send`, `dbus-send`, or `pynotify` — first available wins).
+In dev mode it prints `[DEV] Notification:` instead.
+
+## Plugins
+
+Drop a `*.py` file defining a `Plugin` subclass into
+`~/.config/sessionintent/plugins/`:
+
+```python
+from sessionintent.plugins.system import Plugin
+
+class Greeting(Plugin):
+    name = "greeting"
+
+    def on_mode_apply(self, mode_name, config):
+        return config  # may adjust the mode config
+
+    def on_mode_applied(self, mode_name):
+        pass
+```
+
+Hooks run around `apply`; a crashing plugin is skipped with a warning
+and never breaks the switch. Discovery is skipped in `--dev` mode.
+
 ## Tips
 
 1. **Start simple** - Define 2-3 basic modes first
