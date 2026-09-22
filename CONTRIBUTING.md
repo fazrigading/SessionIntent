@@ -72,7 +72,20 @@ cd SessionIntent
 uv sync
 ```
 
-If you prefer pip: `python3 -m venv .venv && source .venv/bin/activate && pip install -e . pytest pytest-cov ruff mypy types-PyYAML`.
+### Alternative: pip + venv
+
+uv is recommended but not required. Without uv, use a plain virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install the project (editable) and dev dependencies
+pip install -e . pytest pytest-cov ruff mypy types-PyYAML
+```
+
+With this setup, run the tools directly instead of `uv run ...`:
+`pytest`, `ruff check src/ tests/`, `mypy src/`, `sessionintent --dev apply work`.
 
 ### Running Tests
 

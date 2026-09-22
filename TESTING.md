@@ -75,6 +75,20 @@ uv run pytest tests/test_session/test_manager.py
 uv run pytest --cov=sessionintent --cov-report=term-missing
 ```
 
+#### Without uv (pip + venv)
+
+The test suite runs identically without uv:
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e . pytest pytest-cov ruff mypy types-PyYAML
+
+pytest -v --tb=short
+pytest --cov=sessionintent --cov-report=term-missing
+ruff check src/ tests/
+mypy src/
+```
+
 ### Quality Gates
 
 Every change must pass, in order:

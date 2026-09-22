@@ -39,7 +39,7 @@ uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
 curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
-#### Method 3: Manual installation
+#### Method 3: Manual installation (pip)
 ```bash
 pip install .
 ```

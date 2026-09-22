@@ -29,6 +29,8 @@ Or run without installing:
 uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
 ```
 
+uv is the recommended convenience layer; pip remains fully supported (see Manual Installation below).
+
 ### Method 3: Manual Installation
 
 #### Prerequisites
@@ -85,6 +87,8 @@ If you prefer to install manually:
 ```bash
 pip install .
 ```
+
+Note: distros that mark system Python as externally managed (PEP 668, e.g. Fedora, recent Ubuntu/Debian) reject a bare `pip install .`. Use a virtual environment (`python3 -m venv .venv && source .venv/bin/activate`) or pipx in that case.
 
 From a local clone you can also use uv:
 

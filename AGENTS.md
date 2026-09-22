@@ -17,6 +17,10 @@ SessionIntent is a declarative session orchestration system for GNOME Wayland wr
 uv sync
 ```
 
+### pip fallback
+
+Without uv: `python3 -m venv .venv && source .venv/bin/activate && pip install -e . pytest pytest-cov ruff mypy types-PyYAML`, then run the same commands without the `uv run` prefix. The `uv.lock` pins the uv path only; pip resolves from `pyproject.toml`.
+
 ### Lint and Typecheck
 
 ```bash
