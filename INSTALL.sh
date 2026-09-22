@@ -50,16 +50,25 @@ check_prerequisites() {
     PYTHON_VERSION=$(python3 -c 'import sys; print("{}.{}".format(sys.version_info.major, sys.version_info.minor))')
     log_success "Python $PYTHON_VERSION found"
     
-    # Check PyYAML
-    if ! python3 -c 'import yaml' 2> /dev/null; then
-        log_info "Installing PyYAML..."
-        if command -v pip3 &> /dev/null; then
-            pip3 install PyYAML
-        elif command -v pip &> /dev/null; then
-            pip install PyYAML
-        else
-            log_error "pip not found. Please install pip or PyYAML manually"
-            exit 1
+    # Check uv (recommended installer)
+    if command -v uv &> /dev/null; then
+        log_success "uv found - will install via uv tool"
+    else
+        log_info "Tip: install uv for a cleaner setup: curl -LsSf https://astral.sh/uv/install.sh | sh"
+    fi
+
+    # Check PyYAML (only needed for the pip fallback; uv manages dependencies)
+    if ! command -v uv &> /dev/null; then
+        if ! python3 -c 'import yaml' 2> /dev/null; then
+            log_info "Installing PyYAML..."
+            if command -v pip3 &> /dev/null; then
+                pip3 install PyYAML
+            elif command -v pip &> /dev/null; then
+                pip install PyYAML
+            else
+                log_error "pip not found. Please install pip or PyYAML manually"
+                exit 1
+            fi
         fi
     fi
     
@@ -100,14 +109,23 @@ install_script() {
         return 0
     fi
 
-    if [ -f "$SCRIPT_DIR/pyproject.toml" ]; then
-        pip3 install "$SCRIPT_DIR" || pip install "$SCRIPT_DIR"
-    else
+    if [ ! -f "$SCRIPT_DIR/pyproject.toml" ]; then
         log_error "pyproject.toml not found in $SCRIPT_DIR"
         exit 1
     fi
 
-    log_success "SessionIntent installed to $INSTALL_DIR/sessionintent"
+    if command -v uv &> /dev/null; then
+        log_info "Installing via uv..."
+        uv tool install "$SCRIPT_DIR"
+        log_success "SessionIntent installed (manage with: uv tool list)"
+    elif command -v pip3 &> /dev/null || command -v pip &> /dev/null; then
+        log_info "uv not found, falling back to pip..."
+        pip3 install "$SCRIPT_DIR" || pip install "$SCRIPT_DIR"
+        log_success "SessionIntent installed to $INSTALL_DIR/sessionintent"
+    else
+        log_error "Neither uv nor pip found. Install uv: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        exit 1
+    fi
 }
 
 # Install configs
@@ -224,9 +242,14 @@ print_success_message() {
 # Uninstall function
 uninstall() {
     log_info "Uninstalling SessionIntent..."
-    
-    rm -f "$INSTALL_DIR/sessionintent"
-    log_success "Script removed"
+
+    if command -v uv &> /dev/null && uv tool list 2> /dev/null | grep -q '^sessionintent'; then
+        uv tool uninstall sessionintent
+        log_success "uv tool removed"
+    else
+        rm -f "$INSTALL_DIR/sessionintent"
+        log_success "Script removed"
+    fi
     
     if [ "${CONFIRM_UNINSTALL:-0}" = "1" ]; then
         rm -f "$AUTOSTART_DIR/sessionintent.desktop"

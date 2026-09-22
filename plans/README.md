@@ -22,6 +22,7 @@ docs. Where the current documentation claims features that are not wired up, the
 | [`06-documentation.md`](06-documentation.md) | Documentation rewrite and consolidation plan. |
 | [`07-decisions-and-risks.md`](07-decisions-and-risks.md) | Architecture decision records, trade-offs, and risks. |
 | [`08-desktop-compatibility.md`](08-desktop-compatibility.md) | As-built record: what the compat plan became in code. |
+| [`09-uv-packaging.md`](09-uv-packaging.md) | As-built record: uv installability (tool install, lockfile, CI, docs). |
 
 ## How to read this plan
 

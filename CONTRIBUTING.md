@@ -57,7 +57,7 @@ Feature requests should:
 ### Prerequisites
 
 - Python 3.10+
-- pip
+- [uv](https://docs.astral.sh/uv/) — manages the Python interpreter, virtualenv, and dev dependencies
 - wofi or rofi (for UI testing)
 
 ### Local Installation
@@ -67,38 +67,34 @@ Feature requests should:
 git clone https://github.com/fazrigading/SessionIntent.git
 cd SessionIntent
 
-# Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install pytest ruff mypy PyYAML
-
-# Install in editable mode
-pip install -e .
+# Create the virtual environment, install the project (editable)
+# and dev dependencies (pytest, pytest-cov, ruff, mypy)
+uv sync
 ```
+
+If you prefer pip: `python3 -m venv .venv && source .venv/bin/activate && pip install -e . pytest pytest-cov ruff mypy types-PyYAML`.
 
 ### Running Tests
 
 ```bash
 # Run all tests
-python3 -m pytest
+uv run pytest
 
 # Run specific test file
-python3 -m pytest tests/test_config/
+uv run pytest tests/test_config/
 
 # Run with coverage
-python3 -m pytest --cov=sessionintent --cov-report=term-missing
+uv run pytest --cov=sessionintent --cov-report=term-missing
 ```
 
 ### Running in Dev Mode
 
 ```bash
 # Test dry-run
-sessionintent --dev apply work
+uv run sessionintent --dev apply work
 
 # Test with custom config
-sessionintent --dev --config examples/config.example.yaml apply work
+uv run sessionintent --dev --config examples/config.example.yaml apply work
 ```
 
 ## Coding Standards

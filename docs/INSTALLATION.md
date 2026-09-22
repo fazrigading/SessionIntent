@@ -8,7 +8,28 @@
 curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
-### Method 2: Manual Installation
+### Method 2: uv (recommended)
+
+Install [uv](https://docs.astral.sh/uv/), then:
+
+```bash
+uv tool install git+https://github.com/fazrigading/SessionIntent
+```
+
+Manage the installation:
+
+```bash
+uv tool upgrade sessionintent
+uv tool uninstall sessionintent
+```
+
+Or run without installing:
+
+```bash
+uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
+```
+
+### Method 3: Manual Installation
 
 #### Prerequisites
 
@@ -63,6 +84,12 @@ If you prefer to install manually:
 
 ```bash
 pip install .
+```
+
+From a local clone you can also use uv:
+
+```bash
+uv tool install .
 ```
 
 Ensure `~/.local/bin` is in your `$PATH`:
@@ -183,6 +210,12 @@ sessionintent --dev apply browsing
 ./INSTALL.sh --uninstall
 ```
 
+### uv
+
+```bash
+uv tool uninstall sessionintent
+```
+
 ### Manual
 
 ```bash
@@ -254,6 +287,19 @@ INSTALL_NO_AUTOSTART=1 ./INSTALL.sh
 
 ```bash
 SKIP_DEPS_CHECK=1 ./INSTALL.sh
+```
+
+## Development Environment
+
+Contributors can set up a full dev environment with uv (installs the project in editable mode plus pytest, pytest-cov, ruff, and mypy):
+
+```bash
+git clone https://github.com/fazrigading/SessionIntent.git
+cd SessionIntent
+uv sync
+
+uv run sessionintent --help
+uv run pytest
 ```
 
 ## Contributing New Installers

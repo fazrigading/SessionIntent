@@ -59,20 +59,20 @@ sessionintent --dev --backend sway list
 ### Running Tests
 
 ```bash
-# Install test dependencies
-pip install pytest PyYAML
+# Install test dependencies (creates .venv with pytest, pytest-cov, ruff, mypy)
+uv sync
 
 # Run all tests
-python3 -m pytest
+uv run pytest
 
 # Run with verbosity
-python3 -m pytest -v --tb=short
+uv run pytest -v --tb=short
 
 # Run a single test file
-python3 -m pytest tests/test_session/test_manager.py
+uv run pytest tests/test_session/test_manager.py
 
 # Run with coverage
-python3 -m pytest --cov=sessionintent --cov-report=term-missing
+uv run pytest --cov=sessionintent --cov-report=term-missing
 ```
 
 ### Quality Gates
@@ -80,10 +80,10 @@ python3 -m pytest --cov=sessionintent --cov-report=term-missing
 Every change must pass, in order:
 
 ```bash
-ruff check src/ tests/
-mypy src/
-python3 -m pytest
-pip install . && sessionintent version
+uv run ruff check src/ tests/
+uv run mypy src/
+uv run pytest
+uv build && uv run sessionintent version
 ```
 
 See `.github/workflows/ci.yml` — CI runs the same checks.

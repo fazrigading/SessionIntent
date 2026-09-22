@@ -11,17 +11,20 @@ SessionIntent is a declarative session orchestration system for GNOME Wayland wr
 ### Prerequisites
 
 ```bash
-pip install pytest ruff mypy PyYAML
+# Requires uv (https://docs.astral.sh/uv/).
+# Creates .venv, installs the project (editable) and dev dependencies
+# (pytest, pytest-cov, ruff, mypy) from the committed uv.lock.
+uv sync
 ```
 
 ### Lint and Typecheck
 
 ```bash
 # Lint with ruff
-ruff check src/ tests/
+uv run ruff check src/ tests/
 
 # Type check with mypy
-mypy src/
+uv run mypy src/
 ```
 
 **Order**: lint → typecheck → test (as used in CI)
@@ -30,29 +33,29 @@ mypy src/
 
 ```bash
 # Run all tests
-python3 -m pytest
+uv run pytest
 
 # Run tests with coverage
-python3 -m pytest --cov=src --cov-report=term-missing
+uv run pytest --cov=sessionintent --cov-report=term-missing
 
 # Run a single test file
-python3 -m pytest tests/test_config/test_loader.py
+uv run pytest tests/test_config/test_loader.py
 
 # Run a single test class
-python3 -m pytest tests/test_config/test_loader.py::TestLoadYamlFile
+uv run pytest tests/test_config/test_loader.py::TestLoadYamlFile
 
 # Run a single test function
-python3 -m pytest tests/test_config/test_loader.py::TestLoadYamlFile::test_load_valid_yaml
+uv run pytest tests/test_config/test_loader.py::TestLoadYamlFile::test_load_valid_yaml
 
 # Run tests in dev mode (verbose)
-python3 -m pytest -v --tb=short
+uv run pytest -v --tb=short
 ```
 
 ### Running the Application
 
 ```bash
-# Via Python module
-sessionintent --help
+# From the dev environment (or install with: uv tool install .)
+uv run sessionintent --help
 
 # Select mode via UI (default)
 sessionintent
