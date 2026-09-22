@@ -1,5 +1,7 @@
 # SessionIntent - Declarative session orchestration for Linux desktops
 
+Project status: **Work-in-Progress**
+
 SessionIntent switches between intent-based modes (work, gaming, browsing, …) that automatically launch, reuse, and organize applications across workspaces.
 
 Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and an EWMH fallback — override with `--backend`.
