@@ -20,12 +20,11 @@ _WS_SWITCH_TIMEOUT: float = 2.0
 _WS_POLL_INTERVAL: float = 0.1
 
 
-def _get_socket_path(dev_mode: bool = False) -> str | None:
+def _get_socket_path(dev_mode: bool = False) -> str:
     if dev_mode:
         return "/dev/null/sessionintent-ws.sock"
-    runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
-    if not runtime_dir:
-        return None
+    # ponytail: /tmp fallback mirrors extension.js getSocketPath
+    runtime_dir = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
     return f"{runtime_dir}/{SOCKET_NAME}"
 
 
@@ -53,9 +52,6 @@ def _socket_call(
         return (True, "OK")
 
     sock_path = _get_socket_path(dev_mode)
-    if not sock_path:
-        return (False, "XDG_RUNTIME_DIR not set")
-
     if not os.path.exists(sock_path):
         return (False, f"Socket not found at {sock_path}")
 
@@ -94,7 +90,7 @@ def _gdbus_workspace_call(js_code: str, dev_mode: bool = False) -> tuple[bool, s
     if dev_mode:
         if "get_active_workspace_index" in js_code:
             return (True, "(uint32 0,)")
-        if "_workspaces.length" in js_code:
+        if "_workspaces.length" in js_code or "get_n_workspaces" in js_code:
             return (True, "(uint32 4,)")
         return (True, "(false, '')")
     try:
@@ -116,7 +112,7 @@ def _gdbus_workspace_call(js_code: str, dev_mode: bool = False) -> tuple[bool, s
             timeout=5,
         )
         return (result.returncode == 0, result.stdout.strip())
-    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+    except (OSError, subprocess.SubprocessError) as e:
         return (False, str(e))
 
 
@@ -150,13 +146,17 @@ def switch_workspace(
             cmd += f" {monitor}"
         cmd += "\n"
         ok, resp = _socket_call(cmd, dev_mode=dev_mode)
-        if ok and resp == "OK":
-            return True
+        if ok:
+            # ERR from extension is authoritative, don't mask with gdbus retry
+            return resp == "OK"
 
-    # gdbus fallback when socket unavailable or when socket call fails
-    js = f"Main.wm.actionSwitchWorkspace(Main.wm.get_workspace_by_index({idx}))"
-    ok, _ = _gdbus_workspace_call(js, dev_mode)
-    if ok:
+    # gdbus fallback only when socket transport failed (Eval disabled on 46+)
+    js = (
+        f"global.workspace_manager.get_workspace_by_index({idx})"
+        ".activate(global.get_current_time())"
+    )
+    ok, out = _gdbus_workspace_call(js, dev_mode)
+    if ok and "true" in out.lower():
         time.sleep(0.5)
         return True
 
@@ -213,7 +213,9 @@ def get_current_workspace(dev_mode: bool = False) -> int | None:
             except ValueError:
                 pass
 
-    ok, output = _gdbus_workspace_call("Main.wm.get_active_workspace_index()")
+    ok, output = _gdbus_workspace_call(
+        "global.workspace_manager.get_active_workspace_index()"
+    )
     if ok:
         import re
 
@@ -245,7 +247,9 @@ def get_workspace_count(dev_mode: bool = False) -> int:
             except ValueError:
                 pass
 
-    ok, output = _gdbus_workspace_call("Main.wm._workspaces.length")
+    ok, output = _gdbus_workspace_call(
+        "global.workspace_manager.get_n_workspaces()"
+    )
     if ok:
         import re
 

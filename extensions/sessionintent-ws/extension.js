@@ -47,7 +47,11 @@ export default class SessionIntentWorkspaceSwitcher extends Extension {
             if (monIdx === -1) {
                 return `ERR: monitor '${monitorLabel}' not found`;
             }
-            workspace.activate_with_focus(global.display.focus_window, monIdx);
+            // ponytail: workspaces span monitors; validate label but activate with timestamp
+            workspace.activate_with_focus(
+                global.display.focus_window,
+                global.get_current_time()
+            );
         } else {
             // Use Main.wm action if available for proper animation, otherwise direct API
             if (Main.wm && typeof Main.wm.actionSwitchWorkspace === 'function') {

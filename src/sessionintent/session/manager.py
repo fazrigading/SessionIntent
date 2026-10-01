@@ -167,8 +167,7 @@ class SessionManager:
                 else:
                     monitor_str = f" (monitor: {monitor})" if monitor else ""
                     print(f"  Switched to workspace {ws_num}{monitor_str}")
-                    # Wait for workspace switch animation to complete
-                    time.sleep(4)
+                    self._workspace.wait_for_workspace(ws_num, timeout=4.0)
 
             for app_entry in apps_in_ws:
                 app_key, params = self._parse_app_entry(app_entry, mode_cfg)
