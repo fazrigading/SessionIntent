@@ -5,6 +5,7 @@ Provides workspace switching via extension socket (GNOME 46+) or gdbus (legacy).
 
 from __future__ import annotations
 
+import json
 import os
 import socket
 import subprocess
@@ -52,6 +53,8 @@ def _socket_call(
         return (True, "OK")
 
     sock_path = _get_socket_path(dev_mode)
+    if not sock_path:
+        return (False, "XDG_RUNTIME_DIR not set")
     if not os.path.exists(sock_path):
         return (False, f"Socket not found at {sock_path}")
 
@@ -292,6 +295,20 @@ def _enable_extension(dev_mode: bool = False) -> tuple[bool, str]:
         return (False, "gnome-extensions command not found")
 
 
+def _extension_needs_update(ext_dir: str, source_dir: str) -> bool:
+    """True if installed metadata differs from source (version/shell-version)."""
+    try:
+        with open(os.path.join(ext_dir, "metadata.json")) as f:
+            installed = json.load(f)
+        with open(os.path.join(source_dir, "metadata.json")) as f:
+            source = json.load(f)
+    except (OSError, ValueError):
+        return False
+    return installed.get("version") != source.get("version") or installed.get(
+        "shell-version"
+    ) != source.get("shell-version")
+
+
 def ensure_extension(dev_mode: bool = False) -> tuple[bool, str]:
     """
     Ensure the SessionIntent workspace-switcher extension is installed and enabled.
@@ -327,8 +344,26 @@ def ensure_extension(dev_mode: bool = False) -> tuple[bool, str]:
             shutil.copytree(source_dir, ext_dir)
         except OSError as e:
             return (False, f"Failed to copy extension: {e}")
+        updated = True
+    elif _extension_needs_update(ext_dir, source_dir):
+        try:
+            import shutil
+
+            shutil.rmtree(ext_dir)
+            shutil.copytree(source_dir, ext_dir)
+        except OSError as e:
+            return (False, f"Failed to update extension: {e}")
+        updated = True
+    else:
+        updated = False
 
     if _is_extension_enabled(dev_mode):
+        if updated:
+            return (
+                True,
+                f"Extension updated at {ext_dir}. "
+                "Restart GNOME Shell (Alt+F2 → r) to activate.",
+            )
         return (True, f"Extension already enabled at {ext_dir}")
 
     ok, msg = _enable_extension(dev_mode)

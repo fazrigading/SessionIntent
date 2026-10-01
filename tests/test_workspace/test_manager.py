@@ -154,7 +154,7 @@ class TestSwitchWorkspace:
         mock_available.return_value = False
         with patch("sessionintent.providers.workspace.gnome._gdbus_workspace_call") as mock_gdbus:
             with patch("time.sleep"):
-                mock_gdbus.return_value = (True, "")
+                mock_gdbus.return_value = (True, "(true, '')")
                 result = switch_workspace(2, dev_mode=False)
                 assert result is True
                 mock_gdbus.assert_called_once()
