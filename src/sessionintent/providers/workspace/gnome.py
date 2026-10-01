@@ -295,6 +295,22 @@ def _enable_extension(dev_mode: bool = False) -> tuple[bool, str]:
         return (False, "gnome-extensions command not found")
 
 
+def _extension_source_dir() -> str | None:
+    """Locate bundled Shell extension source, or None if not shipped."""
+    # ponytail: ancestor walk beats depth hardcode; metadata check skips
+    # src/sessionintent/extensions/ (Python subpackage, same dirname)
+    path = os.path.abspath(os.path.dirname(__file__))
+    for _ in range(8):
+        candidate = os.path.join(path, "extensions", EXTENSION_SOURCE_DIR)
+        if os.path.isfile(os.path.join(candidate, "metadata.json")):
+            return candidate
+        parent = os.path.dirname(path)
+        if parent == path:
+            break
+        path = parent
+    return None
+
+
 def _extension_needs_update(ext_dir: str, source_dir: str) -> bool:
     """True if installed metadata differs from source (version/shell-version)."""
     try:
@@ -326,17 +342,14 @@ def ensure_extension(dev_mode: bool = False) -> tuple[bool, str]:
         os.path.expanduser("~/.local/share/gnome-shell/extensions"),
         EXTENSION_UUID,
     )
-    source_dir = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-        "extensions",
-        EXTENSION_SOURCE_DIR,
-    )
+    source_dir = _extension_source_dir()
 
     if not os.path.exists(ext_dir):
-        if not os.path.exists(source_dir):
+        if not source_dir:
             return (
                 False,
-                f"Extension source not found at {source_dir}",
+                "Extension source not bundled with this install "
+                "(extensions/sessionintent-ws not found)",
             )
         try:
             import shutil
@@ -345,7 +358,7 @@ def ensure_extension(dev_mode: bool = False) -> tuple[bool, str]:
         except OSError as e:
             return (False, f"Failed to copy extension: {e}")
         updated = True
-    elif _extension_needs_update(ext_dir, source_dir):
+    elif source_dir and _extension_needs_update(ext_dir, source_dir):
         try:
             import shutil
 

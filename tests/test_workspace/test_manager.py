@@ -1,5 +1,7 @@
 """Tests for workspace manager."""
 
+import json
+import os
 from unittest.mock import patch, MagicMock
 import subprocess
 
@@ -9,6 +11,8 @@ from sessionintent.providers.workspace.gnome import (
     get_workspace_count,
     ensure_extension,
     wait_for_workspace,
+    _extension_needs_update,
+    _extension_source_dir,
     _socket_call,
     _is_extension_available,
     _gdbus_workspace_call,
@@ -317,3 +321,54 @@ class TestEnsureExtension:
         ok, msg = ensure_extension(dev_mode=False)
         assert ok is True
         assert "already enabled" in msg
+
+
+def _write_metadata(path, version, shells):
+    path.mkdir(parents=True, exist_ok=True)
+    (path / "metadata.json").write_text(
+        json.dumps({"version": version, "shell-version": shells})
+    )
+    (path / "extension.js").write_text("// stub")
+
+
+class TestExtensionUpdate:
+    """Test stale-install detection and reinstall."""
+
+    def test_source_dir_finds_repo_metadata(self):
+        src = _extension_source_dir()
+        assert src is not None
+        assert src.endswith(os.path.join("extensions", "sessionintent-ws"))
+
+    def test_needs_update_on_version_bump(self, tmp_path):
+        installed = tmp_path / "inst"
+        source = tmp_path / "src"
+        _write_metadata(installed, 1, ["49"])
+        _write_metadata(source, 2, ["49", "50", "51"])
+        assert _extension_needs_update(str(installed), str(source)) is True
+        assert _extension_needs_update(str(source), str(source)) is False
+
+    def test_ensure_reinstalls_stale_install(self, tmp_path, monkeypatch):
+        """Stale v1 install + v2 source -> reinstall, report updated."""
+        monkeypatch.setenv("HOME", str(tmp_path))
+        ext_dir = (
+            tmp_path
+            / ".local/share/gnome-shell/extensions"
+            / "sessionintent-ws@fazrigading.github.io"
+        )
+        source = tmp_path / "source"
+        _write_metadata(ext_dir, 1, ["49"])
+        _write_metadata(source, 2, ["49", "50", "51"])
+        with (
+            patch(
+                "sessionintent.providers.workspace.gnome._extension_source_dir",
+                return_value=str(source),
+            ),
+            patch(
+                "sessionintent.providers.workspace.gnome._is_extension_enabled",
+                return_value=True,
+            ),
+        ):
+            ok, msg = ensure_extension(dev_mode=False)
+        assert ok is True
+        assert "updated" in msg
+        assert json.loads((ext_dir / "metadata.json").read_text())["version"] == 2
