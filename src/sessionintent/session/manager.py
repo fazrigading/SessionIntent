@@ -172,7 +172,16 @@ class SessionManager:
             for app_entry in apps_in_ws:
                 app_key, params = self._parse_app_entry(app_entry, mode_cfg)
                 print(f"  Launching {app_key}...")
-                launch_app(app_key, params, self.apps, self.dev_mode)
+                try:
+                    launched = launch_app(app_key, params, self.apps, self.dev_mode)
+                except (FileNotFoundError, OSError) as e:
+                    print(
+                        f"  Warning: executable for '{app_key}' not found, "
+                        f"skipping ({e})."
+                    )
+                    continue
+                if launched is False:
+                    continue
                 print(f"  {app_key} launched.")
 
                 app_def = self.apps.get(app_key, {})

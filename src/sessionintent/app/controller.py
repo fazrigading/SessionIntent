@@ -32,16 +32,23 @@ def is_running(pattern: str, dev_mode: bool = False) -> bool:
         return True
     except subprocess.CalledProcessError:
         return False
+    except OSError:
+        # ponytail: pgrep itself missing -> treat as not running, not a crash
+        return False
 
 
 async def _launch_app_async(cmd: list[str]) -> None:
     """Launch a single app asynchronously."""
-    await asyncio.create_subprocess_exec(
-        *cmd,
-        stdout=asyncio.subprocess.DEVNULL,
-        stderr=asyncio.subprocess.DEVNULL,
-        start_new_session=True,
-    )
+    try:
+        await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
+            start_new_session=True,
+        )
+    except (FileNotFoundError, OSError) as e:
+        exe = cmd[0] if cmd else "?"
+        raise RuntimeError(f"Executable not found: {exe}: {e}") from e
 
 
 def launch_app(
@@ -49,7 +56,7 @@ def launch_app(
     params: dict[str, Any],
     apps: dict[str, dict[str, Any]],
     dev_mode: bool = False,
-) -> None:
+) -> bool:
     """
     Launch or reuse an application based on its definition.
 
@@ -58,19 +65,23 @@ def launch_app(
         params: Parameters for template substitution and flags
         apps: Application registry with definitions
         dev_mode: If True, print commands instead of launching
+
+    Returns:
+        True if launched, already running, or intentionally skipped.
+        False if the executable was not found (warning emitted, caller continues).
     """
     app_def = apps.get(app_key, {})
 
     if not app_def:
         if not is_running(app_key, dev_mode):
-            _print_or_launch([app_key], dev_mode)
-        return
+            return _print_or_launch([app_key], dev_mode)
+        return True
 
     check_pattern = app_def.get("check", app_key)
     if check_pattern is not False and is_running(check_pattern, dev_mode):
         if not app_def.get("internal_reuse", True):
             _print(dev_mode, f"  - {app_key} is already running (skipping)")
-            return
+            return True
         _print(dev_mode, f"  - {app_key} is already running (reusing)")
 
     _print(dev_mode, f"  - Handling {app_key}...")
@@ -79,13 +90,21 @@ def launch_app(
 
     if dev_mode:
         _print(dev_mode, f"[DEV] Exec: {cmd}")
-    else:
+        return True
+    if not cmd:
+        _warn_missing(app_key, cmd, "empty command")
+        return False
+    try:
         subprocess.Popen(
             cmd,
             start_new_session=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+    except (FileNotFoundError, OSError) as e:
+        _warn_missing(app_key, cmd, e)
+        return False
+    return True
 
 
 async def launch_apps_async(
@@ -214,14 +233,31 @@ def _print(dev_mode: bool, message: str) -> None:
         print(message)
 
 
-def _print_or_launch(cmd: list[str], dev_mode: bool) -> None:
-    """Print or launch command based on dev mode."""
+def _warn_missing(app_key: str, cmd: list[str], cause: object) -> None:
+    """Warn (log + stdout) that an executable is missing; never raises."""
+    from ..session.log import warning
+
+    exe = cmd[0] if cmd else app_key
+    warning(f"Executable not found for '{app_key}': {exe}: {cause}", cmd=cmd)
+    print(f"  Warning: executable for '{app_key}' not found ({exe}), skipping.")
+
+
+def _print_or_launch(cmd: list[str], dev_mode: bool) -> bool:
+    """Print or launch command based on dev mode. Returns False if exe missing."""
     if dev_mode:
         print(f"[DEV] Exec: {cmd}")
-    else:
+        return True
+    if not cmd:
+        _warn_missing("?", cmd, "empty command")
+        return False
+    try:
         subprocess.Popen(
             cmd,
             start_new_session=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+    except (FileNotFoundError, OSError) as e:
+        _warn_missing(cmd[0], cmd, e)
+        return False
+    return True
