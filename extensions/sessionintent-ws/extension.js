@@ -231,7 +231,12 @@ class ConnectionHandler {
             const line = this._buffer.slice(0, newline);
             this._buffer = this._buffer.slice(newline + 1);
 
-            const response = this._extension.handleLine(line);
+            let response;
+            try {
+                response = this._extension.handleLine(line);
+            } catch (e) {
+                response = `ERR: ${e.message}`;
+            }
             if (response !== null) {
                 this._writeResponse(response);
             }
@@ -247,11 +252,11 @@ class ConnectionHandler {
 
         try {
             const data = new TextEncoder().encode(response + "\n");
-            this._outputStream.write_all(
-                data,
-                data.length,
-                null
-            );
+            // ponytail: write_all(buffer, cancellable); extra length arg threw, EOFing every reply
+            const [ok] = this._outputStream.write_all(data, null);
+            if (!ok) {
+                this._close();
+            }
         } catch (e) {
             this._close();
         }
