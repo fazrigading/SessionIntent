@@ -12,7 +12,7 @@ from .app import launch_app, is_running
 from .extensions import apply_extensions, resolve_extension_id
 from .plugins import get_plugin_manager
 
-__version__ = "0.3.3"  # Single source of truth; pyproject.toml reads this dynamically.
+__version__ = "0.4.0"  # Single source of truth; pyproject.toml reads this dynamically.
 __all__ = [
     "SessionManager",
     "load_config",

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0-beta] - 2026-10-02
+
+### Added
+- GNOME Shell 50 and 51 support (extension metadata v2)
+- Socket window tracking: `LIST` command reports windows with
+  app-id, sandboxed app-id, class, title, and pid; workspace
+  switches wait until the app window is visible on the target
+- `ensure_extension` (`sessionintent init`) reinstalls stale
+  extension installs on metadata mismatch
+
+### Fixed
+- Workspace switcher: `/tmp` socket fallback, corrected gdbus
+  Eval snippets, poll-based post-switch wait, extension reply
+  write path (every socket reply was empty)
+- Missing executables warn and skip instead of aborting the mode
+
 ### Changed (breaking)
 - Flat flags replaced by subcommands: `apply`, `preview`, `select`,
   `list`, `status`, `panic`, `quit`, `clear`, `kill`, `suspend`,
