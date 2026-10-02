@@ -24,6 +24,13 @@ chrome:
   append_param: "urls"
   internal_reuse: true
 
+# Zen Browser (flatpak) - Privacy-focused Firefox fork
+zen:
+  cmd: ["flatpak", "run", "app.zen_browser.zen"]
+  check: "zen"
+  append_param: "urls"
+  internal_reuse: true
+
 # ===============
 # Tech
 # ===============
@@ -31,6 +38,12 @@ chrome:
 # VSCode - Code editor
 vscode:
   cmd: ["code", "--reuse-window", "{workspace|}"]
+  primary_param: "workspace"
+  internal_reuse: true
+
+# Zed - Lightning-fast code editor
+zed:
+  cmd: ["zed", "{workspace|}"]
   primary_param: "workspace"
   internal_reuse: true
 
@@ -57,8 +70,8 @@ ghostty:
 
 # Discord (for users that does not use autostart)
 discord:
-  cmd: ["Discord"]
-  check: "Discord"
+  cmd: ["discord"]
+  check: "discord"
   flags:
     background: "--start-minimized"
   internal_reuse: false
@@ -66,6 +79,12 @@ discord:
 # Zoom - Video conference
 zoom:
   cmd: ["zoom"]
+  internal_reuse: false
+
+# ZapZap - Unofficial WhatsApp client (flatpak)
+zapzap:
+  cmd: ["flatpak", "run", "com.rtosta.zapzap"]
+  check: "zapzap"
   internal_reuse: false
 
 # ===============
@@ -134,6 +153,37 @@ steam:
 lutris:
   cmd: ["lutris"]
   check: "lutris"
+  internal_reuse: false
+
+# Heroic - Epic/GOG/Amazon games launcher
+# (flatpak alternative: ["flatpak", "run", "com.heroicgameslauncher.hgl"])
+heroic:
+  cmd: ["heroic"]
+  check: "heroic"
+  internal_reuse: false
+
+# PrismLauncher - Minecraft launcher (flatpak)
+prismlauncher:
+  cmd: ["flatpak", "run", "org.prismlauncher.PrismLauncher"]
+  check: "prismlauncher"
+  internal_reuse: false
+
+# Bottles - Wine prefix manager (flatpak)
+bottles:
+  cmd: ["flatpak", "run", "com.usebottles.bottles"]
+  check: "bottles"
+  internal_reuse: false
+
+# ProtonPlus - Proton-GE manager for Steam/UMU (flatpak)
+protonplus:
+  cmd: ["flatpak", "run", "com.vysp3r.ProtonPlus"]
+  check: "protonplus"
+  internal_reuse: false
+
+# DuckStation - PlayStation 1 emulator (flatpak)
+duckstation:
+  cmd: ["flatpak", "run", "org.duckstation.DuckStation"]
+  check: "duckstation"
   internal_reuse: false
 
 # ===============

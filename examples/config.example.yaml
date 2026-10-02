@@ -165,3 +165,64 @@ modes:
       2:
         - gnome-system-log
         - wireshark
+
+  # --- Deep Work Mode ---
+  deep-work:
+    label: "Deep Work"
+    description: "Zed + docs + terminal, timer and music in the back"
+
+    firefox:
+      profile: work
+      urls:
+        - https://docs.python.org
+
+    zed:
+      workspace: "~/Work/CurrentProject"
+
+    workspaces:
+      1:
+        - zed
+        - firefox
+      2:
+        - ghostty
+        - terminal
+      3:
+        - gnome-pomodoro
+        - ytmdesktop
+
+  # --- Minecraft Mode ---
+  minecraft:
+    label: "Minecraft"
+    description: "PrismLauncher up front, wiki and Discord alongside"
+
+    firefox:
+      profile: chill
+      urls:
+        - https://minecraft.wiki
+
+    workspaces:
+      1:
+        - prismlauncher
+        - firefox
+      2:
+        discord:
+          server: Minecraft
+          background: true
+
+  # --- Retro Mode ---
+  retro:
+    label: "Retro Gaming"
+    description: "PS1 via DuckStation, Bottles for the Windows leftovers"
+
+    firefox:
+      profile: chill
+      urls:
+        - https://www.retroachievements.org
+
+    workspaces:
+      1:
+        - duckstation
+        - bottles
+      2:
+        - discord
+        - ytmdesktop
