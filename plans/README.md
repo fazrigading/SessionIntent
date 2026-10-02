@@ -45,6 +45,7 @@ and backward instead of duplicating content.
 | 2 — Architecture rework | Done | `src/sessionintent/` namespace + provider layer (providers, detection, TUI). Gates: 333 pytest passed, ruff/mypy clean. |
 | 3 — Multi-desktop expansion | Done | KDE, Hyprland, Sway, wlroots-chain providers + KDE extensions; `--backend` override; mocked provider tests. Gates: 362 pytest passed, ruff/mypy clean. |
 | 4 — CLI/config redesign + docs | Done | Subcommand CLI, `version: 2` schema + validation, v1 in-memory migration with notice, docs/MIGRATION.md, docs refresh. Gates: 359 pytest passed, ruff/mypy clean. |
+| Post-4 — Session hardening (0.4.x beta) | In testing | Socket window tracking (`LIST`: app-id → class → title) gating workspace switches; GNOME 50/51 extension support; warn-and-skip on missing executables; tag-triggered release workflow. Gates: 408 pytest passed, ruff clean, `v0.4.0-beta` + `v0.4.1-beta` prereleases. Remaining: final 0.4.0 cut (distro packaging sync), wlroots/X11 hardware verification, integration tests. |
 
 ## Conventions
 

@@ -15,6 +15,7 @@ items below are manual verification, not implementation.
 - [ ] Test on wlroots compositors (River, Labwc)
 - [ ] Test and verify GNOME X11 support
 - [ ] Create comprehensive testing matrix runs for multi-DE support
+- [x] Test on multiple GNOME versions (50/51 verified live on Wayland, 2026-10)
 
 ### Shipped
 
@@ -40,18 +41,18 @@ Ref: docs/ROADMAP.md
 - [x] Add logging system
 - [x] Session Snapshots - save and restore window positions
 - [x] Window state persistence
-- [ ] Config Hot Reload - removed in Phase 1 (manual `reload` only, see `plans/`)
-- [ ] Time-based auto-switching - removed in Phase 1 (unwired, see `plans/`)
-- [ ] Desktop notifications - present but unwired (see `plans/`)
-- [ ] Theme support - removed in Phase 1 (unwired, see `plans/`)
+- [x] Desktop notifications - wired into `apply_mode` (mode applied / not found)
+- [x] TUI Mode - `TuiDisplayProvider` fallback selector (see UI/UX below)
+
+Removed in Phase 1 (not planned work, manual alternatives noted):
+
+- Config Hot Reload - manual `reload` only (see `plans/`)
+- Time-based auto-switching - unwired, removed (see `plans/`)
+- Theme support - unwired, removed (see `plans/`)
 
 ### Medium Priority
 
-- [ ] Plugin system architecture - present but unwired (see `plans/`)
-
-### Low Priority
-
-- [ ] Theme support - removed in Phase 1 (see above)
+- [x] Plugin system architecture - apply/applied hooks wired into `apply_mode`
 
 Ref: docs/ROADMAP.md
 
@@ -72,7 +73,7 @@ Ref: docs/ROADMAP.md
 
 ### High Priority
 
-- [ ] Add TUI Mode - terminal-based mode selector for headless
+- [x] Add TUI Mode - terminal-based mode selector fallback
 - [x] Add Mode Preview - `preview <mode>` shows apps before applying
 
 Ref: docs/ROADMAP.md
