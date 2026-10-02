@@ -97,9 +97,19 @@ def _parse_desktop_entry(content: str) -> dict[str, str]:
             "NoDisplay",
             "Hidden",
             "Type",
+            "MimeType",
         ):
             fields[key] = value.strip()
     return fields
+
+
+def _is_scheme_handler_only(entry: dict[str, str]) -> bool:
+    """True when MimeType lists only x-scheme-handler/... (protocol handler)."""
+    mime = entry.get("MimeType", "")
+    schemes = [m.strip() for m in mime.split(";") if m.strip()]
+    return bool(schemes) and all(
+        s.startswith("x-scheme-handler/") for s in schemes
+    )
 
 
 def detect_desktop_apps(
@@ -131,6 +141,8 @@ def detect_desktop_apps(
             if entry.get("NoDisplay", "false").lower() == "true":
                 continue
             if entry.get("Hidden", "false").lower() == "true":
+                continue
+            if _is_scheme_handler_only(entry):
                 continue
 
             exec_line = entry.get("Exec", "")

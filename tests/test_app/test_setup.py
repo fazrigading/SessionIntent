@@ -300,6 +300,24 @@ class TestDetectDesktopApps:
         d = self._write(tmp_path, "secret.desktop", HIDDEN_DESKTOP)
         assert detect_desktop_apps(desktop_dirs=[d]) == {}
 
+    def test_scheme_handler_only_skipped(self, tmp_path):
+        d = self._write(
+            tmp_path,
+            "handler.desktop",
+            "[Desktop Entry]\nType=Application\nName=Proto\n"
+            "Exec=proto %u\nMimeType=x-scheme-handler/proto;\n",
+        )
+        assert detect_desktop_apps(desktop_dirs=[d]) == {}
+
+    def test_mixed_mimetype_kept(self, tmp_path):
+        d = self._write(
+            tmp_path,
+            "mixed.desktop",
+            "[Desktop Entry]\nType=Application\nName=Mixed\nExec=mixed\n"
+            "MimeType=text/plain;x-scheme-handler/mixed;\n",
+        )
+        assert "mixed" in detect_desktop_apps(desktop_dirs=[d])
+
     def test_wm_class_captured(self, tmp_path):
         d = self._write(tmp_path, "quoted.desktop", QUOTED_DESKTOP)
         apps = detect_desktop_apps(desktop_dirs=[d])
