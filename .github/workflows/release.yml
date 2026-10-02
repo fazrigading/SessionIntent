@@ -77,7 +77,7 @@ jobs:
 
       - name: Install COPR CLI
         run: |
-          sudo dnf install -y copr-cli
+          pip install copr-cli
 
       - name: Trigger COPR build
         # Manual follow-up: COPR has no RPM to build (this workflow ships a
