@@ -8,7 +8,9 @@ from sessionintent.app.detect import (
     _parse_desktop_entry,
     _split_exec,
     categorize_app,
+    detect_all_apps,
     detect_desktop_apps,
+    detect_local_bin_apps,
     get_category_list,
     get_categorized_apps,
 )
@@ -425,3 +427,50 @@ class TestDpkgFilter:
             from sessionintent.app.detect import detect_dpkg_apps
 
             assert detect_dpkg_apps() == {}
+
+
+class TestLocalBinApps:
+    """Test ~/.local/bin executable detection."""
+
+    def _bindir(self, tmp_path):
+        d = tmp_path / "bin"
+        d.mkdir()
+        exe = d / "claude"
+        exe.write_text("#!/bin/sh\nexec foo\n")
+        exe.chmod(0o755)
+        (d / "notes.txt").write_text("not executable")
+        sub = d / "subdir"
+        sub.mkdir()
+        (d / ".hidden").write_text("x")
+        (d / ".hidden").chmod(0o755)
+        return d
+
+    def test_executables_only(self, tmp_path):
+        apps = detect_local_bin_apps(bin_dirs=[self._bindir(tmp_path)])
+        assert list(apps) == ["claude"]
+        assert apps["claude"]["cmd"] == [
+            str(tmp_path / "bin" / "claude")
+        ]
+        assert apps["claude"]["check"] == "claude"
+
+    def test_missing_dir_empty(self, tmp_path):
+        assert detect_local_bin_apps(bin_dirs=[tmp_path / "nope"]) == {}
+
+    def test_last_priority_wins_for_richer_sources(self):
+        with (
+            patch(
+                "sessionintent.app.detect.detect_flatpak_apps",
+                return_value={"dup": {"cmd": ["flatpak", "run", "x"], "check": "dup"}},
+            ),
+            patch(
+                "sessionintent.app.detect.detect_desktop_apps", return_value={}
+            ),
+            patch("sessionintent.app.detect.detect_dpkg_apps", return_value={}),
+            patch("sessionintent.app.detect.detect_rpm_apps", return_value={}),
+            patch(
+                "sessionintent.app.detect.detect_local_bin_apps",
+                return_value={"dup": {"cmd": ["/x/dup"], "check": "dup"}},
+            ),
+        ):
+            apps = detect_all_apps(use_cache=False)
+        assert apps["dup"]["cmd"] == ["flatpak", "run", "x"]

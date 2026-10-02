@@ -5,6 +5,7 @@ Detects installed applications from multiple sources.
 
 from __future__ import annotations
 
+import os
 import shlex
 import shutil
 import subprocess
@@ -261,10 +262,51 @@ def categorize_app(app_key: str) -> str:
     return "Other"
 
 
+def detect_local_bin_apps(
+    bin_dirs: list[Path] | None = None,
+) -> dict[str, dict[str, Any]]:
+    """
+    Detect executables in user bin dirs (e.g. ~/.local/bin).
+
+    Last-resort source for apps with no .desktop entry or package:
+    every executable file becomes a candidate. Runs last so richer
+    sources always win key collisions.
+    """
+    apps: dict[str, dict[str, Any]] = {}
+
+    if bin_dirs is None:
+        bin_dirs = [Path.home() / ".local/bin"]
+
+    for bin_dir in bin_dirs:
+        if not bin_dir.is_dir():
+            continue
+
+        for entry in sorted(bin_dir.iterdir()):
+            if entry.name.startswith(".") or not entry.is_file():
+                continue
+            try:
+                if not os.access(entry, os.X_OK):
+                    continue
+            except OSError:
+                continue
+
+            key = entry.name.lower().replace("_", "-")
+            if key in apps:
+                continue
+
+            apps[key] = {
+                "cmd": [str(entry)],
+                "check": entry.name,
+                "internal_reuse": True,
+            }
+
+    return apps
+
+
 def detect_all_apps(use_cache: bool = True) -> dict[str, dict[str, Any]]:
     """
     Detect all installed applications from all sources.
-    Priority: flatpak > desktop > dpkg > rpm
+    Priority: flatpak > desktop > dpkg > rpm > local-bin
 
     Args:
         use_cache: If True, use cached results if valid. Defaults to True.
@@ -286,6 +328,7 @@ def detect_all_apps(use_cache: bool = True) -> dict[str, dict[str, Any]]:
         ("desktop", detect_desktop_apps()),
         ("dpkg", detect_dpkg_apps()),
         ("rpm", detect_rpm_apps()),
+        ("local-bin", detect_local_bin_apps()),
     ]
 
     for source_name, source_apps in sources:
