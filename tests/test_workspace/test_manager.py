@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock
 import subprocess
 
 from sessionintent.providers.workspace.gnome import (
+    GnomeWorkspaceProvider,
     switch_workspace,
     get_current_workspace,
     get_workspace_count,
@@ -13,9 +14,12 @@ from sessionintent.providers.workspace.gnome import (
     wait_for_workspace,
     _extension_needs_update,
     _extension_source_dir,
+    _list_windows,
     _socket_call,
     _is_extension_available,
     _gdbus_workspace_call,
+    _window_matches,
+    wait_for_window as gnome_wait_for_window,
 )
 
 
@@ -372,3 +376,156 @@ class TestExtensionUpdate:
         assert ok is True
         assert "updated" in msg
         assert json.loads((ext_dir / "metadata.json").read_text())["version"] == 2
+
+
+_FF_ROW = {
+    "ws": 0,
+    "appId": "org.mozilla.firefox",
+    "sandboxId": "",
+    "class": "firefox",
+    "title": "New Tab",
+    "pid": 123,
+}
+_LIST_JSON = json.dumps([_FF_ROW])
+
+
+class TestWindowMatches:
+    """Test _window_matches precedence and case handling."""
+
+    def test_app_id_match(self):
+        assert _window_matches(_FF_ROW, "firefox") is True
+
+    def test_sandbox_id_match(self):
+        row = dict(_FF_ROW, appId="", sandboxId="com.rtosta.zapzap", **{"class": ""})
+        assert _window_matches(row, "zapzap") is True
+
+    def test_case_insensitive(self):
+        assert _window_matches(_FF_ROW, "FireFox") is True
+
+    def test_title_fallback(self):
+        row = dict(_FF_ROW, appId="", sandboxId="", **{"class": ""})
+        assert _window_matches(row, "new tab") is True
+
+    def test_no_match(self):
+        assert _window_matches(_FF_ROW, "discord") is False
+
+
+class TestListWindows:
+    """Test _list_windows parsing and status reporting."""
+
+    def test_ok(self):
+        with (
+            patch(
+                "sessionintent.providers.workspace.gnome._is_extension_available",
+                return_value=True,
+            ),
+            patch(
+                "sessionintent.providers.workspace.gnome._socket_call",
+                return_value=(True, _LIST_JSON),
+            ),
+        ):
+            windows, status = _list_windows(dev_mode=False)
+        assert status == "ok"
+        assert windows[0]["appId"] == "org.mozilla.firefox"
+
+    def test_unavailable_no_socket(self):
+        with patch(
+            "sessionintent.providers.workspace.gnome._is_extension_available",
+            return_value=False,
+        ):
+            assert _list_windows(dev_mode=False) == ([], "unavailable")
+
+    def test_unsupported_old_extension(self):
+        with (
+            patch(
+                "sessionintent.providers.workspace.gnome._is_extension_available",
+                return_value=True,
+            ),
+            patch(
+                "sessionintent.providers.workspace.gnome._socket_call",
+                return_value=(True, "ERR: unknown command 'LIST'"),
+            ),
+        ):
+            assert _list_windows(dev_mode=False) == ([], "unsupported")
+
+    def test_malformed_json(self):
+        with (
+            patch(
+                "sessionintent.providers.workspace.gnome._is_extension_available",
+                return_value=True,
+            ),
+            patch(
+                "sessionintent.providers.workspace.gnome._socket_call",
+                return_value=(True, "not json"),
+            ),
+        ):
+            assert _list_windows(dev_mode=False) == ([], "unavailable")
+
+
+class TestGnomeWaitForWindow:
+    """Test socket-based wait_for_window."""
+
+    def test_dev_mode(self):
+        assert gnome_wait_for_window("x", 1, dev_mode=True) is True
+
+    def test_found_on_target(self):
+        with patch(
+            "sessionintent.providers.workspace.gnome._list_windows",
+            side_effect=[([], "ok"), ([_FF_ROW], "ok")],
+        ):
+            assert gnome_wait_for_window("firefox", 1, timeout=2.0) is True
+
+    def test_wrong_workspace_ignored(self):
+        row = dict(_FF_ROW, ws=1)
+        with patch(
+            "sessionintent.providers.workspace.gnome._list_windows",
+            return_value=([row], "ok"),
+        ):
+            assert gnome_wait_for_window("firefox", 1, timeout=0.2) is False
+
+    def test_unsupported_warns_once_and_fails(self, capsys, monkeypatch):
+        import sessionintent.providers.workspace.gnome as gnomemod
+
+        monkeypatch.setattr(gnomemod, "_warned_list_unsupported", False)
+        with patch(
+            "sessionintent.providers.workspace.gnome._list_windows",
+            return_value=([], "unsupported"),
+        ):
+            assert gnome_wait_for_window("x", 1) is False
+            assert gnome_wait_for_window("x", 1) is False
+        assert capsys.readouterr().out.count("too old for window tracking") == 1
+
+    def test_unavailable_fails_fast(self):
+        with patch(
+            "sessionintent.providers.workspace.gnome._list_windows",
+            return_value=([], "unavailable"),
+        ):
+            assert gnome_wait_for_window("x", 1, timeout=15.0) is False
+
+
+class TestProviderWaitFallback:
+    """Test GnomeWorkspaceProvider falls back to ewmh."""
+
+    def test_socket_wait_wins(self):
+        provider = GnomeWorkspaceProvider(dev_mode=True)
+        with patch(
+            "sessionintent.providers.workspace.gnome.wait_for_window",
+            return_value=True,
+        ) as mock_socket:
+            assert provider.wait_for_window("x", 1) is True
+            mock_socket.assert_called_once()
+
+    def test_ewmh_fallback(self):
+        provider = GnomeWorkspaceProvider(dev_mode=True)
+        with (
+            patch(
+                "sessionintent.providers.workspace.gnome.wait_for_window",
+                return_value=False,
+            ),
+            patch(
+                "sessionintent.providers.workspace.ewmh.EwmhWorkspaceProvider"
+                ".wait_for_window",
+                return_value=True,
+            ),
+        ):
+            assert provider.wait_for_window("x", 1) is True

@@ -27,6 +27,9 @@ from ..app import launch_app
 from ..session.state import save_state
 from .snapshot import save_snapshot
 
+# ponytail: blind-hold when window tracking can't confirm; physical map time needs a knob
+_WINDOW_SETTLE_HOLD: float = 4.0
+
 
 class SessionManager:
     """Main session manager class that orchestrates all session operations."""
@@ -190,9 +193,15 @@ class SessionManager:
                 wait_timeout = app_def.get("wait_window", global_wait)
 
                 if check_pattern is not False:
-                    self._workspace.wait_for_window(
+                    seen = self._workspace.wait_for_window(
                         check_pattern, ws_num, wait_timeout
                     )
+                    if not seen:
+                        print(
+                            f"  Warning: {app_key} window not confirmed on "
+                            f"workspace {ws_num}; holding briefly before continuing."
+                        )
+                        time.sleep(_WINDOW_SETTLE_HOLD)
                 else:
                     time.sleep(4)
 

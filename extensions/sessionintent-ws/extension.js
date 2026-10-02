@@ -34,6 +34,33 @@ export default class SessionIntentWorkspaceSwitcher extends Extension {
         return global.workspace_manager.get_active_workspace_index();
     }
 
+    listWindows() {
+        // ponytail: 0-based ws index matches SWITCH/CURRENT convention
+        const out = [];
+        const wsManager = global.workspace_manager;
+        const n = wsManager.get_n_workspaces();
+        for (let i = 0; i < n; i++) {
+            const ws = wsManager.get_workspace_by_index(i);
+            if (!ws) continue;
+            for (const win of ws.list_windows()) {
+                try {
+                    if (win.is_on_all_workspaces()) continue;
+                    out.push({
+                        ws: i,
+                        appId: win.get_gtk_application_id() || "",
+                        sandboxId: win.get_sandboxed_app_id() || "",
+                        class: win.get_wm_class() || "",
+                        title: win.get_title() || "",
+                        pid: typeof win.get_pid === "function" ? win.get_pid() : 0,
+                    });
+                } catch (e) {
+                    // Skip unreadable windows, keep the rest
+                }
+            }
+        }
+        return out;
+    }
+
     switchWorkspace(idx, monitorLabel = null) {
         const wsManager = global.workspace_manager;
         if (idx < 0 || idx >= wsManager.get_n_workspaces()) {
@@ -94,6 +121,9 @@ export default class SessionIntentWorkspaceSwitcher extends Extension {
             }
             case "COUNT": {
                 return String(global.workspace_manager.get_n_workspaces());
+            }
+            case "LIST": {
+                return JSON.stringify(this.listWindows());
             }
             case "QUIT": {
                 return "BYE";

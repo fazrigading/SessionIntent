@@ -1,8 +1,9 @@
 """Tests for main session manager functionality."""
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from sessionintent.session import SessionManager
+from sessionintent.session.manager import _WINDOW_SETTLE_HOLD
 
 
 # Mock data
@@ -575,3 +576,63 @@ modes:
         assert "migration" in captured.out.lower()
         assert manager.config.get("version") == 2
         assert "work" in manager.config.get("modes", {})
+
+
+class TestApplyWindowGate:
+    """Test apply_mode honors the window wait before leaving a workspace."""
+
+    def _manager(self, tmp_path):
+        config_path = tmp_path / "config.yaml"
+        with open(config_path, "w") as f:
+            f.write(
+                "version: 2\nmodes:\n  solo:\n    label: Solo\n"
+                "    workspaces:\n      1:\n        - myapp\n"
+            )
+        return SessionManager(config_path=str(config_path), dev_mode=False)
+
+    def test_hold_when_window_unseen(self, tmp_path, monkeypatch, capsys):
+        """Unconfirmed window warns, holds briefly, and still completes."""
+        state_file = tmp_path / "state" / "current"
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
+
+        manager = self._manager(tmp_path)
+        manager._workspace = MagicMock()
+        manager._workspace.get_current_workspace.return_value = 1
+        manager._workspace.wait_for_window.return_value = False
+
+        with (
+            patch("sessionintent.session.manager.launch_app", return_value=True),
+            patch("sessionintent.session.manager.time.sleep") as mock_sleep,
+            patch("sessionintent.session.manager.save_state"),
+            patch("sessionintent.session.manager.save_snapshot"),
+            patch("sessionintent.session.manager.notify_mode_change"),
+            patch("sessionintent.session.manager.get_plugin_manager"),
+        ):
+            manager.apply_mode("solo")
+
+        out = capsys.readouterr().out
+        assert "not confirmed" in out
+        mock_sleep.assert_called_once_with(_WINDOW_SETTLE_HOLD)
+
+    def test_no_hold_when_window_seen(self, tmp_path, monkeypatch, capsys):
+        """Confirmed window advances without the settle hold."""
+        state_file = tmp_path / "state" / "current"
+        monkeypatch.setattr("sessionintent.session.state.STATE_FILE", state_file)
+
+        manager = self._manager(tmp_path)
+        manager._workspace = MagicMock()
+        manager._workspace.get_current_workspace.return_value = 1
+        manager._workspace.wait_for_window.return_value = True
+
+        with (
+            patch("sessionintent.session.manager.launch_app", return_value=True),
+            patch("sessionintent.session.manager.time.sleep") as mock_sleep,
+            patch("sessionintent.session.manager.save_state"),
+            patch("sessionintent.session.manager.save_snapshot"),
+            patch("sessionintent.session.manager.notify_mode_change"),
+            patch("sessionintent.session.manager.get_plugin_manager"),
+        ):
+            manager.apply_mode("solo")
+
+        assert "not confirmed" not in capsys.readouterr().out
+        mock_sleep.assert_not_called()

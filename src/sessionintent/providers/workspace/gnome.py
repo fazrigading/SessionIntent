@@ -195,6 +195,109 @@ def wait_for_workspace(
     return False
 
 
+_LIST_POLL_INTERVAL: float = 0.3
+_warned_list_unsupported = False
+
+
+def _list_windows(dev_mode: bool = False) -> tuple[list[dict], str]:
+    """
+    List Shell windows via the extension socket.
+
+    Returns:
+        Tuple of (windows, status) where status is one of:
+        ok | unsupported (extension too old for LIST) | unavailable (no socket)
+        Each window dict has ws (0-based), appId, sandboxId, class, title, pid.
+    """
+    if dev_mode:
+        return ([], "ok")
+
+    if not _is_extension_available(dev_mode):
+        return ([], "unavailable")
+
+    ok, resp = _socket_call("LIST\n", timeout=2.0, dev_mode=dev_mode)
+    if not ok:
+        return ([], "unavailable")
+    if resp.startswith("ERR"):
+        if "unknown command" in resp:
+            return ([], "unsupported")
+        return ([], "unavailable")
+    try:
+        windows = json.loads(resp)
+    except ValueError:
+        return ([], "unavailable")
+    return (windows, "ok") if isinstance(windows, list) else ([], "unavailable")
+
+
+def _window_matches(window: dict, pattern: str) -> bool:
+    """Case-insensitive substring match: appId/sandboxId, then class, then title."""
+    needle = pattern.lower()
+    for key in ("appId", "sandboxId", "class"):
+        if needle in str(window.get(key, "")).lower():
+            return True
+    return needle in str(window.get("title", "")).lower()
+
+
+def _warn_list_unsupported() -> None:
+    """Tell the user once per process to redeploy the extension."""
+    global _warned_list_unsupported  # noqa: PLW0603
+    if _warned_list_unsupported:
+        return
+    _warned_list_unsupported = True
+    from ...session.log import warning
+
+    warning("Extension too old for window tracking (LIST unsupported)")
+    print(
+        "  Warning: workspace extension too old for window tracking. "
+        "Re-copy the extension and log out/in: sessionintent init"
+    )
+
+
+def wait_for_window(
+    app_pattern: str,
+    target_workspace: int,
+    timeout: float = 15.0,
+    dev_mode: bool = False,
+) -> bool:
+    """
+    Wait until a window matching pattern is visible on the target workspace.
+
+    Polls the extension LIST command; never hangs when the socket is down.
+
+    Args:
+        app_pattern: Substring matched against appId, class, then title
+        target_workspace: 1-indexed workspace number to wait for
+        timeout: Maximum seconds to wait
+        dev_mode: If True, return immediately
+
+    Returns:
+        True if a matching window was seen, False on timeout or no tracking
+    """
+    if dev_mode:
+        return True
+
+    target_idx = target_workspace - 1
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        windows, status = _list_windows(dev_mode)
+        if status == "unsupported":
+            _warn_list_unsupported()
+            return False
+        if status == "unavailable":
+            return False
+        for window in windows:
+            if window.get("ws") == target_idx and _window_matches(window, app_pattern):
+                from ...session.log import debug
+
+                debug(
+                    f"Window matched '{app_pattern}' on workspace {target_workspace}",
+                    window=window,
+                )
+                return True
+        time.sleep(_LIST_POLL_INTERVAL)
+
+    return False
+
+
 def get_current_workspace(dev_mode: bool = False) -> int | None:
     """
     Get the current workspace number (1-indexed).
@@ -422,7 +525,11 @@ class GnomeWorkspaceProvider:
         target_workspace: int,
         timeout: float = 15.0,
     ) -> bool:
-        # xdotool-based wait is desktop-agnostic; shared with the EWMH provider.
+        # Socket LIST first (Wayland-native); xdotool fallback for X11 GNOME.
+        if wait_for_window(
+            app_pattern, target_workspace, timeout, self._dev_mode
+        ):
+            return True
         return self._ewmh.wait_for_window(app_pattern, target_workspace, timeout)
 
 
@@ -431,6 +538,7 @@ __all__ = [
     "get_current_workspace",
     "get_workspace_count",
     "wait_for_workspace",
+    "wait_for_window",
     "ensure_extension",
     "GnomeWorkspaceProvider",
 ]
