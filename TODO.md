@@ -84,8 +84,9 @@ Ref: docs/ROADMAP.md
 
 - [ ] Add more comprehensive unit tests
 - [ ] Add integration tests
-- [ ] Test on multiple GNOME versions
+- [x] Test on multiple GNOME versions (50/51 verified live on Wayland, 2026-10; X11 still open)
 - [ ] Automate CI/CD improvements for testing
+- [ ] Re-verify release workflow after Ubuntu 26 runner migration (post Oct 19 2026)
 
 Ref: docs/ROADMAP.md
 

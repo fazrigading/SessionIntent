@@ -90,18 +90,29 @@ checklist, clearly marked in the test matrix.
 
 ## 2. Open questions
 
-These do not block Phase 1 but must be resolved before the relevant later phase:
+These do not block Phase 1 but must be resolved before the relevant later phase.
+All five were resolved during implementation (recorded 2026-10-02); the
+resolutions below are the as-built outcomes.
 
 1. **JSON Schema vs. explicit validator** for `version: 2` — both are viable; the choice
    affects the validation code and test fixtures.
+   **Resolved:** explicit validator (`src/sessionintent/config/validator.py`).
 2. **Config migration** — whether `version: 1` configs are auto-migrated in place or
    only reported with a migration guide.
+   **Resolved:** in-memory migration with a notice (`src/sessionintent/config/migration.py`);
+   configs on disk are left untouched.
 3. **Plugin system scope** — whether the existing `Plugin` API is wired as-is, redesigned,
    or deferred again.
+   **Resolved:** wired as-is; `apply_mode` runs `on_mode_apply` / `on_mode_applied`
+   hooks via `PluginManager`.
 4. **Notification backend** — `pynotify` vs. `notify-send` vs. `dbus-send` as the primary
    path.
+   **Resolved:** layered fallback in that order (`src/sessionintent/session/notify.py`),
+   not a single backend.
 5. **RPM/COPR automation** — whether the release workflow builds the RPM from the spec or
    defers COPR to a manual step.
+   **Resolved:** deferred to a documented manual step; the workflow builds the wheel
+   and says so explicitly instead of silently no-op'ing.
 
 ## 3. Risks and mitigations
 

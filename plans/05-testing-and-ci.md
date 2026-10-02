@@ -32,7 +32,7 @@ This is a plan for validation, not a claim that everything is automated today.
 
 | Desktop | Session | Workspace provider | Extension provider | Coverage |
 |---------|---------|--------------------|--------------------|----------|
-| GNOME | Wayland | `gnome` (extension socket + gdbus) | `gnome` (gnome-extensions) | Automated (mocked) |
+| GNOME | Wayland | `gnome` (extension socket + gdbus) | `gnome` (gnome-extensions) | Automated (mocked) + manual (Shell 50/51, 2026-10) |
 | GNOME | X11 | `gnome` (gdbus) | `gnome` | Automated (mocked) |
 | KDE Plasma | Wayland/X11 | `kde` (qdbus) | `kde` (kpackagetool) | Automated (mocked) |
 | Hyprland | Wayland | `hyprland` (hyprctl) | N/A | Automated (mocked) |
