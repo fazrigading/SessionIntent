@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3-beta] - 2026-10-02
+
+### Added
+- Scanner: `~/.local/bin` executables detected as a last-resort source
+  (after flatpak, desktop files, dpkg, rpm), so PATH-only tools like
+  Claude Code show up in scans
+
+### Fixed
+- Scanner: strip residual quotes from `Exec` tokens (unbalanced-quote
+  fallback path)
+- Scanner: skip pure `x-scheme-handler/...` protocol entries (URL
+  handlers are not launchable apps)
+
 ## [0.4.2] - 2026-10-02
 
 ### Fixed
