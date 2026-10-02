@@ -249,6 +249,14 @@ class TestSplitExec:
     def test_percent_word_kept(self):
         assert _split_exec("app 100%") == ["app", "100%"]
 
+    def test_mid_token_quotes(self):
+        assert _split_exec(
+            '/opt/vivaldi/vivaldi "--profile-directory=Profile 2" --app-id=x %U'
+        ) == ["/opt/vivaldi/vivaldi", "--profile-directory=Profile 2", "--app-id=x"]
+
+    def test_unbalanced_quotes_stripped(self):
+        assert _split_exec('"/broken %U') == ["/broken"]
+
 
 class TestParseDesktopEntry:
     """Test section-aware .desktop parsing."""

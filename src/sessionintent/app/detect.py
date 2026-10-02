@@ -56,6 +56,13 @@ def detect_flatpak_apps() -> dict[str, dict[str, Any]]:
     return apps
 
 
+def _strip_quotes(token: str) -> str:
+    """Remove one layer of surrounding quotes (hardens the naive-split fallback)."""
+    if len(token) >= 2 and token[0] == token[-1] and token[0] in "\"'":
+        return token[1:-1]
+    return token.strip("\"'")
+
+
 def _split_exec(exec_line: str) -> list[str]:
     """Split an Exec line on shell quoting, dropping freedesktop field codes."""
     try:
@@ -63,7 +70,11 @@ def _split_exec(exec_line: str) -> list[str]:
     except ValueError:
         parts = exec_line.split()
     # ponytail: field codes are exactly 2 chars (%f, %U, ...); keep real flags
-    return [p for p in parts if not (p.startswith("%") and len(p) == 2)]
+    return [
+        _strip_quotes(p)
+        for p in parts
+        if not (p.startswith("%") and len(p) == 2)
+    ]
 
 
 def _parse_desktop_entry(content: str) -> dict[str, str]:
