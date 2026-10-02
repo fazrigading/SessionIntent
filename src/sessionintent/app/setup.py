@@ -183,34 +183,46 @@ def select_apps_to_include(categorized_apps: dict[str, dict[str, Any]]) -> set[s
     return included
 
 
+def _find_category(app_key: str, categories: list[str]) -> str:
+    """First category whose keyword matches app_key, else Other."""
+    from ..app.detect import APP_CATEGORIES
+
+    app_key_lower = app_key.lower()
+    for cat in categories:
+        for kw in APP_CATEGORIES.get(cat, []):
+            if kw.lower() in app_key_lower:
+                return cat
+    return "Other"
+
+
+def _entry_lines(app_key: str, app_data: dict[str, Any]) -> list[str]:
+    """Render one apps.yaml entry (with trailing blank line)."""
+    lines = [f"{app_key}:"]
+    if cmd := app_data.get("cmd"):
+        lines.append(f"  cmd: {cmd}")
+    if check := app_data.get("check"):
+        if check is False:
+            lines.append("  check: false")
+        else:
+            lines.append(f"  check: {check!r}")
+    if internal := app_data.get("internal_reuse"):
+        lines.append(f"  internal_reuse: {internal}")
+    lines.append("")
+    return lines
+
+
 def build_apps_yaml(
     apps: dict[str, dict[str, Any]],
     selected_categories: list[str],
 ) -> str:
     """Build YAML content for apps.yaml."""
-    from ..app.detect import APP_CATEGORIES
-
     categorized: dict[str, dict[str, dict[str, Any]]] = {}
 
-    for app_key, app_data in apps.items():
-        found_category = None
-        app_key_lower = app_key.lower()
-
-        for cat in selected_categories:
-            if cat in APP_CATEGORIES:
-                for kw in APP_CATEGORIES[cat]:
-                    if kw.lower() in app_key_lower:
-                        found_category = cat
-                        break
-            if found_category:
-                break
-
-        if not found_category:
-            found_category = "Other"
-
+    for app_key in apps:
+        found_category = _find_category(app_key, selected_categories)
         if found_category not in categorized:
             categorized[found_category] = {}
-        categorized[found_category][app_key] = app_data
+        categorized[found_category][app_key] = apps[app_key]
 
     lines = [
         "# SessionIntent Apps Configuration",
@@ -232,18 +244,10 @@ def build_apps_yaml(
             lines.append(CATEGORY_HEADER[category])
 
         if category in categorized:
-            for app_key, app_data in sorted(categorized[category].items()):
-                lines.append(f"{app_key}:")
-                if cmd := app_data.get("cmd"):
-                    lines.append(f"  cmd: {cmd}")
-                if check := app_data.get("check"):
-                    if check is False:
-                        lines.append("  check: false")
-                    else:
-                        lines.append(f"  check: {check!r}")
-                if internal := app_data.get("internal_reuse"):
-                    lines.append(f"  internal_reuse: {internal}")
-                lines.append("")
+            for app_key in sorted(categorized[category]):
+                lines.extend(
+                    _entry_lines(app_key, categorized[category][app_key])
+                )
 
     return "\n".join(lines)
 
@@ -262,6 +266,64 @@ def write_config_yaml() -> None:
     with open(CONFIG_PATH, "w") as f:
         f.write(DEFAULT_CONFIG)
     info(f"Default config written to {CONFIG_PATH}")
+
+
+def _load_existing_app_keys() -> set[str]:
+    """App keys already configured in apps.yaml (empty when file is missing)."""
+    import yaml
+
+    if not APPS_PATH.exists():
+        return set()
+    try:
+        data = yaml.safe_load(APPS_PATH.read_text()) or {}
+    except (OSError, yaml.YAMLError):
+        return set()
+    return {k for k, v in data.items() if isinstance(v, dict)}
+
+
+def append_new_apps(
+    new_apps: dict[str, dict[str, Any]], categories: list[str]
+) -> int:
+    """
+    Append entries to apps.yaml under matching category headers.
+
+    Args:
+        new_apps: Entries keyed by app key
+        categories: Category order used for header matching
+
+    Returns:
+        Number of entries appended (0 when the file is missing/unwritable)
+    """
+    try:
+        lines = APPS_PATH.read_text().split("\n")
+    except OSError:
+        return 0
+
+    grouped: dict[str, list[str]] = {}
+    for app_key in sorted(new_apps):
+        cat = _find_category(app_key, categories)
+        grouped.setdefault(cat, []).extend(_entry_lines(app_key, new_apps[app_key]))
+
+    headers = set(CATEGORY_HEADER.values())
+    for cat, entry_lines in grouped.items():
+        header = CATEGORY_HEADER.get(cat, f"# {cat}")
+        if header in lines:
+            idx = lines.index(header)
+        else:
+            lines += ["", header]
+            idx = len(lines) - 1
+        pos = len(lines)
+        for j in range(idx + 1, len(lines)):
+            if lines[j] in headers:
+                pos = j
+                break
+        lines[pos:pos] = entry_lines
+
+    try:
+        APPS_PATH.write_text("\n".join(lines))
+    except OSError:
+        return 0
+    return len(new_apps)
 
 
 def setup_interactive(add_new_only: bool = False, use_cache: bool = True) -> None:
@@ -289,6 +351,10 @@ def setup_interactive(add_new_only: bool = False, use_cache: bool = True) -> Non
                 "https://raw.githubusercontent.com/fazrigading/sessionintent/"
                 "main/examples/apps.example.yaml"
             )
+        return
+
+    if add_new_only and APPS_PATH.exists():
+        _add_new_only(detected)
         return
 
     categories = get_category_list()
@@ -334,6 +400,33 @@ def setup_interactive(add_new_only: bool = False, use_cache: bool = True) -> Non
     write_apps_yaml(yaml_content)
 
     print(f"\nSetup complete! {len(final_apps)} apps configured.")
+
+
+def _add_new_only(detected: dict[str, dict[str, Any]]) -> None:
+    """Prompt over apps missing from apps.yaml and append the chosen ones."""
+    fresh = {
+        k: v for k, v in detected.items() if k not in _load_existing_app_keys()
+    }
+    if not fresh:
+        print("No new applications found.")
+        return
+
+    keys = sorted(fresh)
+    print(f"\n{len(keys)} new applications found:")
+    for i, app_key in enumerate(keys, 1):
+        print(f"  {i}. {app_key}")
+
+    if prompt_yes_no(f"Add all {len(keys)} new apps?"):
+        chosen = keys
+    else:
+        chosen = [keys[n - 1] for n in prompt_numbered_list("Add which?", keys)]
+    if not chosen:
+        print("Nothing added.")
+        return
+
+    categories = [cat for cat, _ in get_category_list()]
+    added = append_new_apps({k: fresh[k] for k in chosen}, categories)
+    print(f"\nAdded {added} apps to {APPS_PATH}.")
 
 
 def rescan_options(use_cache: bool = True) -> None:

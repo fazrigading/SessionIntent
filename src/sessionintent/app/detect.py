@@ -5,6 +5,8 @@ Detects installed applications from multiple sources.
 
 from __future__ import annotations
 
+import shlex
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -54,15 +56,53 @@ def detect_flatpak_apps() -> dict[str, dict[str, Any]]:
     return apps
 
 
-def detect_desktop_apps() -> dict[str, dict[str, Any]]:
+def _split_exec(exec_line: str) -> list[str]:
+    """Split an Exec line on shell quoting, dropping freedesktop field codes."""
+    try:
+        parts = shlex.split(exec_line, posix=True)
+    except ValueError:
+        parts = exec_line.split()
+    # ponytail: field codes are exactly 2 chars (%f, %U, ...); keep real flags
+    return [p for p in parts if not (p.startswith("%") and len(p) == 2)]
+
+
+def _parse_desktop_entry(content: str) -> dict[str, str]:
+    """Extract fields from the [Desktop Entry] section only."""
+    fields: dict[str, str] = {}
+    in_entry = False
+    for raw_line in content.split("\n"):
+        line = raw_line.strip()
+        if line.startswith("[") and line.endswith("]"):
+            in_entry = line == "[Desktop Entry]"
+            continue
+        if not in_entry or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        if key in (
+            "Name",
+            "Exec",
+            "StartupWMClass",
+            "StartupNotify",
+            "NoDisplay",
+            "Hidden",
+            "Type",
+        ):
+            fields[key] = value.strip()
+    return fields
+
+
+def detect_desktop_apps(
+    desktop_dirs: list[Path] | None = None,
+) -> dict[str, dict[str, Any]]:
     """Detect apps from .desktop files."""
     apps: dict[str, dict[str, Any]] = {}
 
-    desktop_dirs = [
-        Path("/usr/share/applications"),
-        Path("/usr/local/share/applications"),
-        Path.home() / ".local/share/applications",
-    ]
+    if desktop_dirs is None:
+        desktop_dirs = [
+            Path("/usr/share/applications"),
+            Path("/usr/local/share/applications"),
+            Path.home() / ".local/share/applications",
+        ]
 
     for desktop_dir in desktop_dirs:
         if not desktop_dir.exists():
@@ -74,30 +114,22 @@ def detect_desktop_apps() -> dict[str, dict[str, Any]]:
             except OSError:
                 continue
 
-            exec_line = ""
-            name = ""
-            startup_notify = True
+            entry = _parse_desktop_entry(content)
+            if entry.get("Type", "Application") != "Application":
+                continue
+            if entry.get("NoDisplay", "false").lower() == "true":
+                continue
+            if entry.get("Hidden", "false").lower() == "true":
+                continue
 
-            for line in content.split("\n"):
-                if line.startswith("Exec="):
-                    exec_line = line[5:].strip()
-                elif line.startswith("Name="):
-                    name = line[5:].strip()
-                elif line.startswith("StartupNotify="):
-                    startup_notify = line[14:].strip().lower() == "true"
-
+            exec_line = entry.get("Exec", "")
+            name = entry.get("Name", "")
             if not exec_line or not name:
                 continue
 
-            cmd_parts = exec_line.split()
-            if not cmd_parts:
+            cmd = _split_exec(exec_line)
+            if not cmd:
                 continue
-
-            cmd = [cmd_parts[0]]
-            if len(cmd_parts) > 1:
-                params = cmd_parts[1:]
-                if "%" not in " ".join(params):
-                    cmd.extend(params)
 
             key = name.lower().replace(" ", "-").replace("_", "-")
             for char in key:
@@ -107,10 +139,14 @@ def detect_desktop_apps() -> dict[str, dict[str, Any]]:
             if key in apps:
                 continue
 
+            binary = cmd[0].split("/")[-1]
             apps[key] = {
                 "cmd": cmd,
-                "check": cmd[0].split("/")[-1],
-                "internal_reuse": startup_notify,
+                "check": binary,
+                "internal_reuse": entry.get("StartupNotify", "true").lower()
+                == "true",
+                "wm_class": entry.get("StartupWMClass", "") or binary,
+                "desktop_id": desktop_file.stem,
             }
 
     return apps
@@ -133,23 +169,12 @@ def detect_dpkg_apps() -> dict[str, dict[str, Any]]:
             parts = line.split()
             if len(parts) < 2:
                 continue
-            pkg_name = parts[1]
-            if " " in pkg_name or "_" not in pkg_name:
+            pkg_name = parts[1].split(":")[0]  # strip arch suffix (foo:amd64)
+            if " " in pkg_name:
                 continue
 
-            exec_name = pkg_name.split("_")[0]
-            try:
-                which = subprocess.run(
-                    ["which", exec_name],
-                    capture_output=True,
-                    text=True,
-                )
-                if which.returncode != 0:
-                    continue
-                exec_path = which.stdout.strip()
-                if not exec_path:
-                    continue
-            except FileNotFoundError:
+            exec_name = pkg_name
+            if shutil.which(exec_name) is None:
                 continue
 
             key = exec_name.lower().replace("_", "-")
@@ -183,18 +208,7 @@ def detect_rpm_apps() -> dict[str, dict[str, Any]]:
                 continue
 
             exec_name = pkg_name
-            try:
-                which = subprocess.run(
-                    ["which", exec_name],
-                    capture_output=True,
-                    text=True,
-                )
-                if which.returncode != 0:
-                    continue
-                exec_path = which.stdout.strip()
-                if not exec_path:
-                    continue
-            except FileNotFoundError:
+            if shutil.which(exec_name) is None:
                 continue
 
             key = exec_name.lower().replace("_", "-")

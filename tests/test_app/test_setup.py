@@ -5,11 +5,17 @@ Tests for SessionIntent app detection and setup.
 from unittest.mock import patch
 
 from sessionintent.app.detect import (
+    _parse_desktop_entry,
+    _split_exec,
     categorize_app,
+    detect_desktop_apps,
     get_category_list,
     get_categorized_apps,
 )
 from sessionintent.app.setup import (
+    _add_new_only,
+    _load_existing_app_keys,
+    append_new_apps,
     parse_selection,
     prompt_yes_no,
     select_apps_option,
@@ -197,3 +203,199 @@ class TestAppSelectionFullFlow:
         categorized = get_categorized_apps(mock_apps)
         assert "firefox" in categorized["Browsers"]
         assert "chrome" in categorized["Browsers"]
+
+
+ZED_DESKTOP = """[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zed
+Exec=zed %U
+StartupNotify=true
+Categories=Development;IDE;
+
+[Desktop Action NewWorkspace]
+Exec=zed --new %U
+Name=Open a new workspace
+"""
+
+HIDDEN_DESKTOP = """[Desktop Entry]
+Type=Application
+Name=Secret
+Exec=secret
+NoDisplay=true
+"""
+
+QUOTED_DESKTOP = """[Desktop Entry]
+Type=Application
+Name=Quoted
+Exec="/opt/my app/run" --flag %U
+StartupWMClass=quoted-app
+"""
+
+
+class TestSplitExec:
+    """Test Exec line splitting."""
+
+    def test_field_codes_dropped_flags_kept(self):
+        assert _split_exec("zed %U") == ["zed"]
+        assert _split_exec("app --flag %U") == ["app", "--flag"]
+
+    def test_quoted_path_kept_whole(self):
+        assert _split_exec('"/opt/my app/run" --flag %U') == [
+            "/opt/my app/run",
+            "--flag",
+        ]
+
+    def test_percent_word_kept(self):
+        assert _split_exec("app 100%") == ["app", "100%"]
+
+
+class TestParseDesktopEntry:
+    """Test section-aware .desktop parsing."""
+
+    def test_action_section_ignored(self):
+        fields = _parse_desktop_entry(ZED_DESKTOP)
+        assert fields["Name"] == "Zed"
+        assert fields["Exec"] == "zed %U"
+
+    def test_only_entry_keys_kept(self):
+        fields = _parse_desktop_entry(ZED_DESKTOP)
+        assert set(fields) <= {
+            "Name",
+            "Exec",
+            "StartupWMClass",
+            "StartupNotify",
+            "NoDisplay",
+            "Hidden",
+            "Type",
+        }
+
+
+class TestDetectDesktopApps:
+    """Test desktop file detection end to end."""
+
+    def _write(self, tmp_path, name, content):
+        d = tmp_path / "apps"
+        d.mkdir(exist_ok=True)
+        (d / name).write_text(content)
+        return d
+
+    def test_zed_key_not_action_name(self, tmp_path):
+        d = self._write(tmp_path, "dev.zed.Zed.desktop", ZED_DESKTOP)
+        apps = detect_desktop_apps(desktop_dirs=[d])
+        assert "zed" in apps
+        assert "open-a-new-workspace" not in apps
+        assert apps["zed"]["cmd"] == ["zed"]
+        assert apps["zed"]["desktop_id"] == "dev.zed.Zed"
+
+    def test_nodisplay_skipped(self, tmp_path):
+        d = self._write(tmp_path, "secret.desktop", HIDDEN_DESKTOP)
+        assert detect_desktop_apps(desktop_dirs=[d]) == {}
+
+    def test_wm_class_captured(self, tmp_path):
+        d = self._write(tmp_path, "quoted.desktop", QUOTED_DESKTOP)
+        apps = detect_desktop_apps(desktop_dirs=[d])
+        assert apps["quoted"]["cmd"] == ["/opt/my app/run", "--flag"]
+        assert apps["quoted"]["wm_class"] == "quoted-app"
+
+    def test_wm_class_falls_back_to_binary(self, tmp_path):
+        d = self._write(tmp_path, "dev.zed.Zed.desktop", ZED_DESKTOP)
+        apps = detect_desktop_apps(desktop_dirs=[d])
+        assert apps["zed"]["wm_class"] == "zed"
+
+
+class TestAddNewOnly:
+    """Test add-only-new detection and append."""
+
+    def _apps_file(self, tmp_path, monkeypatch, content):
+        import sessionintent.app.setup as setupmod
+
+        path = tmp_path / "apps.yaml"
+        path.write_text(content)
+        monkeypatch.setattr(setupmod, "APPS_PATH", path)
+        return path
+
+    def test_existing_keys_loaded(self, tmp_path, monkeypatch):
+        self._apps_file(
+            tmp_path, monkeypatch, "firefox:\n  cmd: ['firefox']\n"
+        )
+        assert _load_existing_app_keys() == {"firefox"}
+
+    def test_missing_file_empty(self, tmp_path, monkeypatch):
+        import sessionintent.app.setup as setupmod
+
+        monkeypatch.setattr(setupmod, "APPS_PATH", tmp_path / "nope.yaml")
+        assert _load_existing_app_keys() == set()
+
+    def test_append_under_header_preserves_existing(self, tmp_path, monkeypatch):
+        path = self._apps_file(
+            tmp_path,
+            monkeypatch,
+            "# Development\nzed:\n  cmd: ['zed']\n  check: 'zed'\n",
+        )
+        added = append_new_apps(
+            {"vscode": {"cmd": ["code"], "check": "code"}},
+            ["Development", "Other"],
+        )
+        assert added == 1
+        text = path.read_text()
+        assert "zed:\n  cmd: ['zed']" in text
+        assert "vscode:\n  cmd: ['code']" in text
+        assert text.index("zed:") < text.index("vscode:")
+
+    def test_append_creates_missing_header(self, tmp_path, monkeypatch):
+        path = self._apps_file(tmp_path, monkeypatch, "zed:\n  cmd: ['zed']\n")
+        added = append_new_apps(
+            {"steam": {"cmd": ["steam"], "check": "steam"}}, ["Games"]
+        )
+        assert added == 1
+        text = path.read_text()
+        assert "# Games\nsteam:" in text
+
+    @patch("sessionintent.app.setup.input", return_value="y")
+    def test_add_new_only_bulk(self, mock_input, tmp_path, monkeypatch, capsys):
+        self._apps_file(tmp_path, monkeypatch, "zed:\n  cmd: ['zed']\n")
+        _add_new_only(
+            {
+                "zed": {"cmd": ["zed"]},
+                "zen": {"cmd": ["flatpak", "run", "app.zen_browser.zen"]},
+            }
+        )
+        out = capsys.readouterr().out
+        assert "1 new applications" in out
+        assert "zen" in out
+
+
+class TestDpkgFilter:
+    """Test dpkg detector name handling."""
+
+    def _dpkg(self, stdout):
+        from unittest.mock import MagicMock
+
+        with (
+            patch("sessionintent.app.detect.subprocess.run") as mock_run,
+            patch("sessionintent.app.detect.shutil.which") as mock_which,
+        ):
+            mock_run.return_value = MagicMock(stdout=stdout)
+            mock_which.side_effect = lambda exe: f"/usr/bin/{exe}"
+            from sessionintent.app.detect import detect_dpkg_apps
+
+            return detect_dpkg_apps()
+
+    def test_dash_names_accepted_arch_stripped(self):
+        apps = self._dpkg("ii  my-app:amd64 1.0 desc\nii  ok_tool 2.0 desc\n")
+        assert "my-app" in apps
+        assert apps["my-app"]["cmd"] == ["my-app"]
+
+    def test_missing_binary_skipped(self):
+        from unittest.mock import MagicMock
+
+        with (
+            patch("sessionintent.app.detect.subprocess.run") as mock_run,
+            patch("sessionintent.app.detect.shutil.which",
+                  return_value=None),
+        ):
+            mock_run.return_value = MagicMock(stdout="ii  ghost 1.0 x\n")
+            from sessionintent.app.detect import detect_dpkg_apps
+
+            assert detect_dpkg_apps() == {}
