@@ -117,7 +117,7 @@ sessionintent preview work
 ### CI/CD Improvements
 - Add more unit tests
 - Add integration tests
-- Test on multiple desktops and versions
+- Test on multiple desktops and versions (GNOME Wayland 50/51 verified live, 2026-10; X11/KDE/Hyprland/Sway/wlroots still manual)
 
 ---
 

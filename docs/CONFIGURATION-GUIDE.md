@@ -132,11 +132,15 @@ vscode:
 | Option | Description | Default |
 |--------|-------------|---------|
 | `cmd` | Command to launch app | `[app_key]` |
-| `check` | Process pattern to check for running app | `app_key` |
+| `check` | Pattern identifying the app: process match for reuse, and window match (app-id → class → title) for workspace tracking | `app_key` |
 | `flags` | Conditional command flags | `{}` |
 | `append_param` | Param to append URL/list args | `null` |
 | `primary_param` | Main parameter for app | `value` |
 | `internal_reuse` | Reuse existing instance? | `true` |
+
+`scan` additionally records `wm_class` (from `StartupWMClass`) and
+`desktop_id` on detected entries; the window tracker uses them for
+exact matching when present.
 
 ### Template Variables
 

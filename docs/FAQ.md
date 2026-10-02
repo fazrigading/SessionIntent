@@ -76,7 +76,10 @@ sessionintent init   # Recreate defaults
 
 1. Check if app is in `apps.yaml`
 2. Verify app name matches `pgrep` output
-3. Try `sessionintent --dev apply work` to see dry-run
+3. A missing executable prints `Warning: executable for '<app>' not
+   found, skipping.` and the mode continues without it — fix the `cmd`
+   path (check for case or `/usr/bin` vs flatpak mismatches)
+4. Try `sessionintent --dev apply work` to see dry-run
 
 ### App launching multiple times?
 
@@ -89,7 +92,12 @@ firefox:
 
 ### Wrong workspace?
 
-Workspaces switch *before* app launches. Ensure you launch while focused on the target workspace.
+Apply holds each workspace until the app window is seen there (socket
+window tracking on GNOME Wayland, matched on app-id → class → title).
+If you see `window not confirmed`, the window mapped too slowly or the
+`check` pattern matches nothing — the mode holds briefly and continues.
+If you see `extension too old for window tracking`, re-copy the
+extension (`sessionintent init`) and log out/in.
 
 ### Mode not showing in selector?
 

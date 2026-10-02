@@ -27,8 +27,12 @@ implementation deliberately deviates from the proposal.
 3. **GNOME is the default, not one peer among many.** Unknown desktops
    keep pre-provider GNOME behavior; nothing that worked in Phase 1
    regressed on a new desktop.
-4. **`wait_for_window` lives in `ewmh.py`.** The xdotool wait is
-   desktop-agnostic; the GNOME provider delegates to it.
+4. **Window tracking lives in the GNOME provider, not `ewmh.py`.** The
+   extension socket grew a `LIST` command (0.4.x) reporting windows with
+   app-id, sandboxed app-id, class, title, and pid; the GNOME provider
+   polls it and only leaves a workspace once the app window is visible
+   there (match order: app-id → class → title). The xdotool wait in
+   `ewmh.py` remains as the fallback for X11 GNOME without the extension.
 5. **KDE enable/disable is a documented manual step.** Applets list via
    `kpackagetool6`/`5`; programmatic enable/disable is not reliably
    scriptable, so the provider reports the manual step instead of
@@ -55,9 +59,14 @@ Unknown `backend` names raise `ProviderError`.
 
 ## 4. Verification status
 
-- 387 unit tests, all mocked at the `subprocess` / env boundary; every
-  provider has command-construction tests (`tests/test_providers/`).
+- 424 unit tests, all mocked at the `subprocess` / env boundary; every
+  provider has command-construction tests (`tests/test_providers/`), and
+  the socket `LIST` parsing/polling has fixture tests
+  (`tests/test_workspace/`).
 - `ruff` and `mypy` clean; `pip install .` verified per phase.
+- **Manually verified (needs real hardware):** GNOME Wayland on Shell
+  50/51 — workspace switching, `LIST` window tracking, extension
+  reinstall via `init` (2026-10).
 - **Not done (needs real hardware):** River/Labwc runs, GNOME X11 run,
   distro matrix in `05-testing-and-ci.md`.
 

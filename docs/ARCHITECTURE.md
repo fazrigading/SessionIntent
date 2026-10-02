@@ -102,8 +102,9 @@ SessionIntent is a CLI tool that orchestrates desktop session states based on us
 Providers behind `sessionintent.providers` interfaces; `SessionManager`
 never calls desktop-specific code directly:
 
-- **Workspace** (`providers/workspace/`): `gnome` (extension socket + gdbus),
-  `kde` (qdbus), `hyprland` (hyprctl), `sway` (swaymsg), `wlroots` chain
+- **Workspace** (`providers/workspace/`): `gnome` (extension socket with
+  `LIST` window tracking + gdbus legacy fallback), `kde` (qdbus),
+  `hyprland` (hyprctl), `sway` (swaymsg), `wlroots` chain
   (hyprctl → swaymsg → EWMH), `ewmh` fallback (`wmctrl`/`xdotool`)
 - **Display** (`providers/display/`): `rofi` (`wofi`/`rofi`), `tui` fallback (stdin)
 - **Extensions** (`providers/extensions/`): `gnome` (`gnome-extensions`),
@@ -116,9 +117,11 @@ never calls desktop-specific code directly:
 
 **Desktop backends** (one per environment, see above):
 
-**GNOME (D-Bus example)**:
-- Workspace switching
-- Method: `org.gnome.Shell.Eval`
+**GNOME (extension socket example)**:
+- Workspace switching and window listing over a Unix socket served by
+  the bundled Shell extension (`SWITCH` / `CURRENT` / `COUNT` / `LIST`)
+- Legacy path: `org.gnome.Shell.Eval` via gdbus (disabled on Shell 46+,
+  best-effort fallback only)
 
 **Process Manager**:
 - `pgrep` for app detection

@@ -13,7 +13,7 @@ Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, 
 - 🔋 **Hardware awareness** - Filter modes on battery vs AC power
 - 📝 **Declarative configuration** - `config.yaml` modes + `apps.yaml` registry (`version: 2` schema)
 - 🔒 **Safe by default** - Reuse before launch; destructive actions are explicit commands
-- 🎛️ **Workspace orchestration** - Per-workspace app placement with optional monitor
+- 🎛️ **Workspace orchestration** - Per-workspace app placement with optional monitor; switches wait until the app window is visible (GNOME Shell 46–51 via bundled extension)
 - 👁️ **Mode preview** - `preview <mode>` shows workspaces and apps before applying
 - 🔔 **Notifications** - Desktop notice on every mode switch
 - 🧩 **Plugins** - Drop-in hooks in `~/.config/sessionintent/plugins/`
