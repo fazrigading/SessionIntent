@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1-beta] - 2026-10-02
+
+### Fixed
+- Release workflow: install `copr-cli` via pip instead of `dnf`
+  (the COPR job runs on Ubuntu)
+
 ## [0.4.0-beta] - 2026-10-02
 
 ### Added
