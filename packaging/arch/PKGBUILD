@@ -1,6 +1,6 @@
 # Maintainer: Fazri Gading <fazrigading@gmail.com>
 pkgname=sessionintent
-pkgver=0.3.3
+pkgver=0.4.2
 pkgrel=1
 pkgdesc='Declarative session orchestration for Linux desktops'
 arch=('any')

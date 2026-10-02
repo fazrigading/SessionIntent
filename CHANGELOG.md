@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-02
+
+### Fixed
+- Scanner: section-aware `.desktop` parsing (apps with `[Desktop Action]`
+  sections no longer mislabel, e.g. Zed), spec-correct `Exec` handling,
+  `NoDisplay`/`Hidden` filtering, `wm_class` + `desktop_id` capture
+- Scanner: `scan` option 2 now actually adds only new apps (the
+  `add_new_only` flag was accepted and ignored)
+- Scanner: dpkg detector accepts normal package names (arch suffix
+  stripped), rpm/dpkg use in-process `which` instead of subprocess storms
+- Release workflow: `copr-cli` via pip (Ubuntu has no `dnf`); actions
+  moved off deprecated Node 20 runtimes
+
 ## [0.4.1-beta] - 2026-10-02
 
 ### Fixed
