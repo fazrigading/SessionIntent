@@ -81,6 +81,40 @@ modes:
           server: none
           background: true
 
+  # --- Video Editing Mode (wall power only) ---
+  # Listed in hardware_profiles.battery.disable_modes above, so it
+  # disappears from selection while on battery.
+  video-editing:
+    label: "Video Editing"
+    description: "OBS + HandBrake; too hungry for battery"
+
+    firefox:
+      profile: work
+      urls:
+        - https://obsproject.com/wiki
+
+    workspaces:
+      1:
+        - obs-studio
+        - firefox
+      2:
+        - handbrake
+        - terminal
+
+  # --- Rendering Mode (wall power only) ---
+  # Long transcodes live here; low-power stays available on battery.
+  rendering:
+    label: "Rendering"
+    description: "Queued transcodes plus something to watch meanwhile"
+
+    workspaces:
+      1:
+        - handbrake
+        - terminal
+      2:
+        - firefox
+        - ytmdesktop
+
   # --- Contributor Mode ---
   contributor:
     label: "Contributor Mode"

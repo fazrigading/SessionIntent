@@ -140,6 +140,24 @@ onlyoffice:
   internal_reuse: false
 
 # ===============
+# Content Creation
+# ===============
+# Heavy apps: pair with battery-disabled modes (see hardware_profiles
+# in config.example.yaml) so they only run on wall power.
+
+# OBS Studio (flatpak) - Video recording and streaming
+obs-studio:
+  cmd: ["flatpak", "run", "com.obsproject.Studio"]
+  check: "obs"
+  internal_reuse: false
+
+# HandBrake (flatpak) - Video transcoder
+handbrake:
+  cmd: ["flatpak", "run", "fr.handbrake.ghb"]
+  check: "handbrake"
+  internal_reuse: false
+
+# ===============
 # Gaming
 # ===============
 
