@@ -197,20 +197,20 @@ def load_yaml_file(file_path: Path) -> dict[str, Any]:
 ### File Organization
 
 ```
-src/
-├── __init__.py          # Package exports only
+src/sessionintent/
+├── __init__.py          # Package exports
 ├── __main__.py          # CLI entry point
-├── constants/           # Configuration constants
-├── config/              # Configuration management
-├── hardware/            # Hardware detection
-├── app/                 # Application management
-├── workspace/           # Workspace management
-├── extensions/          # GNOME Shell extensions
-├── ui/                  # User interface
-├── session/             # Session orchestration
-│   ├── manager.py      # Main orchestrator class
-│   └── state.py        # State persistence
-└── cli/                 # CLI utilities
+├── constants/           # Paths, defaults
+├── config/              # Loaders, migration, validation
+├── hardware/            # Power detection
+├── app/                 # Detection, setup, cache, control, templates
+├── workspace/           # Workspace switching
+├── extensions/          # Desktop extension management
+├── plugins/             # Plugin discovery and hooks
+├── providers/           # Desktop/backend providers (GNOME, KDE, Sway, ...)
+├── ui/                  # Display and selection UI
+├── session/             # Orchestration, state, snapshot, logging
+└── cli/                 # Argument parsing
 ```
 
 ### Test Organization
@@ -243,6 +243,7 @@ from .ui import select_mode
 from .workspace import switch_workspace
 from .app import launch_app, is_running
 from .extensions import apply_extensions, resolve_extension_id
+from .plugins import get_plugin_manager
 
 __all__ = [
     "SessionManager",
@@ -256,6 +257,7 @@ __all__ = [
     "is_running",
     "apply_extensions",
     "resolve_extension_id",
+    "get_plugin_manager",
 ]
 ```
 
