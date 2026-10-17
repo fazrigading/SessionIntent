@@ -1,10 +1,14 @@
-# SessionIntent - Declarative session orchestration for Linux desktops
+# SessionIntent: Declarative session orchestration for Linux desktops
 
-Project status: **Work-in-Progress**
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![PyPI](https://img.shields.io/pypi/v/sessionintent.svg)](https://pypi.org/project/sessionintent/)
+[![CI](https://github.com/fazrigading/SessionIntent/actions/workflows/ci.yml/badge.svg)](https://github.com/fazrigading/SessionIntent/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/fazrigading/SessionIntent)](https://github.com/fazrigading/SessionIntent/releases)
 
 SessionIntent switches between intent-based modes (work, gaming, browsing, …) that automatically launch, reuse, and organize applications across workspaces.
 
-Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and an EWMH fallback — override with `--backend`.
+Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and an EWMH fallback (override with `--backend`).
 
 ## Features
 
