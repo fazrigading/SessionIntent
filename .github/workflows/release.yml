@@ -61,6 +61,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  pypi:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1
+        with:
+          packages-dir: dist/
+
   copr:
     needs: release
     runs-on: ubuntu-latest
@@ -68,24 +85,45 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
-      - name: Install COPR CLI
+      - name: Install RPM tooling
         run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
           pip install copr-cli
 
-      - name: Trigger COPR build
-        # Manual follow-up: COPR has no RPM to build (this workflow ships a
-        # wheel only). Build the RPM from packaging/fedora/sessionintent.spec
-        # locally, then submit it with `copr-cli build`.
+      - name: Write COPR config
         run: |
-          echo "COPR build is a manual step; see packaging/fedora/sessionintent.spec."
-        env:
-          COPR_LOGIN: ${{ secrets.COPR_LOGIN }}
-          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}
-          COPR_TOKEN: ${{ secrets.COPR_TOKEN }}
+          mkdir -p ~/.config
+          cat > ~/.config/copr <<EOF
+          [copr-cli]
+          login = ${{ secrets.COPR_LOGIN }}
+          username = ${{ secrets.COPR_USERNAME }}
+          token = ${{ secrets.COPR_TOKEN }}
+          copr_url = https://copr.fedorainfracloud.org
+          EOF
+
+      - name: Build source RPM
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          git archive --format=tar.gz --prefix="sessionintent-${VERSION}/" "v${VERSION}" > "rpmbuild/SOURCES/sessionintent-${VERSION}.tar.gz"
+          rpmbuild -bs packaging/fedora/sessionintent.spec \
+            --define "_topdir $(pwd)/rpmbuild" \
+            --define "_sourcedir $(pwd)/rpmbuild/SOURCES"
+          mkdir -p dist
+          cp rpmbuild/SRPMS/*.src.rpm dist/
+
+      - name: Submit to COPR
+        run: |
+          copr-cli build fazrigading/sessionintent dist/*.src.rpm
