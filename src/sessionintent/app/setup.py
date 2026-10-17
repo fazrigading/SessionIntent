@@ -326,13 +326,14 @@ def append_new_apps(
     return len(new_apps)
 
 
-def setup_interactive(add_new_only: bool = False, use_cache: bool = True) -> None:
+def setup_interactive(add_new_only: bool = False, use_cache: bool = False) -> None:
     """
     Run interactive setup wizard.
 
     Args:
         add_new_only: If True, only add new detected apps.
-        use_cache: If True, use cached detection results. Defaults to True.
+        use_cache: If True, use cached detection results. Defaults to False
+            (setup always rescans so newly installed apps are recognized).
     """
     if not CONFIG_PATH.exists():
         write_config_yaml()

@@ -45,7 +45,7 @@ def prompt_first_run() -> None:
     if response in ("y", "yes", ""):
         from .app.setup import setup_interactive
 
-        setup_interactive()
+        setup_interactive(use_cache=False)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -71,7 +71,7 @@ def main(argv: list[str] | None = None) -> int:
     if command == "setup":
         from .app.setup import setup_interactive
 
-        setup_interactive()
+        setup_interactive(use_cache=False)
         return 0
 
     if command == "scan":
