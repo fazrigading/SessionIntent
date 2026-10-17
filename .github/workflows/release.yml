@@ -128,4 +128,4 @@ jobs:
 
       - name: Submit to COPR
         run: |
-          copr-cli build fazrigading/SessionIntent dist/*.src.rpm
+          copr-cli build --nowait fazrigading/SessionIntent dist/*.src.rpm
