@@ -14,7 +14,7 @@ from ..constants import STATE_DIR
 
 
 CACHE_VERSION = 1
-DEFAULT_CACHE_TTL_DAYS = 14
+DEFAULT_CACHE_TTL_DAYS = 3
 
 
 def _get_cache_file() -> Path:
