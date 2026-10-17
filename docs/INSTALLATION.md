@@ -47,6 +47,7 @@ pip install PyYAML
 # UI tool (one of)
 sudo dnf install wofi    # Fedora
 sudo apt install rofi    # Ubuntu/Debian
+sudo pacman -S rofi      # Arch Linux
 ```
 
 #### Steps
@@ -182,6 +183,19 @@ pip3 install .
 ./INSTALL.sh
 ```
 
+### Arch Linux
+
+```bash
+# Install dependencies
+sudo pacman -S python python-yaml rofi
+
+# Clone and install
+git clone https://github.com/fazrigading/SessionIntent.git
+cd SessionIntent
+pip install .
+./INSTALL.sh
+```
+
 ### Other Distributions
 
 Use the general installation method:
@@ -262,6 +276,9 @@ sudo dnf install wofi
 
 # Ubuntu/Debian
 sudo apt install rofi
+
+# Arch Linux
+sudo pacman -S rofi
 ```
 
 ### "Permission denied" on config

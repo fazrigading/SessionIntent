@@ -116,6 +116,9 @@ sudo dnf install wofi
 
 # Ubuntu/Debian
 sudo apt install rofi
+
+# Arch Linux
+sudo pacman -S rofi
 ```
 
 ## Usage
