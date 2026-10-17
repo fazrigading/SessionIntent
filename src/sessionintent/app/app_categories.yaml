@@ -7,12 +7,13 @@ Browsers:
   - chrome
   - chromium
   - brave
-  - edge
   - opera
   - vivaldi
   - librewolf
   - falkon
   - eponymous
+  - zen
+  - zen-browser
   - midori
   - konqueror
 
@@ -22,6 +23,7 @@ Development:
   - vscodium
   - sublime-text
   - atom
+  - zed
   - gedit
   - gnome-text-editor
   - vim
@@ -54,6 +56,7 @@ Development:
   - anaconda
   - Workbench
   - Wine
+  - orca
 
 Media Players:
   - spotify
@@ -73,7 +76,6 @@ Media Players:
   - kmplayer
   - dragon
   - rustune
-  - youtube-music-desktop-app
   - videos
   - totem
   - freetube
@@ -94,6 +96,12 @@ Art Editing:
   - flowblade
   - photopea
   - Constrict
+  - photocraft
+  - designcraft
+  - figcraft
+  - filmcraft
+  - vectorcraft
+  - effectcraft
 
 Communication:
   - discord
@@ -102,6 +110,7 @@ Communication:
   - zoom
   - skype
   - zapzap
+  - zapfast
   - signal
   - element
   - vesktop
@@ -197,6 +206,10 @@ Productivity:
   - joplin
   - Iotas
   - Folio
+  - wordcraft
+  - gridcraft
+  - deckcraft
+  - pdfcraft
 
 Utilities:
   - nautilus
@@ -293,6 +306,7 @@ Utilities:
   - Graphs
   - FreeRDP
   - Blanket
+  - tikfinity
 
 System:
   - gnome-terminal
@@ -319,7 +333,6 @@ System:
   - search
   - settings
   - MissionCenter
-  - orca
   - onboard
   - caribou
   - squeekboard
