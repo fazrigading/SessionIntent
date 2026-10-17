@@ -85,9 +85,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Get version from tag
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
@@ -97,10 +94,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install RPM tooling
+      - name: Install COPR CLI
         run: |
-          sudo apt-get update
-          sudo apt-get install -y rpm
           pip install copr-cli
 
       - name: Write COPR config
@@ -114,18 +109,10 @@ jobs:
           copr_url = https://copr.fedorainfracloud.org
           EOF
 
-      - name: Build source RPM
+      - name: Submit SCM build to COPR
         run: |
-          VERSION="${{ steps.version.outputs.VERSION }}"
-          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          git archive --format=tar.gz --prefix="sessionintent-${VERSION}/" "v${VERSION}" > "rpmbuild/SOURCES/sessionintent-${VERSION}.tar.gz"
-          cp examples/apps.example.yaml "rpmbuild/SOURCES/apps.example.yaml"
-          rpmbuild -bs packaging/fedora/sessionintent.spec \
-            --define "_topdir $(pwd)/rpmbuild" \
-            --define "_sourcedir $(pwd)/rpmbuild/SOURCES"
-          mkdir -p dist
-          cp rpmbuild/SRPMS/*.src.rpm dist/
-
-      - name: Submit to COPR
-        run: |
-          copr-cli build --nowait fazrigading/SessionIntent dist/*.src.rpm
+          copr-cli buildscm fazrigading/SessionIntent \
+            --clone-url https://github.com/fazrigading/SessionIntent.git \
+            --commit "v${{ steps.version.outputs.VERSION }}" \
+            --spec packaging/fedora/sessionintent.spec \
+            --nowait
