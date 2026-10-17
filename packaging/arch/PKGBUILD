@@ -1,3 +1,5 @@
+# Reference only -- NOT a maintained release artifact and never built by CI.
+# sha256sums below is a placeholder; run updpkgsums before using this anywhere.
 # Maintainer: Fazri Gading <fazrigading@gmail.com>
 pkgname=sessionintent
 pkgver=0.4.4

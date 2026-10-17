@@ -1,5 +1,10 @@
 # Flatpak manifest for SessionIntent.
 #
+# Reference only -- NOT a maintained release artifact and never built by CI.
+# The PyYAML sha256 below is a placeholder (FILL-ME-ON-RELEASE), so this
+# manifest cannot build as-is. See the sandbox limits below for why it is
+# not shipped.
+#
 # Sandbox limits (by design, documented not hidden):
 # - SessionIntent orchestrates HOST processes (pgrep, gdbus, hyprctl,
 #   wmctrl, wofi/rofi). Inside the sandbox it can only see its own
