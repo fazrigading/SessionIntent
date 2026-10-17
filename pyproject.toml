@@ -7,7 +7,7 @@ name = "sessionintent"
 dynamic = ["version"]
 description = "A declarative session orchestration system for GNOME Wayland"
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "GPL-3.0-or-later" }
 requires-python = ">=3.10"
 dependencies = [
     "PyYAML>=6.0",
