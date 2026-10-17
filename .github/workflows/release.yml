@@ -85,10 +85,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
-      - name: Get version from tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -109,10 +105,8 @@ jobs:
           copr_url = https://copr.fedorainfracloud.org
           EOF
 
-      - name: Submit SCM build to COPR
+      - name: Submit build to COPR
         run: |
-          copr-cli buildscm fazrigading/SessionIntent \
-            --clone-url https://github.com/fazrigading/SessionIntent.git \
-            --commit "v${{ steps.version.outputs.VERSION }}" \
+          copr-cli build fazrigading/SessionIntent \
             --spec packaging/fedora/sessionintent.spec \
             --nowait
