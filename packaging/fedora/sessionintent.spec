@@ -1,5 +1,5 @@
 Name:           sessionintent
-Version:        0.4.2
+Version:        0.4.3
 Release:        1%{?dist}
 Summary:        A declarative session orchestration system for GNOME Wayland
 
@@ -58,7 +58,7 @@ install -m 644 man/sessionintent.1 %{buildroot}%{_mandir}/man1/sessionintent.1
 %{_mandir}/man1/sessionintent.1*
 
 %changelog
-* Fri Oct 02 2026 Fazri Gading <fazrigading@gmail.com> - 0.4.2-1
+* Fri Oct 02 2026 Fazri Gading <fazrigading@gmail.com> - 0.4.3-1
 - Scanner repair, socket window tracking, GNOME 50/51 support
 * Fri Sep 18 2026 Fazri Gading <fazrigading@gmail.com> - 0.3.3-1
 - Stabilize: single version source, provider-plan baseline

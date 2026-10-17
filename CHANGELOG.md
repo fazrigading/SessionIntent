@@ -7,18 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.4.3-beta] - 2026-10-02
+## [0.4.3] - 2026-10-17
 
 ### Added
 - Scanner: `~/.local/bin` executables detected as a last-resort source
   (after flatpak, desktop files, dpkg, rpm), so PATH-only tools like
   Claude Code show up in scans
+- Scanner: categorize Zen Browser, Zed, and other apps into Browsers,
+  Development, and Utilities respectively
 
 ### Fixed
 - Scanner: strip residual quotes from `Exec` tokens (unbalanced-quote
   fallback path)
 - Scanner: skip pure `x-scheme-handler/...` protocol entries (URL
   handlers are not launchable apps)
+- Setup: bypass the app cache so newly installed apps are recognized
+- Scanner: resolve `env KEY=val ...` wrappers so process checks target
+  the real executable (e.g. AppImages)
 
 ## [0.4.2] - 2026-10-02
 

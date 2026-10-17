@@ -1,3 +1,10 @@
+sessionintent (0.4.3) unstable; urgency=medium
+
+  * Setup cache bypass, env-wrapped app detection, app category updates.
+  * See CHANGELOG.md for details.
+
+ -- Fazri Gading <fazrigading@gmail.com>  Fri, 02 Oct 2026 21:04:41 +0800
+
 sessionintent (0.4.2) unstable; urgency=medium
 
   * Scanner repair, socket window tracking, GNOME 50/51 support.
