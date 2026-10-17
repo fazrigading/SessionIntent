@@ -74,7 +74,7 @@ jobs:
           path: dist/
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
 
@@ -118,6 +118,7 @@ jobs:
           VERSION="${{ steps.version.outputs.VERSION }}"
           mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           git archive --format=tar.gz --prefix="sessionintent-${VERSION}/" "v${VERSION}" > "rpmbuild/SOURCES/sessionintent-${VERSION}.tar.gz"
+          cp examples/apps.example.yaml "rpmbuild/SOURCES/apps.example.yaml"
           rpmbuild -bs packaging/fedora/sessionintent.spec \
             --define "_topdir $(pwd)/rpmbuild" \
             --define "_sourcedir $(pwd)/rpmbuild/SOURCES"

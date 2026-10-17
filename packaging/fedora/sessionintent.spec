@@ -5,7 +5,7 @@ Summary:        A declarative session orchestration system for GNOME Wayland
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/fazrigading/SessionIntent
-Source0:        https://github.com/fazrigading/SessionIntent/archive/refs/tags/v%{version}.tar.gz
+Source0:        sessionintent-%{version}.tar.gz
 Source1:        examples/apps.example.yaml
 
 BuildArch:      noarch
