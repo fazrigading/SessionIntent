@@ -40,10 +40,26 @@ log_error() {
 check_prerequisites() {
     log_info "Checking prerequisites..."
     
+    # Detect package manager for distro-specific hints
+    if command -v dnf &> /dev/null; then
+        PKG_MGR="dnf"
+    elif command -v apt-get &> /dev/null; then
+        PKG_MGR="apt"
+    elif command -v pacman &> /dev/null; then
+        PKG_MGR="pacman"
+    else
+        PKG_MGR="unknown"
+    fi
+
     # Check Python
     if ! command -v python3 &> /dev/null; then
         log_error "Python 3 is not installed"
-        log_info "Install with: sudo dnf install python3"
+        case "$PKG_MGR" in
+            dnf) log_info "Install with: sudo dnf install python3" ;;
+            apt) log_info "Install with: sudo apt install python3" ;;
+            pacman) log_info "Install with: sudo pacman -S python" ;;
+            *) log_info "Install Python 3 with your distribution's package manager" ;;
+        esac
         exit 1
     fi
     
@@ -74,10 +90,14 @@ check_prerequisites() {
     
     # Check UI tool
     if ! command -v wofi &> /dev/null && ! command -v rofi &> /dev/null; then
-        log_warn "No UI tool found (wofi or rofi)"
+        log_warn "No UI tool found (wofi or rofi) - optional"
         log_info "Install one for mode selection:"
-        log_info "  Fedora: sudo dnf install wofi"
-        log_info "  Ubuntu: sudo apt install rofi"
+        case "$PKG_MGR" in
+            dnf) log_info "  Fedora: sudo dnf install wofi" ;;
+            apt) log_info "  Ubuntu/Debian: sudo apt install rofi" ;;
+            pacman) log_info "  Arch: sudo pacman -S rofi" ;;
+            *) log_info "  wofi or rofi (see your distro's packages)" ;;
+        esac
     else
         if command -v wofi &> /dev/null; then
             log_success "wofi found"
