@@ -163,7 +163,15 @@ def detect_desktop_apps(
             if key in apps:
                 continue
 
+            # Resolve wrappers like `env KEY=val binary` so the running-process
+            # check targets the real executable, not `env`.
             binary = cmd[0].split("/")[-1]
+            if binary == "env":
+                for token in cmd[1:]:
+                    if "=" in token and not token.startswith("/"):
+                        continue
+                    binary = token.split("/")[-1]
+                    break
             apps[key] = {
                 "cmd": cmd,
                 "check": binary,
