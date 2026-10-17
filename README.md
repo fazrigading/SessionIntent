@@ -23,7 +23,13 @@ Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, 
 
 ### Installation
 
-#### Method 1: Using uv (recommended)
+#### Method 1: Using installer script (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
+```
+
+#### Method 2: Using uv
 
 ```bash
 uv tool install git+https://github.com/fazrigading/SessionIntent
@@ -33,12 +39,6 @@ Or run without installing:
 
 ```bash
 uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
-```
-
-#### Method 2: Using installer script
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
 #### Method 3: Manual installation (pip)

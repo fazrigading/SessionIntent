@@ -2,13 +2,13 @@
 
 ## Quick Install
 
-### Method 1: One-liner (Recommended)
+### Method 1: Using installer script (Recommended)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
-### Method 2: uv (recommended)
+### Method 2: uv
 
 Install [uv](https://docs.astral.sh/uv/), then:
 
@@ -29,7 +29,7 @@ Or run without installing:
 uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
 ```
 
-uv is the recommended convenience layer; pip remains fully supported (see Manual Installation below).
+uv is a supported convenience layer; pip remains fully supported (see Manual Installation below).
 
 ### Method 3: Manual Installation
 
