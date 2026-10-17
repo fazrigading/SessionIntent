@@ -93,6 +93,7 @@ def _parse_desktop_entry(content: str) -> dict[str, str]:
         if key in (
             "Name",
             "Exec",
+            "TryExec",
             "StartupWMClass",
             "StartupNotify",
             "NoDisplay",
@@ -172,6 +173,8 @@ def detect_desktop_apps(
                         continue
                     binary = token.split("/")[-1]
                     break
+            if entry.get("TryExec"):
+                binary = entry["TryExec"].split("/")[-1]
             apps[key] = {
                 "cmd": cmd,
                 "check": binary,
