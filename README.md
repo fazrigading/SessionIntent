@@ -1,14 +1,26 @@
-# SessionIntent: Declarative session orchestration for Linux desktops
+<div align="center">
+    <h1>SessionIntent</h1>
+    <b>A declarative session orchestration for Linux desktops</b><br>
+    <b>Describe your "intents" (modes) to orchestrate application launch, workspace layout, and session state.</b>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-blue.svg"></a>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white"></a>
+    <a href="https://pyyaml.org/"><img src="https://img.shields.io/badge/PyYAML-6.0%2B-blue?logo=python&logoColor=white"></a>
+    <a href="https://pypi.org/project/sessionintent/"><img src="https://img.shields.io/pypi/v/sessionintent.svg?label=PyPI"></a>
+    <a href="https://github.com/fazrigading/SessionIntent/actions/workflows/ci.yml"><img src="https://github.com/fazrigading/SessionIntent/actions/workflows/ci.yml/badge.svg?branch=master&label=CI"></a>
+    <a href="https://github.com/fazrigading/SessionIntent/releases"><img src="https://img.shields.io/github/v/release/fazrigading/SessionIntent"></a>
+    <a href="https://github.com/fazrigading/SessionIntent/stargazers"><img src="https://img.shields.io/github/stars/fazrigading/SessionIntent?style=social"></a><br>
+    <a href="https://github.com/fazrigading/SessionIntent#requirements"><img src="https://img.shields.io/badge/UI-wofi%20%7C%20rofi-purple"></a>
+    <a href="https://www.gnome.org/"><img src="https://img.shields.io/badge/GNOME-4A86CF?logo=gnome&logoColor=white"></a>
+    <a href="https://kde.org/"><img src="https://img.shields.io/badge/KDE-1D99F3?logo=kde&logoColor=white"></a>
+    <a href="https://hyprland.org/"><img src="https://img.shields.io/badge/Hyprland-00D4FF?logo=hyprland&logoColor=white"></a>
+    <a href="https://swaywm.org/"><img src="https://img.shields.io/badge/Sway-68C?logo=sway&logoColor=white"></a>
+    <a href="https://gitlab.freedesktop.org/wlroots/wlroots"><img src="https://img.shields.io/badge/wlroots-d69f00?logo=wayland&logoColor=white"></a>
+    <a href="https://specifications.freedesktop.org/wm-spec/latest/"><img src="https://img.shields.io/badge/X11/EWMH-346f94"></a>
+</div>
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![PyPI](https://img.shields.io/pypi/v/sessionintent.svg)](https://pypi.org/project/sessionintent/)
-[![CI](https://github.com/fazrigading/SessionIntent/actions/workflows/ci.yml/badge.svg)](https://github.com/fazrigading/SessionIntent/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/fazrigading/SessionIntent)](https://github.com/fazrigading/SessionIntent/releases)
+SessionIntent is a declarative session orchestration system for Linux desktop environments, with a focus on GNOME and Wayland. It lets you define named session modes in YAML and automatically manage applications, workspaces, and desktop state as you switch between contexts such as browsing, work, media, or focus sessions.
 
-SessionIntent switches between intent-based modes (work, gaming, browsing, …) that automatically launch, reuse, and organize applications across workspaces.
-
-Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and an EWMH fallback (override with `--backend`).
+Instead of launching apps manually each time, you define the behavior of a session once and let SessionIntent restore it consistently.
 
 ## Features
 
@@ -25,7 +37,47 @@ Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, 
 
 ## Quick Start
 
+### Requirements
+
+- Python 3.10+
+- PyYAML
+- wofi or rofi (OPTIONAL, for UI; terminal fallback otherwise)
+- A supported DE (GNOME, KDE, Hyprland, Sway, wlroots) or X11/EWMH
+
 ### Installation
+
+<details>
+<summary>Fedora Derivatives</summary>
+
+```bash
+sudo dnf copr enable fazrigading/SessionIntent
+sudo dnf install sessionintent
+```
+    
+</details>
+
+<details>
+<summary>Debian/Ubuntu Derivatives</summary>
+
+No distro package yet. Use the installer script or `uv` below.
+
+```bash
+sudo apt install python3-pip python3-yaml rofi
+```
+
+</details>
+
+
+<details>
+<summary>Arch Derivatives</summary>
+
+No distro package yet. Use the installer script or `uv` below.
+
+```bash
+sudo pacman -S python python-yaml rofi
+```
+
+</details>
 
 #### Method 1: Using installer script (recommended)
 
@@ -37,24 +89,19 @@ curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/IN
 
 ```bash
 uv tool install git+https://github.com/fazrigading/SessionIntent
-```
-
-Or run without installing:
-
-```bash
+# To run without installing:
 uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
 ```
 
-#### Method 3: Manual installation (pip)
-```bash
-pip install .
-```
+#### More Installation Methods
 
-Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for details. Distro packages: PKGBUILD in `packaging/arch/`, Debian sources in `debian/`, Flatpak manifest in `packaging/flatpak/`, RPM spec in `packaging/fedora/` (all pending upload except the installer).
+**Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for manual install guide, how-to uninstall, custom install location, and other advanced settings.**
+
+Distro packaging: the RPM spec in `packaging/fedora/` is the maintained one and publishes to COPR. `packaging/arch/`, `debian/`, and `packaging/flatpak/` are kept as reference for downstream packagers but are not built or published.
 
 ### Configuration
 
-1. Initialize SessionIntent:
+1. Initialize SessionIntent first:
 ```bash
 sessionintent init
 ```
@@ -64,14 +111,30 @@ sessionintent init
 sessionintent setup
 ```
 
-3. Edit `~/.config/sessionintent/config.yaml` to define your modes, read [examples/config.example.yaml](examples/config.example.yaml) for reference.
+The selected apps will be saved at `~/.config/sessionintent/apps.yaml`
 
-4. Launch the mode selector:
+3. To define your modes, edit the `config.yaml` at:
 ```bash
-sessionintent
+~/.config/sessionintent/config.yaml
 ```
 
-Upgrading from flag-based CLI or `version: 1` configs? See [docs/MIGRATION.md](docs/MIGRATION.md).
+Read [examples/config.example.yaml](examples/config.example.yaml) for reference.
+
+4. Launch the mode:
+```bash
+# UI Selector (wofi/rofi required):
+sessionintent
+# Without UI:
+sessionintent apply <mode_name>
+```
+
+> [!WARNING]
+> Upgrading from flag-based CLI or `version: 1` configs? 
+> 
+> Read [docs/MIGRATION.md](docs/MIGRATION.md).
+
+> [!NOTE]
+> Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and an EWMH fallback (override with `--backend`).
 
 ## Usage
 
@@ -119,13 +182,6 @@ sessionintent --config ~/other.yaml list
 | `~/.config/sessionintent/apps.yaml` | User app registry |
 | `/usr/share/sessionintent/apps.yaml` | System app registry |
 | `~/.local/state/sessionintent/current` | Current session state (`$XDG_STATE_HOME` honored) |
-
-## Requirements
-
-- Python 3.10+
-- PyYAML
-- wofi or rofi (OPTIONAL, for UI; terminal fallback otherwise)
-- A supported desktop (GNOME, KDE, Hyprland, Sway, wlroots) or X11/EWMH
 
 ## License
 

@@ -5,6 +5,17 @@
 ### Method 1: Using installer script (Recommended)
 
 ```bash
+# Fedora-based
+sudo dnf install python3-pyyaml gnome-shell wofi
+# Debian-based
+sudo apt install python3-pip python3-yaml rofi
+# Arch-based
+sudo pacman -S python python-yaml rofi
+```
+
+Note: `wofi` or `rofi` for UI selector (recommended to install)
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
@@ -31,130 +42,19 @@ uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
 
 uv is a supported convenience layer; pip remains fully supported (see Manual Installation below).
 
-### Method 3: Manual Installation
-
-#### Prerequisites
-
-Before installing SessionIntent, ensure you have:
-
-```bash
-# Python 3.10+
-python3 --version
-
-# PyYAML
-pip install PyYAML
-
-# UI tool (one of)
-sudo dnf install wofi    # Fedora
-sudo apt install rofi    # Ubuntu/Debian
-sudo pacman -S rofi      # Arch Linux
-```
-
-#### Steps
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/fazrigading/SessionIntent.git
-cd SessionIntent
-```
-
-2. **Install the package**
-```bash
-pip install .
-```
-
-3. **Run installer**
-```bash
-./INSTALL.sh
-```
-
-This will:
-- Install the `sessionintent` command via `pip install .`
-- Create config directory `~/.config/sessionintent/`
-- Install default configs from `examples/`
-- Create autostart entry
-
-4. **Verify installation**
-```bash
-sessionintent --help
-```
-
-## Manual Installation
-
-If you prefer to install manually:
-
-### 1. Install Package
-
-```bash
-pip install .
-```
-
-Note: distros that mark system Python as externally managed (PEP 668, e.g. Fedora, recent Ubuntu/Debian) reject a bare `pip install .`. Use a virtual environment (`python3 -m venv .venv && source .venv/bin/activate`) or pipx in that case.
-
-From a local clone you can also use uv:
-
-```bash
-uv tool install .
-```
-
-Ensure `~/.local/bin` is in your `$PATH`:
-
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-### 2. Create Config Directory
-
-```bash
-mkdir -p ~/.config/sessionintent
-mkdir -p ~/.local/state/sessionintent
-```
-
-### 3. Install Default Configs
-
-```bash
-# Copy example configs
-cp examples/config.example.yaml ~/.config/sessionintent/config.yaml
-cp examples/apps.example.yaml ~/.config/sessionintent/apps.yaml
-```
-
-### 4. Set Up Autostart (Optional)
-
-Create desktop file:
-
-```bash
-mkdir -p ~/.config/autostart
-
-cat > ~/.config/autostart/sessionintent.desktop << EOF
-[Desktop Entry]
-Type=Application
-Name=SessionIntent
-Comment=Session mode selector
-Exec=sessionintent
-X-GNOME-AutoRestart=false
-X-GNOME-Autostart-Delay=3
-EOF
-```
 
 ## Installation with RPM Package (Fedora)
 
-### Enable COPR Repository
+Published to COPR. The project name is case-sensitive.
 
 ```bash
-sudo dnf copr enable fazrigading/sessionintent
+sudo dnf copr enable fazrigading/SessionIntent
 sudo dnf install sessionintent
 ```
 
-## Installation with Arch Linux (AUR)
-
-Using an AUR helper:
-
-```bash
-yay -S sessionintent
-# or
-paru -S sessionintent
-```
+Available from the next tagged release. The RPM ships the CLI, the man page,
+and the example configs; it does **not** install an autostart entry, so run
+`sessionintent init` once after installing.
 
 ## Distribution-Specific Notes
 
@@ -218,6 +118,94 @@ sessionintent --help
 
 # Test in dev mode
 sessionintent --dev apply browsing
+```
+
+## Manual Installation
+
+If you prefer to install manually:
+
+### 0. Prequisites
+
+Install `wofi` or `rofi` for UI selector (optional, nice to have):
+
+```bash
+sudo dnf install wofi    # Fedora
+sudo apt install rofi    # Ubuntu/Debian
+sudo pacman -S rofi      # Arch Linux
+```
+
+git clone https://github.com/fazrigading/SessionIntent.git
+cd SessionIntent
+
+### 1. Install Package
+
+```bash
+pip install .
+```
+
+> [!IMPORTANT]
+> Distros that mark system Python as externally managed (PEP 668, e.g. Fedora, recent Ubuntu/Debian) **may** reject a bare `pip install .`. Use a virtual environment (`python3 -m venv .venv && source .venv/bin/activate`) or pipx in that case.
+
+From a local clone you can also use uv:
+
+```bash
+uv tool install .
+```
+
+For an editable development environment:
+
+Using uv:
+```bash
+uv sync
+uv run sessionintent --help
+```
+
+Using pip:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+sessionintent --help
+```
+
+Ensure `~/.local/bin` is in your `$PATH`:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### 2. Create Config Directory
+
+```bash
+mkdir -p ~/.config/sessionintent
+mkdir -p ~/.local/state/sessionintent
+```
+
+### 3. Install Default Configs
+
+```bash
+# Copy example configs
+cp examples/config.example.yaml ~/.config/sessionintent/config.yaml
+cp examples/apps.example.yaml ~/.config/sessionintent/apps.yaml
+```
+
+### 4. Set Up Autostart (Optional)
+
+Create desktop file:
+
+```bash
+mkdir -p ~/.config/autostart
+
+cat > ~/.config/autostart/sessionintent.desktop << EOF
+[Desktop Entry]
+Type=Application
+Name=SessionIntent
+Comment=Session mode selector
+Exec=sessionintent
+X-GNOME-AutoRestart=false
+X-GNOME-Autostart-Delay=3
+EOF
 ```
 
 ## Uninstallation
