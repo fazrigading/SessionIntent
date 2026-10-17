@@ -5,16 +5,14 @@ Summary:        A declarative session orchestration system for GNOME Wayland
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/fazrigading/SessionIntent
-Source0:        sessionintent-%{version}.tar.gz
-Source1:        examples/apps.example.yaml
+Source0:        https://github.com/fazrigading/SessionIntent/archive/refs/tags/%{version}.tar.gz
 
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-pyyaml
 Requires:       python3-pyyaml
-Requires:       python3-gobject
-Requires:       (wofi or rofi)
+Recommends:     (wofi or rofi)
 
 %description
 SessionIntent is a session orchestration system for GNOME Wayland.
