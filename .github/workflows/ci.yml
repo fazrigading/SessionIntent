@@ -3,6 +3,13 @@ name: CI
 on:
   pull_request:
     branches: [master]
+  push:
+    branches: [master]
+    # Docs-only pushes don't need the suite. paths-ignore skips the run only
+    # when every changed file matches, so a docs + code push still runs.
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
 
 jobs:
   test:
