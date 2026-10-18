@@ -22,8 +22,6 @@ The COPR project name is case-sensitive. The RPM ships the CLI, the man page,
 and the example configs, but no autostart entry — run `sessionintent init` once
 after installing.
 
-Available from the next tagged release.
-
 ### Any distribution
 
 Install the dependencies:
