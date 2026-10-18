@@ -10,6 +10,8 @@ Source0:        https://github.com/fazrigading/SessionIntent/archive/refs/tags/v
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+BuildRequires:  python3-pip
 BuildRequires:  python3-pyyaml
 Requires:       python3-pyyaml
 Recommends:     (wofi or rofi)
