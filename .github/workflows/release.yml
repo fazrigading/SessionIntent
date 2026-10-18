@@ -107,6 +107,7 @@ jobs:
 
       - name: Submit build to COPR
         run: |
+          # The spec is a positional argument; --spec is not a valid flag here.
           copr-cli build fazrigading/SessionIntent \
-            --spec packaging/fedora/sessionintent.spec \
+            packaging/fedora/sessionintent.spec \
             --nowait
