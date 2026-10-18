@@ -1,6 +1,6 @@
 <div align="center">
     <h1>SessionIntent</h1>
-    <b>A declarative session orchestration for Linux desktops</b><br>
+    <b>Declarative session orchestration for Linux desktops</b><br>
     <b>Describe your "intents" (modes) to orchestrate application launch, workspace layout, and session state.</b>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-blue.svg"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white"></a>
@@ -41,100 +41,98 @@ Instead of launching apps manually each time, you define the behavior of a sessi
 
 - Python 3.10+
 - PyYAML
-- wofi or rofi (OPTIONAL, for UI; terminal fallback otherwise)
-- A supported DE (GNOME, KDE, Hyprland, Sway, wlroots) or X11/EWMH
+- `wofi` or `rofi` — optional, for the mode picker. Without either, SessionIntent
+  falls back to a terminal menu.
+- A supported DE or compositor: GNOME, KDE Plasma, Hyprland, Sway, wlroots, or
+  X11/EWMH
 
 ### Installation
 
-<details>
-<summary>Fedora Derivatives</summary>
-
-```bash
-sudo dnf copr enable fazrigading/SessionIntent
-sudo dnf install sessionintent
-```
-    
-</details>
-
-<details>
-<summary>Debian/Ubuntu Derivatives</summary>
-
-No distro package yet. Use the installer script or `uv` below.
-
-```bash
-sudo apt install python3-pip python3-yaml rofi
-```
-
-</details>
-
-
-<details>
-<summary>Arch Derivatives</summary>
-
-No distro package yet. Use the installer script or `uv` below.
-
-```bash
-sudo pacman -S python python-yaml rofi
-```
-
-</details>
-
-#### Method 1: Using installer script (recommended)
+#### Method 1: Installer script (recommended)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/fazrigading/SessionIntent/master/INSTALL.sh | bash
 ```
 
-#### Method 2: Using uv
+The script checks prerequisites, installs SessionIntent, seeds a default config,
+and sets up autostart.
+
+#### Method 2: uv
 
 ```bash
 uv tool install git+https://github.com/fazrigading/SessionIntent
-# To run without installing:
+```
+
+To run without installing:
+
+```bash
 uvx --from git+https://github.com/fazrigading/SessionIntent sessionintent --help
 ```
 
-#### More Installation Methods
+#### Method 3: Distro packages
 
-**Read [docs/INSTALLATION.md](docs/INSTALLATION.md) for manual install guide, how-to uninstall, custom install location, and other advanced settings.**
+**Fedora:**
+```bash
+sudo dnf copr enable fazrigading/SessionIntent
+sudo dnf install sessionintent -y
+```
 
-Distro packaging: the RPM spec in `packaging/fedora/` is the maintained one and publishes to COPR. `packaging/arch/`, `debian/`, and `packaging/flatpak/` are kept as reference for downstream packagers but are not built or published.
+> [!NOTE]
+> The project name is case-sensitive. The RPM **does not** set up autostart, 
+> so run `sessionintent init` once after installing.
+
+For **Debian and Arch**, there are no distro package yet. 
+Install the dependencies, then use Method 1 or 2:
+
+```bash
+# Debian-based
+sudo apt install python3-pip python3-yaml rofi
+# Arch-based
+sudo pacman -S python python-yaml rofi
+```
+
+> [!NOTE] 
+> Only the Fedora RPM is built and published. `packaging/arch/`, `debian/`, 
+> and `packaging/flatpak/` are kept as reference for downstream packagers.
+
+> [!IMPORTANT]
+> See [docs/INSTALLATION.md](docs/INSTALLATION.md) for manual installs,
+> uninstalling, custom install locations, and troubleshooting.
 
 ### Configuration
 
-1. Initialize SessionIntent first:
-```bash
-sessionintent init
-```
+1. Initialize SessionIntent. This writes a default config and installs the
+   GNOME Shell workspace extension:
 
-2. Set up your apps:
-```bash
-sessionintent setup
-```
+   ```bash
+   sessionintent init
+   ```
 
-The selected apps will be saved at `~/.config/sessionintent/apps.yaml`
+2. Choose the apps you want to manage:
 
-3. To define your modes, edit the `config.yaml` at:
-```bash
-~/.config/sessionintent/config.yaml
-```
+   ```bash
+   sessionintent setup
+   ```
 
-Read [examples/config.example.yaml](examples/config.example.yaml) for reference.
+   Your selection is saved to `~/.config/sessionintent/apps.yaml`.
 
-4. Launch the mode:
-```bash
-# UI Selector (wofi/rofi required):
-sessionintent
-# Without UI:
-sessionintent apply <mode_name>
-```
+3. Define your modes in `~/.config/sessionintent/config.yaml`. See
+   [examples/config.example.yaml](examples/config.example.yaml) for reference.
+
+4. Launch a mode:
+
+   ```bash
+   sessionintent                    # picker (needs wofi or rofi)
+   sessionintent apply browsing     # apply directly, no picker
+   ```
 
 > [!WARNING]
-> Upgrading from flag-based CLI or `version: 1` configs? 
-> 
-> Read [docs/MIGRATION.md](docs/MIGRATION.md).
+> Upgrading from the flag-based CLI or `version: 1` configs? See
+> [docs/MIGRATION.md](docs/MIGRATION.md).
 
 > [!NOTE]
-> Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic wlroots, and an EWMH fallback (override with `--backend`).
+> Backends are auto-detected: GNOME, KDE Plasma, Hyprland, Sway, generic
+> wlroots, and an EWMH fallback. Override with `--backend`.
 
 ## Usage
 
@@ -193,5 +191,8 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/ROAD
 
 ## Acknowledgments
 
-- Provider-based multi-desktop support
-- Inspired by window manager session management tools
+Inspired by window manager session management tools.
+
+## Author
+
+Fazri Gading (Copyright 2026)
