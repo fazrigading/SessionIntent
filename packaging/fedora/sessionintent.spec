@@ -50,6 +50,11 @@ install -m 644 examples/config.example.yaml %{buildroot}%{_datadir}/sessioninten
 mkdir -p %{buildroot}%{_mandir}/man1/
 install -m 644 man/sessionintent.1 %{buildroot}%{_mandir}/man1/sessionintent.1
 
+%check
+# Smoke test the installed entry point. Catches a broken console script or
+# a bad %install on COPR's builders, before a user installs the package.
+sessionintent version
+
 %files -f %{pyproject_files}
 %doc README.md CONTRIBUTING.md docs/
 %license LICENSE
