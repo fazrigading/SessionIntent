@@ -9,6 +9,15 @@ OLD=$(grep -oP '__version__ = "\K[^"]+' src/sessionintent/__init__.py)
 
 sed -i "s/__version__ = \"${OLD}\"/__version__ = \"${NEW}\"/" src/sessionintent/__init__.py
 sed -i "s/^Version:        ${OLD}/Version:        ${NEW}/" packaging/fedora/sessionintent.spec
-sed -i "s/${OLD}-1/${NEW}-1/g" packaging/fedora/sessionintent.spec
+
+# Insert a fresh changelog entry. Rewriting the previous one in place would
+# hand the new version the old release's date and description.
+NAME=$(git config user.name)
+EMAIL=$(git config user.email)
+sed -i "/^%changelog$/a\\
+* $(LC_ALL=C date '+%a %b %d %Y') ${NAME} <${EMAIL}> - ${NEW}-1\\
+- See CHANGELOG.md for details." packaging/fedora/sessionintent.spec
+
 sed -i "s/sessionintent ${OLD}/sessionintent ${NEW}/" man/sessionintent.1
 echo "Bumped ${OLD} -> ${NEW}"
+echo "Edit the new %changelog entry before tagging."
